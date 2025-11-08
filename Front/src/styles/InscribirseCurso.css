@@ -1,0 +1,22 @@
+.nav-link.active {
+    border-bottom: 2px solid white;
+}
+
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--light-grey);
+}
+
+
+.sticky-footer-btn {
+    position: sticky;
+    bottom: 0;
+    z-index: 1020;
+    padding: 20px 0;
+    background-color: var(--white);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    margin-top: auto; 
+}

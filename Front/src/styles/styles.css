@@ -1,0 +1,24 @@
+:root {
+    --ucab-blue: #2c3e50;
+    --ucab-link: #3498db;
+    --white: #ffffff; 
+    --light-grey: #f4f7f6; 
+}
+
+
+.bg-ucab-blue {
+    background-color: var(--ucab-blue) !important;
+}
+
+.btn-ucab-primary {
+    background-color: var(--ucab-link);
+    border-color: var(--ucab-link);
+    color: var(--white);
+    padding: 10px 20px;
+    font-weight: 500;
+}
+.btn-ucab-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    color: var(--white);
+}
