@@ -1,12 +1,12 @@
-const express = require("express");
-const app = express();
-const routes = require("./routes/index");
-const authRoutes = require("./routes/authRoutes");
+const express = require('express');
+const path = require('path');
+const routes = require('./routes/index_tutoria');
 
-app.use(express.json()); // para leer JSON en las peticiones
+const app = express();
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '..', 'Front', 'public')));
+
+app.use(routes);
 
 module.exports = app;
-
-app.use("/", routes);
-
-app.use("/auth", authRoutes);

@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "boostrap": "^2.0.0",
     "bootstrap": "^5.3.8",
     "express": "^5.1.0",
     "express-validator": "^7.3.0"
