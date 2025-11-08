@@ -45,12 +45,5 @@
             color: white;
         }
 
-         .footer-fixed {
-            background-color: var(--ucab-blue);
-            color: white;
-            padding: 15px 0;
-            font-size: 0.875rem;
-            flex-shrink: 0; 
-            text-align: center;
-        }
+         
         

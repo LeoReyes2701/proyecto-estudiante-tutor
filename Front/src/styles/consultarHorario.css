@@ -1,0 +1,41 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa; 
+    color: #333;
+}
+
+ .schedule-card {
+    border-left: 6px solid var(--ucab-blue);
+    border-radius: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: white;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.schedule-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 51, 102, 0.1); 
+}
+
+        
+.day-title {
+    color: var(--ucab-blue);
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+}
+        
+.day-hours {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+}
+        
+.page-content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
