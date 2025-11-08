@@ -1,0 +1,61 @@
+        .details-card {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 900px; 
+            width: 100%;
+        }
+        
+        .main-content-wrapper {
+             max-width: 900px; 
+             margin: 0 auto;
+        }
+
+        .form-input-ucab {
+            background-color: var(--light-grey);
+            border: 1px solid #ddd;
+            padding: 0.75rem 1rem; 
+            border-radius: 0.5rem;
+            width: 100%;
+        }
+       
+        .schedule-card {
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #ddd; 
+            border-radius: 0.5rem;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            font-weight: 500;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .schedule-card.selected, .schedule-card:hover {
+            border-color: #3498db;
+            color: #3498db;
+        }
+        
+        .horario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .horario-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .footer-fixed {
+            width: 100%;
+            background-color: var(--ucab-blue);
+            color: white;
+            padding: 15px 0;
+            font-size: 0.875rem;
+            flex-shrink: 0; 
+        }
+        .page-container {
+             display: flex;
+             flex-direction: column;
+             min-height: 100vh;
+        }
