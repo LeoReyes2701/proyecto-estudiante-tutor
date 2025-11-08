@@ -1,14 +1,16 @@
 {
   "schedules": [
     {
-      "day": "lunes",
-      "start": "08:00",
-      "end": "09:30"
+        "tutor": "Juan Perez",
+        "day": "lunes",
+        "start": "08:00",
+        "end": "09:30"
     },
     {
-      "day": "martes",
-      "start": "10:00",
-      "end": "11:30"
+        "tutor": "Juan Perez",
+        "day": "martes",
+        "start": "10:00",
+        "end": "11:30"
     }
   ]
 }

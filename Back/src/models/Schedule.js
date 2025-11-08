@@ -11,12 +11,12 @@ class Schedule {
 
   constructor(tutor, day, start, end) {
     this.tutor = tutor; // nombre del tutor asignado automáticamente
-    this.day = day;     // día en español
+    this.day = day;     // día
     this.start = start; // hora inicio HH:mm
     this.end = end;     // hora fin HH:mm
   }
 
-  // Valida que el día esté en español
+  // Valida el día
   isValidDay() {
     const normalizar = (s) =>
       s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
@@ -55,7 +55,7 @@ class Schedule {
       return { ok: false, reason: "Duración inválida (50-100 min)" };
     }
     if (!this.isValidDay()) {
-      return { ok: false, reason: "El día debe estar en español (lunes-domingo)" };
+      return { ok: false, reason: "El día no es correcto" };
     }
     return { ok: true };
   }
