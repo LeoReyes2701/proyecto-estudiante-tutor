@@ -1,24 +1,71 @@
-const Tutoring = require('../models/tutorias');
-const { readJSON, writeJSON } = require('../config/database');
+const fs = require('fs');
+const path = require('path');
 
-function createTutoring(req, res) {
-  const { title, description, startTime, endTime, weekday, capacity } = req.body;
+const dataPath = path.join(__dirname, '..', 'models', 'data', 'tutorias.json');
 
-  if (new Date(startTime) >= new Date(endTime)) {
-    return res.status(400).json({ error: 'La hora de fin debe ser posterior a la de inicio' });
+function createTutoria(req, res) {
+  const { nombre, cupos, descripcion, horarios } = req.body;
+
+  if (
+    typeof nombre !== 'string' || !nombre.trim() ||
+    typeof descripcion !== 'string' || !descripcion.trim() ||
+    typeof cupos !== 'number' || cupos < 10 || cupos > 20 ||
+    !Array.isArray(horarios) || horarios.length === 0
+  ) {
+    return res.status(400).json({ error: 'Formato inválido en el servidor' });
   }
 
-  const newTutoring = new Tutoring({ title, description, startTime, endTime, weekday, capacity });
-  const tutorings = readJSON('tutorings.json');
-  tutorings.push(newTutoring);
-  writeJSON('tutorings.json', tutorings);
+  const nuevaTutoria = {
+    nombre: nombre.trim(),
+    cupos,
+    descripcion: descripcion.trim(),
+    horarios: horarios.map(h => ({
+      dia: h.dia,
+      hora: h.hora
+    }))
+  };
 
-  res.status(201).json(newTutoring);
+  let tutorias = [];
+
+  try {
+    if (fs.existsSync(dataPath)) {
+      const raw = fs.readFileSync(dataPath, 'utf8');
+      tutorias = JSON.parse(raw);
+      if (!Array.isArray(tutorias)) tutorias = [];
+    }
+  } catch (err) {
+    console.error('Error leyendo tutorias.json:', err);
+    return res.status(500).json({ error: 'Error interno al leer datos' });
+  }
+
+  tutorias.push(nuevaTutoria);
+
+  try {
+    fs.writeFileSync(dataPath, JSON.stringify(tutorias, null, 2), 'utf8');
+    return res.status(201).json({ message: 'Tutoría creada exitosamente' });
+  } catch (err) {
+    console.error('Error escribiendo tutorias.json:', err);
+    return res.status(500).json({ error: 'Error interno al guardar datos' });
+  }
 }
 
-function getTutorings(req, res) {
-  const tutorings = readJSON('tutorings.json');
-  res.json(tutorings);
+function getTutorias(req, res) {
+  try {
+    if (!fs.existsSync(dataPath)) {
+      // Si no existe, devolver array vacío (no crear archivo automáticamente para no alterar)
+      return res.status(200).json([]);
+    }
+    const raw = fs.readFileSync(dataPath, 'utf8');
+    const tutorias = JSON.parse(raw);
+    if (!Array.isArray(tutorias)) {
+      return res.status(500).json({ error: 'Formato inválido de datos en servidor' });
+    }
+    return res.status(200).json(tutorias);
+  } catch (err) {
+    console.error('Error leyendo tutorias.json:', err);
+    return res.status(500).json({ error: 'Error interno al leer datos' });
+  }
 }
 
-module.exports = { createTutoring, getTutorings };
+module.exports = { createTutoria, getTutorias };
+

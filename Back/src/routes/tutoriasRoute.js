@@ -1,10 +1,13 @@
 const express = require('express');
-const { createTutoring, getTutorings } = require('../controllers/tutoriasController');
+const { createTutoria, getTutorias } = require('../controllers/tutoriasController');
 const { validateTutoring } = require('../middleware/validation');
 
 const router = express.Router();
 
-router.post('/', validateTutoring, createTutoring);
-router.get('/', getTutorings);
+// POST crear tutoría (existente)
+router.post('/tutorias', validateTutoring, createTutoria);
+
+// GET listar tutorías (nueva)
+router.get('/tutorias', getTutorias);
 
 module.exports = router;

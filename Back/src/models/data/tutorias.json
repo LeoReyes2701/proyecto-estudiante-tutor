@@ -1,1 +1,59 @@
-[]
+[
+  {
+    "nombre": "111",
+    "cupos": 12,
+    "descripcion": "asd",
+    "horarios": [
+      {
+        "dia": "Lunes",
+        "hora": "7:00 AM - 9:00 AM"
+      }
+    ]
+  },
+  {
+    "nombre": "1234",
+    "cupos": 13,
+    "descripcion": "sfsfsf",
+    "horarios": [
+      {
+        "dia": "Lunes",
+        "hora": "7:00 AM - 9:00 AM"
+      },
+      {
+        "dia": "Martes",
+        "hora": "9:00 AM - 11:00 AM"
+      },
+      {
+        "dia": "Miércoles",
+        "hora": "11:00 AM - 1:00 PM"
+      },
+      {
+        "dia": "Jueves",
+        "hora": "1:00 PM - 3:00 PM"
+      }
+    ]
+  },
+  {
+    "nombre": "ejemplo",
+    "cupos": 15,
+    "descripcion": "hola test",
+    "horarios": [
+      {
+        "dia": "Lunes",
+        "hora": "7:00 AM - 9:00 AM"
+      },
+      {
+        "dia": "Martes",
+        "hora": "9:00 AM - 11:00 AM"
+      },
+      {
+        "dia": "Miércoles",
+        "hora": "11:00 AM - 1:00 PM"
+      },
+      {
+        "dia": "Jueves",
+        "hora": "1:00 PM - 3:00 PM"
+      }
+    ]
+  }
+]

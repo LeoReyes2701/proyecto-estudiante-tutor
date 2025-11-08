@@ -3,7 +3,8 @@ const tutoringRoutes = require('./tutoriasRoute');
 
 const router = express.Router();
 
-router.use('/tutorias', tutoringRoutes);
+router.use('/', tutoringRoutes);
+
 
 module.exports = router;
 
