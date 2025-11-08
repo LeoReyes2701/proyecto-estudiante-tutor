@@ -1,10 +1,8 @@
 const express = require('express');
-const tutoringRoutes = require('./tutoriasRoute');
+const tutorialasRoute = require('./tutoriasRoute');
 
 const router = express.Router();
 
-router.use('/', tutoringRoutes);
-
+router.use('/', tutorialasRoute);
 
 module.exports = router;
-

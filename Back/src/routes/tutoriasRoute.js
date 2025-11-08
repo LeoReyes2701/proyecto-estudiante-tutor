@@ -1,13 +1,20 @@
 const express = require('express');
-const { createTutoria, getTutorias } = require('../controllers/tutoriasController');
+const TutoriaRepository = require('../repositories/TutoriaRepository');
+const TutoriaController = require('../controllers/tutoriaController');
 const { validateTutoring } = require('../middleware/validation');
 
 const router = express.Router();
 
-// POST crear tutoría (existente)
-router.post('/tutorias', validateTutoring, createTutoria);
+// instancia única del repositorio para persistencia en archivo
+const repo = new TutoriaRepository();
+const controller = new TutoriaController(repo);
 
-// GET listar tutorías (nueva)
-router.get('/tutorias', getTutorias);
+// Rutas API (compatibles con tu frontend)
+router.post('/tutorias', validateTutoring, controller.createTutoria);
+router.get('/tutorias', controller.getTutorias);
+
+// opcionales (no usadas por frontend actual pero útiles)
+router.get('/tutorias/:id', controller.getTutoriaById);
+router.delete('/tutorias/:id', controller.deleteTutoria);
 
 module.exports = router;

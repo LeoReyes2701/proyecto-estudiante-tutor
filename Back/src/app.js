@@ -4,21 +4,20 @@ const routes = require('./routes/index_tutoria');
 
 const app = express();
 
-// Middleware para parsear JSON
 app.use(express.json());
 
-// Servir archivos estáticos desde Front/public
+// servir frontend (sin modificar front)
+// Public: Front/public
 app.use(express.static(path.resolve(__dirname, '../../Front/public')));
-
-// Servir archivos JS y CSS desde Front/src
+// Assets (src JS/CSS): Front/src
 app.use('/src', express.static(path.resolve(__dirname, '../../Front/src')));
 
-// Ruta raíz que carga crearTutoria.html
+// raíz muestra crearTutoria.html como antes
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../../Front/public/consultarTutoria.html'));
+  res.sendFile(path.resolve(__dirname, '../../Front/public/crearTutoria.html'));
 });
 
-// Rutas API
+// API routes
 app.use(routes);
 
 module.exports = app;
