@@ -1,0 +1,72 @@
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--light-grey);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+        }
+        
+       
+        .login-container {
+            flex-grow: 1; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px; 
+        }
+
+       
+        .login-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px; 
+            width: 100%; 
+        }
+
+
+        .role-selection .btn {
+            border: 1px solid #ced4da;
+            color: #495057;
+            background-color: var(--white);
+            font-weight: 500;
+            padding: 10px;
+            transition: all 0.2s;
+        }
+
+        .role-selection .btn.active-role, .role-selection .btn:focus {
+            background-color: var(--white);
+            border-color: var(--ucab-link);
+            color: var(--ucab-link);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25); 
+            z-index: 2; 
+        }
+    
+        .header-login {
+            background-color: var(--ucab-blue);
+            color: var(--white);
+            padding: 15px 20px;
+        }
+        .footer-login {
+            background-color: var(--ucab-blue); 
+            color: var(--white);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            width: 100%;
+            font-size: 0.9em;
+            position: relative; 
+        }
+        
+        
+        .form-control {
+            background-color: var(--light-grey); 
+            border: 1px solid #ced4da;
+            padding: 10px;
+        }
+
+        .text-register {
+            font-size: 0.9em;
+        }

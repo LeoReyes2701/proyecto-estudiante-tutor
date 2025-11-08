@@ -56,8 +56,9 @@
             </form>
 
             <p class="text-center text-muted mt-4">
-                ¿No tienes una cuenta? <a href="#" class="text-decoration-none" style="color: var(--ucab-link);">Regístrate aquí</a>
+                ¿No tienes una cuenta? <a href="crearCuenta.html" class="text-decoration-none" style="color: var(--ucab-link);">Regístrate aquí</a>
             </p>
+            
         </div>
     </div>
 
@@ -71,16 +72,6 @@
             crossorigin="anonymous">
     </script>
     
-    <script>
-        const togglePassword = document.querySelector('#togglePassword');
-        const passwordInput = document.querySelector('#passwordInput');
-
-        if (togglePassword && passwordInput) {
-            togglePassword.addEventListener('click', function (e) {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-            });
-        }
-    </script>
+   <script src="../src/components/auth/logIn.js"></script>
 </body>
 </html>
