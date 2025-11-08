@@ -1,12 +1,10 @@
 const express = require("express");
 const app = express();
-const routes = require("./routes/index");
-const authRoutes = require("./routes/authRoutes");
 
-app.use(express.json()); // para leer JSON en las peticiones
+app.use(express.json());
+
+// Importar y usar las rutas de horarios
+const scheduleRoutes = require("./routes/scheduleRoutes");
+app.use("/schedules", scheduleRoutes);
 
 module.exports = app;
-
-app.use("/", routes);
-
-app.use("/auth", authRoutes);
