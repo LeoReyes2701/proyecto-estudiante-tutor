@@ -1,0 +1,50 @@
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--light-grey-bg);
+            color: #333;
+        }
+
+        .text-ucab-blue {
+            color: var(--ucab-blue) !important;
+        }
+
+        .header-strip {
+            background-color: #34495e; 
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+        
+       
+        .profile-card {
+            max-width: 800px;
+            margin: auto;
+            border-radius: 12px;
+        }
+
+        .tutor-card {
+            border-left: 5px solid var(--ucab-primary); 
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .tutor-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+       
+        .user-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--ucab-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+         
+
+        

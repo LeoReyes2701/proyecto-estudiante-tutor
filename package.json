@@ -1,19 +1,36 @@
 {
   "name": "proyecto-estudiante-tutor",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Proyecto Estudiante-Tutor (Front + Back)",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "private": true,
   "scripts": {
+    "start": "node Back/src/server.js",
+    "dev:back": "nodemon Back/src/server.js --watch Back/src",
+    "dev:front": "echo \"Frontend estático servido desde Front/public (no hay server dev por defecto)\"",
+    "dev": "npm-run-all --parallel dev:back dev:front",
+    "lint": "echo \"Add linter if needed\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "workspaces": [
+    "Front",
+    "Back"
+  ],
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "bootstrap": "^5.3.8",
     "express": "^5.1.0",
     "express-validator": "^7.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "npm-run-all": "^4.1.5"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18"
   }
 }
