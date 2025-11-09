@@ -1,0 +1,23 @@
+{
+  "name": "proyecto-estudiante-tutor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Back/src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js --watch Back/src",
+    "start": "node Back/src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "bootstrap": "^5.3.8",
+    "express": "^5.1.0",
+    "express-validator": "^7.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

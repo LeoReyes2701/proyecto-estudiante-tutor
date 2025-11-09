@@ -1,37 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio de Sesión - Programa Estudiante-Tutor</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Iniciar Sesión — Programa Estudiante‑Tutor</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-          rel="stylesheet" 
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
-          crossorigin="anonymous">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="../src/styles/styles.css"> 
-    <link rel="stylesheet" href="../src/styles/logIn.css">
-    
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --ucab-blue: #0b3d91;
+      --accent: #0b8ae6;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --muted: #6c757d;
+    }
+    html,body { height:100%; }
+    body {
+      margin:0;
+      font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(180deg, #eaf3ff 0%, var(--bg) 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:2rem;
+    }
+
+    .layout {
+      width:100%;
+      max-width:980px;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:2rem;
+      align-items:stretch;
+    }
+
+    .panel-visual {
+      background: linear-gradient(135deg, rgba(11,61,145,0.95), rgba(11,138,230,0.95));
+      color: #fff;
+      border-radius:12px;
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:18px;
+      box-shadow: 0 10px 30px rgba(11,61,145,0.12);
+    }
+    .panel-visual h1 { margin:0; font-size:1.8rem; letter-spacing:-0.01em; }
+    .panel-visual p { margin:0; opacity:0.92; }
+
+    .logo-circle {
+      width:56px; height:56px; border-radius:12px;
+      background:rgba(255,255,255,0.12); display:flex; align-items:center; justify-content:center;
+      font-weight:700; font-size:18px;
+    }
+
+    .card-auth {
+      background: var(--card);
+      border-radius:12px;
+      padding:22px;
+      box-shadow:0 6px 20px rgba(30,40,60,0.06);
+    }
+    .card-auth h3 { margin:0 0 6px 0; }
+    .card-auth p.lead { margin:0 0 14px 0; color:var(--muted); font-size:0.95rem; }
+
+    .password-toggle {
+      position:absolute; right:12px; top:36px; cursor:pointer; user-select:none; color:var(--muted);
+    }
+
+    .small-link { font-size:0.92rem; color:var(--accent); text-decoration:none; }
+
+    footer.page-foot {
+      text-align:center; margin-top:14px; color:var(--muted); font-size:0.86rem;
+    }
+
+    @media (max-width:900px) {
+      .layout { grid-template-columns: 1fr; }
+      .panel-visual { order:2; padding:18px; border-radius:10px; }
+      .card-auth { order:1; }
+    }
+  </style>
 </head>
-<body class="d-flex flex-column min-vh-100" style="background-color: var(--light-grey);">
-    
-    <header class="navbar navbar-dark bg-ucab-blue py-3">
-        <div class="container-fluid mx-lg-5">
-            <a class="navbar-brand fw-bold fs-5 me-5" href="#">
-                    UCAB <span class="fw-normal">Programa Estudiante-Tutor</span>
-                </a>
+<body>
+  <div class="layout">
+
+    <aside class="panel-visual">
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div class="logo-circle">UCAB</div>
+        <div>
+          <div style="font-weight:700">Programa Estudiante‑Tutor</div>
+          <div style="font-size:0.88rem; opacity:0.95">Conecta estudiantes y tutores de forma sencilla</div>
         </div>
-    </header>
+      </div>
 
-    <div class="login-container">
-        <div class="login-card">
-            <h2 class="text-center fw-bold mb-2">Iniciar Sesión</h2>
-            <p class="text-center text-muted mb-4">Ingresa tus credenciales para acceder al sistema</p>
+      <div>
+        <h1>Bienvenido de vuelta</h1>
+        <p>Accede con tu correo institucional para continuar con tus horarios, solicitudes y notificaciones.</p>
+      </div>
 
-            <form>
+<<<<<<< HEAD
+      <div style="margin-top:auto; font-size:0.85rem; opacity:0.95">
+        <div><strong>Consejo:</strong> usa tu correo <code>@est.ucab.edu.ve</code></div>
+        <div style="margin-top:6px; font-size:0.82rem">Si no tienes cuenta, regístrate en la sección de la derecha.</div>
+      </div>
+    </aside>
+=======
+            <form id="loginForm">
                 <div class="mb-3">
                     <label for="emailInput" class="form-label">Correo Electrónico Institucional</label>
                     <input type="email" class="form-control" id="emailInput" placeholder="ejemplo@ucab.edu.ve">
@@ -54,24 +127,83 @@
                 </div>
                 <button type="submit" class="btn btn-ucab-primary w-100 mb-3">Iniciar Sesión</button>
             </form>
+>>>>>>> b701ab0d1b93a7d4f5bb3547a98c857fbf9aa762
 
+<<<<<<< HEAD
             <p class="text-center text-muted mt-4">
                 ¿No tienes una cuenta? <a href="crearCuenta.html" class="text-decoration-none" style="color: var(--ucab-link);">Regístrate aquí</a>
             </p>
             
+=======
+    <main class="card-auth">
+      <h3>Iniciar Sesión</h3>
+      <p class="lead">Ingresa con tu correo institucional</p>
+
+      <form id="loginForm" novalidate>
+        <div class="mb-3">
+          <label class="form-label" for="emailInput">Correo institucional</label>
+          <input id="emailInput" class="form-control" type="email" placeholder="usuario@est.ucab.edu.ve" required>
+          <div class="form-text muted">El correo debe terminar en <code>@est.ucab.edu.ve</code></div>
+>>>>>>> origin/leonardo
         </div>
-    </div>
 
-    <footer class="footer-login mt-auto">
-        <span>© 2025 UCAB - Universidad Católica Andrés Bello</span>
-        
-    </footer>
+        <div class="mb-3 position-relative">
+          <label class="form-label" for="passwordInput">Contraseña</label>
+          <input id="passwordInput" class="form-control" type="password" placeholder="Tu contraseña" required>
+          <span id="togglePassword" class="password-toggle" title="Mostrar/ocultar">👁️</span>
+        </div>
 
+<<<<<<< HEAD
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
             crossorigin="anonymous">
     </script>
     
    <script src="../src/components/auth/logIn.js"></script>
+=======
+        <div id="formError" class="text-danger mb-2 visually-hidden"></div>
+
+        <div class="d-grid gap-2 mb-2">
+          <button id="submitBtn" type="submit" class="btn" style="background:var(--ucab-blue); color:#fff; border-radius:8px; padding:10px 14px;">
+            Iniciar Sesión
+          </button>
+        </div>
+
+        <div class="d-flex gap-2 mb-2">
+          <button id="resetBtn" type="button" class="btn btn-outline-secondary" style="flex:0 0 auto;">Limpiar</button>
+          <div style="margin-left:auto; align-self:center; color:var(--muted); font-size:0.92rem">O</div>
+          <a href="crearCuenta.html" class="btn btn-outline-primary" style="margin-left:auto;">Crear cuenta</a>
+        </div>
+
+        <div style="margin-top:14px; border-top:1px dashed #e9eef8; padding-top:12px;">
+          <small class="form-text muted">Al iniciar sesión aceptas las políticas del sistema.</small>
+        </div>
+      </form>
+
+      <footer class="page-foot">© 2025 UCAB — Universidad Católica Andrés Bello</footer>
+    </main>
+
+  </div>
+
+  <script type="module" src="/src/components/auth/login.js"></script>
+
+  <script>
+    // fallback pequeño por si el módulo no se carga
+    (function () {
+      const pwd = document.getElementById('passwordInput');
+      const toggle = document.getElementById('togglePassword');
+      if (toggle && pwd) {
+        toggle.addEventListener('click', () => {
+          const t = pwd.getAttribute('type') === 'password' ? 'text' : 'password';
+          pwd.setAttribute('type', t);
+          toggle.textContent = t === 'password' ? '👁️' : '🙈';
+        });
+      }
+      document.getElementById('resetBtn').addEventListener('click', () => document.getElementById('loginForm').reset());
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+>>>>>>> origin/leonardo
 </body>
 </html>
