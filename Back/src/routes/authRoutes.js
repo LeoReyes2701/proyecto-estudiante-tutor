@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+<<<<<<< HEAD
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs'); // usar bcryptjs en CommonJS
@@ -8,6 +9,14 @@ const User = require('../models/User');
 
 // Ruta POST para login (delegada al controller)
 router.post('/login', authController.login);
+=======
+const path = require("path");
+const fs = require("fs");
+const bcrypt = require("bcrypt");
+const authController = require("../controllers/authControllers");
+const User = require("../models/User");
+
+>>>>>>> b701ab0d1b93a7d4f5bb3547a98c857fbf9aa762
 
 // Función para generar un ID simple
 function generarId() {
@@ -82,4 +91,9 @@ router.post('/registro', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
+=======
+router.post("/login", authController.login);
+
+>>>>>>> b701ab0d1b93a7d4f5bb3547a98c857fbf9aa762
 module.exports = router;

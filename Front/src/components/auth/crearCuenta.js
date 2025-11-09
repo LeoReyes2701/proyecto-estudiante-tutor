@@ -69,8 +69,17 @@
       const json = await res.json().catch(() => null);
       setSaving(false);
 
+<<<<<<< HEAD
       if (res.status === 201) {
         pushToast('Cuenta creada correctamente', 'success');
+=======
+      let resultado = null;
+      try { resultado = await res.json(); } catch (err) { /* ignore parse error */ }
+
+      if (res.ok) {
+        alert(resultado?.mensaje || 'Usuario registrado con éxito');
+        window.location.href = "/login";
+>>>>>>> b701ab0d1b93a7d4f5bb3547a98c857fbf9aa762
         form.reset();
         return;
       }
