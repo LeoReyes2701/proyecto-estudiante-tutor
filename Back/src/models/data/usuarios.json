@@ -1,0 +1,13 @@
+[
+  {
+    "id": "1762657384069",
+    "nombre": "Nanan",
+    "apellido": "Naa",
+    "email": "na@est.ucab.edu.ve",
+    "password": "$2b$10$C9j3b3j/sp3WjFTDl5b/G.ES0AaNAjt30dhNr/c8LBUj2eBAhMzoK",
+    "rol": "tutor",
+    "createdAt": "08/11/25",
+    "tutoriasOfrecidas": [],
+    "tutoriasInscritas": []
+  }
+]
