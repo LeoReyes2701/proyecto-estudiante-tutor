@@ -1,148 +1,168 @@
-function setupPasswordToggle(toggleId, inputId) {
-    const toggle = document.querySelector(`#${toggleId}`);
-    const input = document.querySelector(`#${inputId}`);
-    
-    if (toggle && input) {
-        // El toggle es invisible (controlado por CSS), pero el cursor indica que es cliqueable.
-        toggle.addEventListener('click', function (e) {
-            // Alterna entre el tipo 'password' y 'text'
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-        });
+class CrearCuenta {
+  constructor(rootFormId = 'signupForm') {
+    this.form = document.getElementById(rootFormId);
+    if (!this.form) return console.warn(`#${rootFormId} no encontrado`);
+    this.bindEls();
+    this.attachListeners();
+  }
+
+  bindEls() {
+    this.nombre = this.form.querySelector('#nombreInput');
+    this.apellido = this.form.querySelector('#apellidoInput');
+    this.email = this.form.querySelector('#emailInput');
+    this.password = this.form.querySelector('#passwordInput');
+    this.confirmPassword = this.form.querySelector('#confirmPasswordInput');
+    this.roleEst = document.getElementById('roleEstudiante');
+    this.roleTut = document.getElementById('roleTutor');
+    this.roleButtons = Array.from(this.form.querySelectorAll('.role-selection .btn'));
+    this.rolSeleccionado = null;
+    this.alertContainer = document.getElementById('pageAlertContainer') || this.form;
+  }
+
+  attachListeners() {
+    this.setupToggle('togglePassword1', this.password);
+    this.setupToggle('togglePassword2', this.confirmPassword);
+
+    if (this.roleEst) this.roleEst.addEventListener('click', () => this.selectRole('estudiante', this.roleEst, this.roleTut));
+    if (this.roleTut) this.roleTut.addEventListener('click', () => this.selectRole('tutor', this.roleTut, this.roleEst));
+    if (!this.roleEst && !this.roleTut && this.roleButtons.length) {
+      this.roleButtons.forEach(btn => btn.addEventListener('click', () => this.selectRoleFromBtn(btn)));
     }
-}
-document.addEventListener('DOMContentLoaded', function() {
-  // Formulario principal
-  const form = document.getElementById('signupForm');
-  if (!form) return console.warn('Formulario #form-registro no encontrado en la página.');
 
-  // Inicializar toggles de contraseña (si existen)
-  setupPasswordToggle('togglePassword1', 'passwordInput');
-  setupPasswordToggle('togglePassword2', 'confirmPasswordInput');
+    this.form.addEventListener('submit', (e) => this.onSubmit(e));
+  }
 
-  // Selección de rol: soporta IDs específicos o un grupo .role-selection .btn
-  const btnEstudiante = document.getElementById('roleEstudiante');
-  const btnTutor = document.getElementById('roleTutor');
-  const roleButtons = document.querySelectorAll('.role-selection .btn');
-  let rolSeleccionado = null;
+  setupToggle(toggleId, inputEl) {
+    if (!toggleId || !inputEl) return;
+    const toggle = document.getElementById(toggleId);
+    if (!toggle) return;
+    toggle.style.cursor = 'pointer';
+    toggle.addEventListener('click', () => {
+      inputEl.type = inputEl.type === 'password' ? 'text' : 'password';
+    });
+  }
 
-  function marcarActivo(botonActivo, botonInactivo) {
-    if (!botonActivo) return;
-    botonActivo.classList.add('active-role', 'btn-primary');
-    botonActivo.classList.remove('btn-outline-secondary');
-    if (botonInactivo) {
-      botonInactivo.classList.remove('active-role', 'btn-primary');
-      botonInactivo.classList.add('btn-outline-secondary');
+  selectRole(rol, activo, inactivo) {
+    this.rolSeleccionado = rol;
+    if (activo) {
+      activo.classList.add('active-role', 'btn-primary');
+      activo.classList.remove('btn-outline-secondary');
+    }
+    if (inactivo) {
+      inactivo.classList.remove('active-role', 'btn-primary');
+      inactivo.classList.add('btn-outline-secondary');
     }
   }
 
-  if (btnEstudiante) {
-    btnEstudiante.addEventListener('click', () => {
-      rolSeleccionado = 'estudiante';
-      marcarActivo(btnEstudiante, btnTutor);
-    });
-  }
-  if (btnTutor) {
-    btnTutor.addEventListener('click', () => {
-      rolSeleccionado = 'tutor';
-      marcarActivo(btnTutor, btnEstudiante);
-    });
+  selectRoleFromBtn(btn) {
+    this.roleButtons.forEach(b => b.classList.remove('active-role', 'btn-primary'));
+    btn.classList.add('active-role', 'btn-primary');
+    const roleFromDataset = btn.dataset.role || btn.getAttribute('data-role');
+    if (roleFromDataset) this.rolSeleccionado = roleFromDataset;
+    else this.rolSeleccionado = btn.id && btn.id.toLowerCase().includes('est') ? 'estudiante' : 'tutor';
   }
 
-  // Fallback: si no hay IDs, usar botones con .role-selection .btn
-  if (!btnEstudiante && !btnTutor && roleButtons.length) {
-    roleButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        roleButtons.forEach(b => b.classList.remove('active-role', 'btn-primary'));
-        btn.classList.add('active-role', 'btn-primary');
-        rolSeleccionado = btn.dataset.role || btn.getAttribute('data-role') || (btn.id && btn.id.toLowerCase().includes('est') ? 'estudiante' : 'tutor');
-      });
-    });
+  collectFields() {
+    return {
+      nombre: this.nombre?.value.trim() || '',
+      apellido: this.apellido?.value.trim() || '',
+      email: (this.email?.value.trim() || '').toLowerCase(),
+      password: this.password?.value || '',
+      confirmPassword: this.confirmPassword?.value || '',
+      rol: this.rolSeleccionado
+    };
   }
 
-  // Helper para leer valores del formulario de forma robusta
-  function getFormValue(name) {
-    const el = form.elements[name] || form.querySelector(`[name="${name}"]`) || document.getElementById(name);
-    return el ? (el.value || '').toString() : '';
+  validate(fields) {
+    const faltan = [];
+    if (!fields.nombre) faltan.push('Nombre');
+    if (!fields.apellido) faltan.push('Apellido');
+    if (!fields.email) faltan.push('Correo');
+    if (!fields.password) faltan.push('Contraseña');
+    if (!fields.confirmPassword) faltan.push('Confirmar contraseña');
+    if (!fields.rol) faltan.push('Rol');
+    if (faltan.length) return { ok: false, msg: `Faltan campos obligatorios: ${faltan.join(', ')}` };
+    if (!fields.email.endsWith('@est.ucab.edu.ve')) return { ok: false, msg: 'El correo debe terminar en @est.ucab.edu.ve' };
+    if (fields.password.length < 6) return { ok: false, msg: 'La contraseña debe tener al menos 6 caracteres' };
+    if (fields.password !== fields.confirmPassword) return { ok: false, msg: 'Las contraseñas no coinciden' };
+    return { ok: true };
   }
 
-  form.addEventListener('submit', async function(e) {
+  showMessage(message, type = 'success', timeout = 4000) {
+    const container = this.alertContainer;
+    if (!container) {
+      alert(message);
+      return;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+      <div class="alert alert-${type} alert-dismissible fade show shadow-sm" role="alert" style="border-radius:.5rem;">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    `;
+
+    // Limpiar anteriores y añadir nueva
+    container.innerHTML = '';
+    container.appendChild(wrapper);
+
+    // Auto-dismiss con instancia de Bootstrap si está disponible
+    if (timeout > 0) {
+      setTimeout(() => {
+        try {
+          const alertEl = wrapper.querySelector('.alert');
+          if (window.bootstrap && alertEl) {
+            const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+            bsAlert.close();
+          } else {
+            wrapper.innerHTML = '';
+          }
+        } catch (e) {
+          wrapper.innerHTML = '';
+        }
+      }, timeout);
+    }
+  }
+
+  async onSubmit(e) {
     e.preventDefault();
+    const fields = this.collectFields();
+    const v = this.validate(fields);
+    if (!v.ok) return this.showMessage(v.msg, 'danger');
 
-    if (!rolSeleccionado) {
-      alert('Debes seleccionar un rol antes de registrarte');
-      return;
-    }
-
-    const nombre = document.getElementById("nombreInput")?.value.trim();
-    const apellido = document.getElementById("apellidoInput")?.value.trim();
-    const email = document.getElementById("emailInput")?.value.trim().toLowerCase();
-    const password = document.getElementById("passwordInput")?.value.trim();
-    const confirmPassword = document.getElementById("confirmPasswordInput")?.value.trim();
-
-
-    // if (!nombre || !apellido || !email || !password) {
-    //   alert('Faltan campos obligatorios');
-    //   return;
-    // }
-
-    const camposFaltantes = [];
-
-    if (!form.nombreInput.value.trim()) camposFaltantes.push("Nombre");
-    if (!form.apellidoInput.value.trim()) camposFaltantes.push("Apellido");
-    if (!form.correoInput.value.trim()) camposFaltantes.push("Correo");
-    if (!form.contraseñaInput.value.trim()) camposFaltantes.push("Contraseña");
-    if (!form.confirmarContraseñaInput.value.trim()) camposFaltantes.push("confirmarContraseña");
-    if (!rolSeleccionado) camposFaltantes.push("Rol");
-
-    if (camposFaltantes.length > 0) {
-    alert("Faltan campos obligatorios: " + camposFaltantes.join(", "));
-    return;
-    }
-
-
-    if (!email.endsWith('@est.ucab.edu.ve')) {
-      alert('El correo debe terminar en @est.ucab.edu.ve');
-      return;
-    }
-
-    if (confirmPassword && password !== confirmPassword) {
-      alert('Las contraseñas no coinciden');
-      return;
-    }
-
-    if (password.length < 6) {
-      alert('La contraseña debe tener al menos 6 caracteres');
-      return;
-    }
-
-    const datos = { nombre, apellido, email, password, rol: rolSeleccionado };
+    const payload = {
+      nombre: fields.nombre,
+      apellido: fields.apellido,
+      email: fields.email,
+      password: fields.password,
+      rol: fields.rol
+    };
 
     try {
-      const res = await fetch('http://localhost:3000/auth/registro', {
+      const res = await fetch('/auth/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos)
+        body: JSON.stringify(payload)
       });
 
-      let resultado = null;
-      try { resultado = await res.json(); } catch (err) { /* ignore parse error */ }
+      const json = await (res.headers.get('content-type')?.includes('application/json') ? res.json() : null);
 
       if (res.ok) {
-        alert(resultado?.mensaje || 'Usuario registrado con éxito');
-        form.reset();
-        rolSeleccionado = null;
-        roleButtons.forEach(b => b.classList.remove('active-role', 'btn-primary'));
-        if (btnEstudiante) { btnEstudiante.classList.remove('btn-primary'); btnEstudiante.classList.add('btn-outline-secondary'); }
-        if (btnTutor) { btnTutor.classList.remove('btn-primary'); btnTutor.classList.add('btn-outline-secondary'); }
+        this.showMessage(json?.mensaje || 'Usuario registrado con éxito', 'success');
+        this.form.reset();
+        this.rolSeleccionado = null;
+        this.roleButtons.forEach(b => b.classList.remove('active-role', 'btn-primary'));
+        if (this.roleEst) { this.roleEst.classList.remove('btn-primary'); this.roleEst.classList.add('btn-outline-secondary'); }
+        if (this.roleTut) { this.roleTut.classList.remove('btn-primary'); this.roleTut.classList.add('btn-outline-secondary'); }
       } else {
-        alert(resultado?.error || resultado?.mensaje || `Error ${res.status}: ${res.statusText}`);
+        this.showMessage(json?.error || json?.mensaje || `Error ${res.status}`, 'danger');
       }
     } catch (err) {
-      console.error('Error en fetch registro:', err);
-      alert('Error al conectar con el servidor');
+      console.error('Fetch error:', err);
+      this.showMessage('Error al conectar con el servidor', 'danger');
     }
-  });
+  }
+}
 
-});
-
+document.addEventListener('DOMContentLoaded', () => new CrearCuenta('signupForm'));
