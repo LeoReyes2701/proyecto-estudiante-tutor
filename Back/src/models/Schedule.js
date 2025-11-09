@@ -16,6 +16,8 @@ class Schedule {
     this.end = end;     // hora fin HH:mm
   }
 
+  /*Por commo esta ahora solo se utiliza el validDuration, de resto se skipea debido a la
+  entrada de datos, lo dejo igual para mas adelante por posible implementacion de modificar horario*/
   // Valida el día
   isValidDay() {
     const normalizar = (s) =>
@@ -52,7 +54,7 @@ class Schedule {
       return { ok: false, reason: "La hora fin debe ser posterior a la hora inicio" };
     }
     if (!this.isValidDuration()) {
-      return { ok: false, reason: "Duración inválida (50-100 min)" };
+      return { ok: false, reason: "Duración inválida. Debe durar 1 o 2 horas académicas (50-100 min)" };
     }
     if (!this.isValidDay()) {
       return { ok: false, reason: "El día no es correcto" };
