@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "1762717226990",
+    "nombre": "mao",
+    "apellido": "anez",
+    "email": "manez.24@est.ucab.edu.ve",
+    "password": "$2b$10$5O8FszXd0IOnDr2OOIr.xOsTcsTq6odF3GWIMm.3gdVgvjLs0V68.",
+    "rol": "estudiante"
+  },
+  {
+    "id": "1762718300302",
+    "nombre": "test",
+    "apellido": "test",
+    "email": "test@est.ucab.edu.ve",
+    "password": "$2b$10$DwDPKrcE0hR8DLRqNqHBau/xYc7lrMqUids809zDbQBXnJ1s9MitC",
+    "rol": "tutor"
+  }
+]
