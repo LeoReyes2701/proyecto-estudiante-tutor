@@ -9,5 +9,16 @@
     "createdAt": "08/11/25",
     "tutoriasOfrecidas": [],
     "tutoriasInscritas": []
+  },
+  {
+    "id": "1762707740869",
+    "nombre": "Juan",
+    "apellido": "Arango",
+    "email": "ja@est.ucab.edu.ve",
+    "password": "$2b$10$X8wJo/pur55gpxfsk7UWKuP2KeMB7CTkVQGu5ND0RJJ08Jj9X/YTe",
+    "rol": "tutor",
+    "createdAt": "09/11/25",
+    "tutoriasOfrecidas": [],
+    "tutoriasInscritas": []
   }
 ]

@@ -21,6 +21,9 @@ app.get('/login', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', '..', 'Front', 'public', 'logIn.html'));
 });
 
+app.get('/perfil', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '..', '..', 'Front', 'public', 'consultarPerfil.html'));
+});
 
 // Servir index público (raíz) apuntando a crearCuenta.html
 app.get('/', (req, res) => {
