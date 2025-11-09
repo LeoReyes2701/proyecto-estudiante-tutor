@@ -1,16 +1,18 @@
 // Front/src/components/auth/login.js
 (() => {
+  // Elementos
   const form = document.getElementById('loginForm');
   if (!form) return;
 
-  const email = document.getElementById('emailInput');
-  const password = document.getElementById('passwordInput');
+  const emailInput = document.getElementById('emailInput');
+  const passwordInput = document.getElementById('passwordInput');
   const toggle = document.getElementById('togglePassword');
   const submitBtn = document.getElementById('submitBtn');
   const resetBtn = document.getElementById('resetBtn');
   const formError = document.getElementById('formError');
   const messages = document.getElementById('messages');
 
+  // Utilidades
   function pushToast(message, type = 'info') {
     const wrapper = document.createElement('div');
     const bg = type === 'error' ? 'danger' : (type === 'success' ? 'success' : 'info');
@@ -31,11 +33,14 @@
       formError.textContent = text;
       formError.classList.remove('visually-hidden');
       setTimeout(() => formError.classList.add('visually-hidden'), 4000);
+    } else {
+      pushToast(text, 'error');
     }
     pushToast(text, 'error');
   }
 
   function setSaving(active, label = '') {
+    if (!submitBtn) return;
     if (active) {
       submitBtn.setAttribute('disabled', 'disabled');
       submitBtn.textContent = label || 'Procesando...';
@@ -45,12 +50,12 @@
     }
   }
 
-<<<<<<< HEAD
-  // Toggle password visibility
-  if (toggle && password) {
+  // Toggle password visibility (definida aquí)
+  function setupPasswordToggle() {
+    if (!toggle || !passwordInput) return;
     toggle.addEventListener('click', () => {
-      const t = password.getAttribute('type') === 'password' ? 'text' : 'password';
-      password.setAttribute('type', t);
+      const t = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', t);
       toggle.textContent = t === 'password' ? '👁️' : '🙈';
     });
   }
@@ -58,14 +63,19 @@
   // Reset handler
   if (resetBtn) resetBtn.addEventListener('click', () => form.reset());
 
-  // Submit handler
+  // Main submit handler (single listener)
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const em = (email.value || '').trim();
-    const pw = password.value || '';
 
-    if (!em || !pw) return showError('Correo y contraseña son obligatorios');
-    if (!em.endsWith('@est.ucab.edu.ve')) return showError('Usa tu correo institucional (@est.ucab.edu.ve)');
+    const em = (emailInput.value || '').trim().toLowerCase();
+    const pw = (passwordInput.value || '').trim();
+
+    if (!em || !pw) {
+      return showError('Correo y contraseña son obligatorios');
+    }
+    if (!em.endsWith('@est.ucab.edu.ve')) {
+      return showError('Usa tu correo institucional (@est.ucab.edu.ve)');
+    }
 
     const payload = { email: em, password: pw };
 
@@ -77,20 +87,22 @@
         body: JSON.stringify(payload),
         credentials: 'include'
       });
+
       const json = await res.json().catch(() => null);
       setSaving(false);
 
-      if (res.status === 200) {
+      if (res.ok) {
         pushToast('Inicio de sesión exitoso', 'success');
 
-        // Si el backend devuelve { redirect: '/ruta' } úsalo; si no, por defecto a gestion.html
-        const redirect = json && json.redirect ? json.redirect : '/gestion.html';
-
-        // Guardar token si viene
+        // Guardar token/usuario si viene en respuesta
         if (json && json.token) {
-          try { localStorage.setItem('authToken', json.token); } catch (e) { /* ignore */ }
+          try { localStorage.setItem('authToken', json.token); } catch (e) {}
+        }
+        if (json && json.user) {
+          try { localStorage.setItem('usuario', JSON.stringify(json.user)); } catch (e) {}
         }
 
+        const redirect = (json && json.redirect) ? json.redirect : '/gestion.html';
         window.location.href = redirect;
         return;
       }
@@ -103,47 +115,14 @@
       showError('Error de red al iniciar sesión');
     }
   });
-})();
-=======
-document.addEventListener("DOMContentLoaded", () => {
+
+  // Inicialización después de cargar DOM
+  document.addEventListener('DOMContentLoaded', () => {
     setupPasswordToggle();
-  const form = document.getElementById("loginForm");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("emailInput").value.trim().toLowerCase();
-    const password = document.getElementById("passwordInput").value.trim();
-
-    if (!email || !password) {
-      alert("Debes ingresar correo y contraseña");
-      return;
-    }
-
-    try {
-      const res = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.error || "Error en login");
-        return;
-      }
-
-      // Guardar sesión en LocalStorage
-      localStorage.setItem("usuario", JSON.stringify(data));
-
-      alert("Inicio de sesión exitoso");
-      console.log("Sesión creada en LocalStorage:", data);
-      //window.location.href = "/home.html"; // ACA FALTA PONER LA PAGINA PRINCIPAL
-    } catch (err) {
-      console.error("Error en login:", err);
-      alert("Error de conexión con el servidor");
-    }
   });
-});
->>>>>>> b701ab0d1b93a7d4f5bb3547a98c857fbf9aa762
+
+  // Si el documento ya está cargado, inicializar inmediatamente
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setupPasswordToggle();
+  }
+})();
