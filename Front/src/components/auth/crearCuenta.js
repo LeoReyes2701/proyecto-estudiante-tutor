@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (res.ok) {
         alert(resultado?.mensaje || 'Usuario registrado con éxito');
+        window.location.href = "/login";
         form.reset();
         rolSeleccionado = null;
         roleButtons.forEach(b => b.classList.remove('active-role', 'btn-primary'));

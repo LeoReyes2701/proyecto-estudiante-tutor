@@ -6,9 +6,6 @@ const bcrypt = require("bcrypt");
 const authController = require("../controllers/authControllers");
 const User = require("../models/User");
 
-// Ruta POST para login
-router.post("/login", authController.login);
-
 
 // Función para generar un ID simple
 function generarId() {
@@ -79,6 +76,6 @@ router.post("/registro", async (req, res) => {
   }
 });
 
-
+router.post("/login", authController.login);
 
 module.exports = router;

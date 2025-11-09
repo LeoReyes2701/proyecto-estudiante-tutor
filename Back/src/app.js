@@ -16,6 +16,12 @@ app.get('/crear-cuenta', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', '..', 'Front', 'public', 'crearCuenta.html'));
 });
 
+// Servir la página de login (ruta pública)
+app.get('/login', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '..', '..', 'Front', 'public', 'logIn.html'));
+});
+
+
 // Servir index público (raíz) apuntando a crearCuenta.html
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', '..', 'Front', 'public', 'crearCuenta.html'));
