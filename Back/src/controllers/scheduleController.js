@@ -1,30 +1,13 @@
+// Back/src/controllers/scheduleController.js
 const Schedule = require('../models/Schedule');
+const dataStore = require('../models/DataStore');
 
-const scheduleRepo = new Map();
-
-/**
- * POST /api/schedules
- * Body: { role, userId, slots: [{ day, start, end }], confirm }
- *
- * Flow:
- * - sólo role === "tutor" puede crear
- * - valida userId y slots
- * - intenta crear instancia Schedule(userId, slots) que valida formato/solapamientos
- * - si confirm no está, devuelve mensaje de confirmación (200)
- * - if confirm === "no" => no crea (200)
- * - if confirm === "yes" => guarda en repo y devuelve 201
- */
-exports.create = (req, res) => {
+async function create(req, res) {
   try {
     const { role, userId, slots, confirm } = req.body || {};
 
-    if (role !== 'tutor') {
-      return res.status(403).json({ error: 'El tutor debe haber iniciado sesión' });
-    }
-
-    if (!userId || !Array.isArray(slots) || slots.length === 0) {
-      return res.status(400).json({ error: 'Datos no válidos: se requiere userId y al menos un slot' });
-    }
+    if (role !== 'tutor') return res.status(403).json({ error: 'El tutor debe haber iniciado sesión' });
+    if (!userId || !Array.isArray(slots) || slots.length === 0) return res.status(400).json({ error: 'userId y al menos un slot son requeridos' });
 
     let schedule;
     try {
@@ -34,65 +17,60 @@ exports.create = (req, res) => {
     }
 
     if (confirm === undefined || confirm === null) {
-      return res.status(200).json({ message: '¿Confirma la creación de este bloque de horario?', preview: schedule.toJSON() });
+      return res.status(200).json({ message: 'Confirma la creación', preview: schedule.toJSON() });
     }
 
-    if (String(confirm).toLowerCase() === 'no') {
-      return res.status(200).json({ message: 'Horario no creado' });
-    }
+    const c = String(confirm).toLowerCase();
+    if (c === 'no') return res.status(200).json({ message: 'Horario no creado' });
 
-    if (String(confirm).toLowerCase() === 'yes') {
-      scheduleRepo.set(String(userId), schedule);
-      return res.status(201).json({ message: 'Horario creado exitosamente', horario: schedule.toJSON() });
+    if (c === 'yes') {
+      try {
+        const all = await dataStore.readAll();
+
+        // evitar duplicados exactos (mismo userId y mismos slots)
+        const key = (arr) => (arr || []).map(s => `${s.day}|${s.start}|${s.end}`).sort().join('||');
+        const exists = all.some(existing => String(existing.userId) === String(schedule.userId) && key(existing.slots) === key(schedule.slots));
+        if (exists) return res.status(200).json({ message: 'Horario ya existe', horario: schedule.toJSON() });
+
+        all.push(schedule.toJSON());
+        await dataStore.saveAll(all);
+        return res.status(201).json({ message: 'Horario creado exitosamente', horario: schedule.toJSON() });
+      } catch (err) {
+        console.error('Error guardando horario:', err);
+        return res.status(500).json({ error: 'No se pudo guardar el horario en disco' });
+      }
     }
 
     return res.status(400).json({ error: 'Confirmación inválida' });
   } catch (err) {
     console.error('scheduleController.create error', err);
-    return res.status(500).json({ error: 'Error interno del sistema' });
+    return res.status(500).json({ error: 'Error interno del servidor' });
   }
-};
+}
 
-/**
- * GET /api/schedules
- * Query: ?role=...&userId=...
- * If userId query provided returns that user's schedule (if found) else 400.
- * If no userId provided returns all schedules.
- * Role must be 'tutor' or 'student' to read.
- */
-exports.getAll = (req, res) => {
+async function getAll(req, res) {
   try {
-    const { role } = req.query;
-    if (role !== 'tutor' && role !== 'student') {
-      return res.status(403).json({ error: 'Rol no autorizado' });
-    }
-
-    const all = Array.from(scheduleRepo.values()).map(s => s.toJSON());
-    return res.json(all);
+    const arr = await dataStore.readAll();
+    return res.json(arr);
   } catch (err) {
     console.error('scheduleController.getAll error', err);
     return res.status(500).json({ error: 'Error interno' });
   }
-};
+}
 
-/**
- * GET /api/schedules/user/:userId
- * Path param userId. Query may include role.
- */
-exports.getByUserId = (req, res) => {
+async function getByUserId(req, res) {
   try {
     const { userId } = req.params;
-    const { role } = req.query;
-
     if (!userId) return res.status(400).json({ error: 'Debe especificar userId' });
-    if (role !== 'tutor' && role !== 'student') return res.status(403).json({ error: 'Rol no autorizado' });
-
-    const schedule = scheduleRepo.get(String(userId));
-    if (!schedule) return res.status(404).json({ error: 'Horario no encontrado' });
-
-    return res.json(schedule.toJSON());
+    const arr = await dataStore.readAll();
+    const found = arr.find(s => String(s.userId) === String(userId));
+    if (!found) return res.status(404).json({ error: 'Horario no encontrado' });
+    return res.json(found);
   } catch (err) {
     console.error('scheduleController.getByUserId error', err);
     return res.status(500).json({ error: 'Error interno' });
   }
-};
+}
+
+module.exports = { create, getAll, getByUserId };
+
