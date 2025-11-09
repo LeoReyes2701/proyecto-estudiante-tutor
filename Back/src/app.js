@@ -36,8 +36,11 @@ app.use(express.static(path.resolve(__dirname, "../../Front/public")));
 app.use("/src", express.static(path.resolve(__dirname, "../../Front/src")));
 
 app.get("/", (req, res) => {
-  //res.sendFile(path.resolve(__dirname, "../../Front/public/crearHorario.html"));
   res.sendFile(path.resolve(__dirname, "../../Front/public/consultarHorario.html"));
+});
+
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../../Front/public/crearHorario.html"));
 });
 
 app.use("/schedules", scheduleRoutes);

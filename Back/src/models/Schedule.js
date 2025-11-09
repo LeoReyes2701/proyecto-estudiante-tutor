@@ -4,16 +4,14 @@ class Schedule {
     "martes",
     "miércoles",
     "jueves",
-    "viernes",
-    "sábado",
-    "domingo"
+    "viernes"
   ];
 
   constructor(tutor, day, start, end) {
-    this.tutor = tutor; // nombre del tutor asignado automáticamente
-    this.day = day;     // día
-    this.start = start; // hora inicio HH:mm
-    this.end = end;     // hora fin HH:mm
+    this.tutor = tutor; 
+    this.day = day;     
+    this.start = start; 
+    this.end = end;     
   }
 
   /*Por commo esta ahora solo se utiliza el validDuration, de resto se skipea debido a la
