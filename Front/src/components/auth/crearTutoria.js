@@ -1,126 +1,127 @@
-// crearTutoria.js (version sin alert, muestra mensajes en página)
-document.addEventListener('DOMContentLoaded', () => {
-  const scheduleCards = Array.from(document.querySelectorAll('.schedule-card'));
-  const form = document.getElementById('createTutoriaForm');
-  const horarioError = document.getElementById('horarioError');
-  const messagesContainer = document.getElementById('appMessages');
-  const submitBtn = document.getElementById('submitBtn');
+class CrearTutoria {
+  constructor(formId = 'crearTutoriaForm') {
+    this.form = document.getElementById(formId);
+    if (!this.form) return console.warn(`#${formId} no encontrado`);
+    this.horarioContainer = document.getElementById('horarioContainer');
+    this.selectedInput = document.getElementById('selectedSchedule');
+    this.alertContainer = document.getElementById('pageAlertContainer') || this.form;
+    this.selected = null;
+    this.init();
+  }
 
-  function showMessage({ title = '', text = '', type = 'success', timeout = 3500 }) {
-    if (!messagesContainer) return;
-    // Bootstrap toast si está disponible
-    if (window.bootstrap && typeof window.bootstrap.Toast === 'function') {
-      const toastEl = document.createElement('div');
-      toastEl.className = 'toast align-items-center text-bg-' + (type === 'success' ? 'success' : 'danger') + ' border-0';
-      toastEl.setAttribute('role', 'status');
-      toastEl.setAttribute('aria-live', 'polite');
-      toastEl.setAttribute('aria-atomic', 'true');
-      toastEl.style.minWidth = '220px';
-      toastEl.innerHTML = `
-        <div class="d-flex">
-          <div class="toast-body">
-            <strong class="d-block mb-1">${title}</strong>
-            <div>${text}</div>
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-      `;
-      messagesContainer.appendChild(toastEl);
-      const toast = new bootstrap.Toast(toastEl, { delay: timeout });
-      toast.show();
-      toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+  async init() {
+    this.attachListeners();
+    await this.loadSchedules();
+  }
+
+  attachListeners() {
+    this.form.addEventListener('submit', (e) => this.onSubmit(e));
+    const btnReset = document.getElementById('resetSelection');
+    if (btnReset) btnReset.addEventListener('click', () => this.clearSelection());
+  }
+
+  async loadSchedules() {
+    try {
+      const res = await fetch('/data/schedules.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const schedules = await res.json();
+      this.renderSchedules(schedules);
+    } catch (err) {
+      console.error('Error cargando schedules.json', err);
+      this.horarioContainer.innerHTML = '<div class="text-danger">No se pudieron cargar los horarios</div>';
+    }
+  }
+
+  renderSchedules(schedules = []) {
+    if (!Array.isArray(schedules) || schedules.length === 0) {
+      this.horarioContainer.innerHTML = '<div class="text-muted">No hay horarios disponibles</div>';
       return;
     }
 
-    // Fallback simple
-    const msg = document.createElement('div');
-    msg.className = `app-message ${type === 'success' ? 'success' : 'error'}`;
-    msg.style.marginBottom = '8px';
-    msg.style.padding = '10px 14px';
-    msg.style.borderRadius = '8px';
-    msg.style.color = '#fff';
-    msg.style.background = type === 'success' ? '#198754' : '#dc3545';
-    msg.innerHTML = `<div style="font-weight:600;margin-bottom:4px;">${title}</div><div style="font-size:0.95rem;">${text}</div>`;
-    messagesContainer.appendChild(msg);
-    setTimeout(() => {
-      msg.style.transition = 'opacity 200ms';
-      msg.style.opacity = '0';
-      setTimeout(() => msg.remove(), 220);
+    this.horarioContainer.innerHTML = '';
+    schedules.forEach((s, idx) => {
+      const card = document.createElement('div');
+      card.className = 'schedule-card';
+      card.tabIndex = 0;
+      card.setAttribute('data-dia', s.dia || '');
+      card.setAttribute('data-hora', s.hora || '');
+      card.setAttribute('data-id', s.id ?? idx);
+      card.textContent = `${s.dia} ${s.hora}`;
+
+      card.addEventListener('click', () => this.toggleSelect(card));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.toggleSelect(card); }
+      });
+
+      this.horarioContainer.appendChild(card);
+    });
+  }
+
+  toggleSelect(card) {
+    // Desactivar previos
+    Array.from(this.horarioContainer.querySelectorAll('.schedule-card.active')).forEach(c => c.classList.remove('active'));
+    // Activar actual
+    card.classList.add('active');
+    this.selected = {
+      id: card.getAttribute('data-id'),
+      dia: card.getAttribute('data-dia'),
+      hora: card.getAttribute('data-hora')
+    };
+    if (this.selectedInput) this.selectedInput.value = JSON.stringify(this.selected);
+  }
+
+  clearSelection() {
+    Array.from(this.horarioContainer.querySelectorAll('.schedule-card.active')).forEach(c => c.classList.remove('active'));
+    this.selected = null;
+    if (this.selectedInput) this.selectedInput.value = '';
+  }
+
+  showMessage(msg, type = 'success', timeout = 4000) {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+      <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+        ${msg}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>`;
+    this.alertContainer.innerHTML = '';
+    this.alertContainer.appendChild(wrapper);
+    if (timeout > 0) setTimeout(() => {
+      try { const el = wrapper.querySelector('.alert'); if (window.bootstrap && el) bootstrap.Alert.getOrCreateInstance(el).close(); else wrapper.innerHTML = ''; } catch (e) { wrapper.innerHTML = ''; }
     }, timeout);
   }
 
-  // Toggle visual selección de horarios
-  scheduleCards.forEach(card => {
-    card.addEventListener('click', () => {
-      card.classList.toggle('selected');
-      const selectedCount = document.querySelectorAll('.schedule-card.selected').length;
-      if (horarioError) horarioError.classList.toggle('d-none', selectedCount > 0);
-    });
-  });
-
-  // Helper para desactivar temporalmente botón submit
-  function setSubmitting(isSubmitting) {
-    if (!submitBtn) return;
-    submitBtn.disabled = isSubmitting;
-    submitBtn.setAttribute('aria-busy', isSubmitting ? 'true' : 'false');
-  }
-
-  form.addEventListener('submit', async (e) => {
+  async onSubmit(e) {
     e.preventDefault();
-    setSubmitting(true);
+    const asignatura = (this.form.querySelector('#asignaturaInput')?.value || '').trim();
+    if (!asignatura) return this.showMessage('La asignatura es obligatoria', 'danger');
+
+    if (!this.selected) return this.showMessage('Selecciona un horario disponible', 'danger');
+
+    const payload = {
+      asignatura,
+      descripcion: this.form.querySelector('#descripcionInput')?.value || '',
+      schedule: this.selected
+    };
 
     try {
-      let isValid = true;
-      const nombre = document.getElementById('nombreTutoria').value.trim();
-      const descripcion = document.getElementById('descripcionTutoria').value.trim();
-      const numCuposInput = document.getElementById('numeroCupos');
-      const numCupos = parseInt(numCuposInput.value, 10);
-      const selectedSchedules = Array.from(document.querySelectorAll('.schedule-card.selected'));
-
-      if (!nombre || !descripcion) isValid = false;
-      if (Number.isNaN(numCupos) || numCupos < 10 || numCupos > 20) isValid = false;
-
-      if (selectedSchedules.length === 0) {
-        if (horarioError) horarioError.classList.remove('d-none');
-        isValid = false;
-      } else {
-        if (horarioError) horarioError.classList.add('d-none');
-      }
-
-      if (!isValid) {
-        showMessage({ title: 'Datos inválidos', text: 'Revisa los campos del formulario.', type: 'error', timeout: 4500 });
-        setSubmitting(false);
-        return;
-      }
-
-      const horariosSeleccionados = selectedSchedules.map(card => ({
-        dia: card.getAttribute('data-dia'),
-        hora: card.getAttribute('data-hora')
-      }));
-
-      const body = { nombre, cupos: numCupos, descripcion, horarios: horariosSeleccionados };
-
-      const res = await fetch('/tutorias', {
+      const res = await fetch('/api/tutorias', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(payload)
       });
-
-      const data = await res.json().catch(() => ({}));
-
+      const json = await (res.headers.get('content-type')?.includes('application/json') ? res.json() : null);
       if (res.ok) {
-        showMessage({ title: 'Tutoría creada', text: data.message || 'La tutoría se creó correctamente.', type: 'success', timeout: 3500 });
-        form.reset();
-        document.querySelectorAll('.schedule-card.selected').forEach(c => c.classList.remove('selected'));
+        this.showMessage(json?.mensaje || 'Tutoría creada con éxito', 'success');
+        this.form.reset();
+        this.clearSelection();
       } else {
-        const errText = data.error || (Array.isArray(data.details) ? data.details.map(d => d.msg).join('; ') : 'Error al crear la tutoría.');
-        showMessage({ title: 'Error', text: errText, type: 'error', timeout: 6000 });
+        this.showMessage(json?.error || json?.mensaje || `Error ${res.status}`, 'danger');
       }
     } catch (err) {
-      console.error('Error al enviar:', err);
-      showMessage({ title: 'Conexión fallida', text: 'No se pudo conectar con el servidor.', type: 'error', timeout: 6000 });
-    } finally {
-      setSubmitting(false);
+      console.error('Error creando tutoría', err);
+      this.showMessage('Error al conectar con el servidor', 'danger');
     }
-  });
-});
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => new CrearTutoria('crearTutoriaForm'));
