@@ -3,15 +3,12 @@
     --ucab-link: #3498db;
     --white: #ffffff; 
     --light-grey: #E4EBF5; 
-<<<<<<< HEAD
-=======
 }
 
 .navbar-nav .nav-link.active-view {
     font-weight: 700;
     border-bottom: 2px solid white;
 
->>>>>>> origin/main
 }
 
 
