@@ -3,6 +3,15 @@
     --ucab-link: #3498db;
     --white: #ffffff; 
     --light-grey: #E4EBF5; 
+<<<<<<< HEAD
+=======
+}
+
+.navbar-nav .nav-link.active-view {
+    font-weight: 700;
+    border-bottom: 2px solid white;
+
+>>>>>>> origin/main
 }
 
 
@@ -26,3 +35,13 @@
     border-color: #2980b9;
     color: var(--white);
 }
+
+ .footer-fixed {
+    background-color: var(--ucab-blue);
+    color: white;
+    padding: 15px 0;
+    font-size: 0.875rem;
+    flex-shrink: 0; 
+    text-align: center;
+}
+        

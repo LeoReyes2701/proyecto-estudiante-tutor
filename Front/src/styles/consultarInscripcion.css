@@ -1,0 +1,119 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--ucab-dark);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    }
+
+.navbar-nav .nav-link.active {
+    font-weight: 700;
+    border-bottom: 2px solid white;
+    }
+
+.inscription-container {
+            max-width: 700px;
+            margin: 20px auto 50px auto; 
+}
+
+        
+.details-card {
+    border-radius: 12px;
+    padding: 30px;
+}
+
+        
+.section-title {
+    color: var(--ucab-dark); 
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-title svg {
+    margin-right: 10px;
+    color: var(--ucab-blue); 
+}
+
+
+.data-pair {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.data-pair .label {
+    font-weight: 500;
+    color: #6c757d; 
+    margin-bottom: 2px;
+    font-size: 0.9rem;
+}
+
+.data-pair .value {
+    font-weight: 500;
+    color: var(--ucab-dark); 
+}
+
+        
+.tutor-info-row {
+    display: flex;
+    gap: 50px; 
+}
+
+.tutor-info-col {
+    flex: 1;
+    min-width: 250px;
+}
+
+@media (max-width: 768px) {
+    .tutor-info-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+
+.btn-back-box {
+            
+    display: inline-block; 
+    background-color: white; 
+    color: var(--ucab-dark);
+    padding: 12px 20px;
+    border-radius: 8px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    margin-bottom: 25px; 
+    transition: all 0.2s;
+}
+
+.btn-back-box:hover {
+    text-decoration: none;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); 
+    transform: translateY(-2px); 
+}
+
+.btn-back-box a {
+    color: var(--ucab-dark); 
+    text-decoration: none; 
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.btn-back-box svg {
+    color: var(--ucab-blue); 
+    transition: color 0.2s;
+}
+
+.btn-back-box:hover svg {
+    color: #00509e; 
+}
+
+.status-badge {
+    color: #28a745; 
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
