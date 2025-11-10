@@ -1,16 +1,24 @@
 {
-  "name": "back",
+  "name": "proyecto-estudiante-tutor",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "Back/src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/server.js --watch Back/src",
+    "start": "node Back/src/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "express": "^5.1.0"
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "bootstrap": "^5.3.8",
+    "express": "^5.1.0",
+    "express-validator": "^7.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

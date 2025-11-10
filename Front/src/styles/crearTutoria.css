@@ -1,61 +1,100 @@
-        .details-card {
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 900px; 
-            width: 100%;
-        }
-        
-        .main-content-wrapper {
-             max-width: 900px; 
-             margin: 0 auto;
-        }
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --accent: #0d6efd;
+  --muted: #6c757d;
+  --success-bg: #d1e7dd;
+  --success-text: #0f5132;
+  --danger-bg: #f8d7da;
+  --danger-text: #842029;
+}
 
-        .form-input-ucab {
-            background-color: var(--white);
-            border: 1px solid #ddd;
-            padding: 0.75rem 1rem; 
-            border-radius: 0.5rem;
-            width: 100%;
-        }
-       
-        .schedule-card {
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid #ddd; 
-            border-radius: 0.5rem;
-            padding: 1rem 0.5rem;
-            text-align: center;
-            font-weight: 500;
-            background-color: rgb(255, 255, 255);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
+/* Base */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #212529;
+  font-size: 14px;
+  line-height: 1.4;
+}
 
-        .schedule-card.selected, .schedule-card:hover {
-            border-color: #3498db;
-            color: #3498db;
-        }
-        
-        .horario-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
+/* Topbar */
+.topbar {
+  background: var(--accent);
+  color: white;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand { font-weight: 600; font-size: 1.1rem; }
+.profile { display: flex; flex-direction: column; align-items: flex-end; }
+.avatar {
+  background: white;
+  color: var(--accent);
+  font-weight: 700;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
 
-        @media (min-width: 768px) {
-            .horario-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        .footer-fixed {
-            width: 100%;
-            background-color: var(--ucab-blue);
-            color: white;
-            padding: 15px 0;
-            font-size: 0.875rem;
-            flex-shrink: 0; 
-        }
-        .page-container {
-             display: flex;
-             flex-direction: column;
-             min-height: 100vh;
-        }
+/* Layout */
+.container { max-width: 960px; margin: 2rem auto; padding: 0 16px; }
+.card { background: var(--card); border-radius: 10px; padding: 20px; box-shadow: 0 8px 24px rgba(10,15,30,0.06); }
+.grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+
+/* Forms */
+.form-label { font-weight: 500; display: block; margin-bottom: 6px; }
+.form-control { border-radius: 8px; border: 1px solid #e6e9f2; padding: 10px 12px; width: 100%; }
+.form-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+
+/* Buttons */
+.btn { border-radius: 8px; font-weight: 600; padding: 8px 12px; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: white; }
+.btn-outline-secondary { border-color: #ced4da; color: #495057; background: white; }
+
+/* Feedback */
+#formFeedback { display: block; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; font-weight: 500; }
+.alert-success { background-color: var(--success-bg); color: var(--success-text); border: 1px solid #badbcc; }
+.alert-danger { background-color: var(--danger-bg); color: var(--danger-text); border: 1px solid #f5c2c7; }
+
+/* Horarios */
+.horarios-panel { background: transparent; box-shadow: none; padding: 8px; }
+.horarios-list { display: flex; flex-direction: column; gap: 12px; min-height: 56px; }
+
+.horario-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e6e9f2;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #ffffff;
+}
+.horario-item:hover { background: #fbfdff; }
+
+.horario-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.horario-meta-wrap { display: flex; flex-direction: column; min-width: 0; margin-left: 8px; }
+.horario-day { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.horario-time { color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.horario-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.horario-note { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); font-size: 0.9rem; }
+
+.horario-item input[type="checkbox"] { width:18px; height:18px; margin:0; }
+
+/* Empty */
+.no-horarios { text-align: center; color: var(--muted); padding: 12px; font-size: 0.95rem; }
+
+/* Responsive */
+@media (max-width: 768px) { .grid { grid-template-columns: 1fr; } .form-footer { flex-direction: column; align-items: stretch; } }
+@media (max-width: 480px) { .horario-item { flex-direction: column; align-items: stretch; gap: 8px; } .horario-day, .horario-time { white-space: normal; } }

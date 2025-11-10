@@ -1,62 +1,20 @@
-.login-container {
-    flex-grow: 1; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px; 
-}
+:root { --ucab-blue:#0b3d91; --muted:#6c757d; --bg:#f4f7fb; --white:#fff; }
 
+*{ box-sizing:border-box; }
 
-.login-card {
-    background-color: var(--white);
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    padding: 40px;
-    max-width: 500px; 
-    width: 100%; 
-}
+html,body{ height:100%; margin:0; font-family:Inter, Roboto, Arial, sans-serif; background:linear-gradient(180deg,#eaf3ff 0%,var(--bg)100%); }
 
-.login-card .form-label {
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 8px;
-}
+.layout{ max-width:980px; margin:3rem auto; display:grid; grid-template-columns:1fr 420px; gap:2rem; align-items:stretch; padding:0 12px; }
+.panel-visual{ background:linear-gradient(135deg,#0b3d91,#0b8ae6); color:#fff; padding:28px; border-radius:12px; box-shadow:0 10px 30px rgba(11,61,145,0.12); }
+.panel-visual .logo{ width:56px; height:56px; border-radius:12px; background:rgba(255,255,255,0.12); display:flex; align-items:center; justify-content:center; font-weight:700; }
 
-.login-card .form-control {
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-    padding: 10px 15px;
-    height: auto; 
-}
+.card-auth{ background:var(--white); padding:22px; border-radius:12px; box-shadow:0 6px 20px rgba(30,40,60,0.06); }
+.password-toggle{ position:absolute; right:12px; top:38px; cursor:pointer; user-select:none; color:var(--muted); font-size:1.05rem; }
+.footer-login{ background-color:var(--ucab-blue); color:var(--white); padding:15px 20px; display:flex; justify-content:center; align-items:center; width:100%; font-size:0.9em; position:relative; }
+.card-auth .form-control:focus{ box-shadow:none; outline:3px solid rgba(11,61,145,0.06); border-color:var(--ucab-blue); }
 
-.login-card .form-control:focus {
-    border-color: var(--ucab-link);
-    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25); 
-}
-
-.footer-login {
-    
-    background-color: var(--ucab-blue); 
-    color: var(--white);
-    padding: 15px 20px;
-    
-   
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    
-    width: 100%;
-    font-size: 0.9em;
-    position: relative; 
-}
-
-
-@media (max-width: 768px) {
-    .login-card {
-        padding: 30px 20px; 
-    }
-    .footer-login {
-        justify-content: center; 
-    }
-    
+@media(max-width:900px){
+  .layout{ grid-template-columns:1fr; padding:1rem; }
+  .panel-visual{ order:2; }
+  .card-auth{ order:1; }
 }

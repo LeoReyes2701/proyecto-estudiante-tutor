@@ -1,0 +1,70 @@
+# Node
+node_modules/
+**/node_modules/
+
+# If node_modules only exists in Back, ignore explicitly there too
+Back/node_modules/
+back/node_modules/
+Back/**/node_modules/
+back/**/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Build / output
+dist/
+build/
+.tmp/
+temp/
+coverage/
+coverage-final.json
+
+# Frontend specific
+Front/public/src/**/*.map
+Front/public/*.map
+Front/public/.cache/
+Front/.env
+Front/node_modules/
+Front/dist/
+Front/build/
+
+# Backend specific
+Back/.env
+Back/.cache/
+Back/dist/
+Back/build/
+
+# Misc
+*.pem
+*.key
+*.crt
+*.p12
+*.envrc
+*.localhistory
+
+# macOS Finder tags
+.AppleDouble
+.LSOverride

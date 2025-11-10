@@ -1,0 +1,127 @@
+:root {
+  --ucab-blue: #0b4f8a;
+  --light-bg: #f6f8fa;
+  --card-bg: #ffffff;
+  --muted: #6c757d;
+  --text: #212529;
+  --max-content-width: 1140px;
+  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial;
+}
+
+body.light-grey-bg {
+  background: var(--light-bg);
+  color: var(--text);
+  margin: 0;
+}
+
+.bg-ucab-blue {
+  background-color: var(--ucab-blue) !important;
+}
+
+.navbar .navbar-brand {
+  color: #fff;
+}
+
+.navbar .btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.container.mx-lg-5 {
+  max-width: var(--max-content-width);
+}
+
+#tutoriasContainer .card {
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+#tutoriasContainer .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(11, 79, 138, 0.08);
+}
+
+.card .card-body {
+  padding: 1.25rem;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.card-text {
+  font-size: 0.95rem;
+}
+
+.card .mb-2 strong {
+  color: var(--ucab-blue);
+}
+
+#emptyMessage {
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.footer-fixed {
+  background: transparent;
+  border-top: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+@media (max-width: 767px) {
+  .container.mx-lg-5 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .navbar-brand {
+    font-size: 1rem;
+  }
+}
+
+.small.mt-3 {
+  margin-top: 0.75rem !important;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Botón Volver compacto */
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  height: auto;
+  min-width: 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.97);
+  background: transparent;
+  box-sizing: border-box;
+  text-decoration: none;
+  transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  cursor: pointer;
+}
+
+.btn-volver:hover,
+.btn-volver:focus {
+  background-color: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(11, 79, 138, 0.06);
+  text-decoration: none;
+}
+
+.btn-volver:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 576px) {
+  .btn-volver {
+    padding: 0.22rem 0.5rem;
+    font-size: 0.82rem;
+  }
+}

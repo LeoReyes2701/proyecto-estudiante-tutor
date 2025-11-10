@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gestión — Programa Estudiante‑Tutor</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles/gestion.css">
+</head>
+<body>
+  <div class="container-card">
+    <aside class="panel-visual">
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div class="logo-circle">UCAB</div>
+        <div>
+          <div style="font-weight:700">Programa Estudiante‑Tutor</div>
+          <div style="font-size:0.88rem; opacity:0.95">Panel de gestión</div>
+        </div>
+      </div>
+
+      <div>
+        <h2 style="margin:0" id="welcomeTitle">Hola, bienvenido</h2>
+        <p style="margin-top:6px;opacity:0.95">Desde aquí puedes crear o consultar cuentas, horarios y ver tu perfil.</p>
+      </div>
+
+      <div style="margin-top:auto; font-size:0.9rem; opacity:0.95">
+        <div><strong>Atajo rápido</strong></div>
+        <div style="margin-top:6px;">Usa las tarjetas a la derecha para acceder inmediatamente a la función deseada.</div>
+      </div>
+    </aside>
+
+    <main class="card-actions">
+      <div>
+        <h3>Acciones rápidas</h3>
+        <p class="lead">Elige una acción para comenzar</p>
+      </div>
+
+      <div class="actions-grid" id="actionsGrid">
+        <!-- botones EXACTOS solicitados y en orden, se quitó Consultar inscripcion -->
+        <button class="action-btn" id="btnConsultarPerfil" title="Consultar perfil">👤 Consultar perfil</button>
+        <button class="action-btn" id="btnConsultarHorario" title="Consultar horario">📋 Consultar horario</button>
+        <button class="action-btn" id="btnConsultarTutoria" title="Consultar tutoria">🔎 Consultar tutoria</button>
+        <button class="action-btn primary" id="btnCrearTutoria" title="Crear tutoria">📝 Crear tutoria</button>
+        <button class="action-btn primary" id="btnCrearHorario" title="Crear horario">🗓️ Crear horario</button>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+        <div class="muted" id="sessionState">Sesión activa</div>
+        <div>
+          <button id="btnLogout" class="btn btn-outline-secondary btn-sm">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <footer class="page-foot">© 2025 UCAB — Universidad Católica Andrés Bello</footer>
+    </main>
+  </div>
+
+  <!-- Modal para mostrar resultados -->
+  <div class="modal fade" id="modalResult" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Resultado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="/src/components/gestion/gestion.js"></script>
+</body>
+</html>

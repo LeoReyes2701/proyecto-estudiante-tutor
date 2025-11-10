@@ -1,128 +1,96 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Tutoría - Programa Estudiante-Tutor</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Crear Tutoría — Programa Estudiante‑Tutor</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-          rel="stylesheet" 
-          xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
-          crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../src/styles/styles.css"> 
-    <link rel="stylesheet" href="../src/styles/crearTutoria.css"> 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles/crearTutoria.css">
 </head>
-<body class="p-0 light-grey-bg">
-    <div class="page-container">
-        <header class="navbar navbar-expand-lg navbar-dark bg-ucab-blue py-3">
-            <div class="container-fluid mx-lg-5">
-                <a class="navbar-brand fw-bold fs-5 me-5" href="#">
-                    UCAB <span class="fw-normal">Programa Estudiante-Tutor</span>
-                </a>
+<body>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mb-2 mb-lg-0" style="margin-left: 250px;">
-
-                        <li class="nav-item">
-                            <a class="nav-link pb-1" href="crearTutoria.html">Crear Tutoria</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pb-1" href="consultarTutoria.html">Mis Tutorias</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pb-1" href="consultarHorario.html">Mis Horarios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pb-1" href="crearHorario.html">Crear Horario</a>
-                        </li>
-                    </ul>
-
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center pb-1" href="#">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-circle me-2" viewBox="0 0 16 16">
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-                                </svg>
-                                <span>Perfil</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </header>
-
-        <div class="bg-ucab-blue text-white p-5">
-            <div class="container-fluid mx-lg-5">
-                <h1 class="fw-bold display-5">Crear Tutoría</h1>
-            </div>
-        </div>
-
-        <main class="py-5 px-3 flex-grow-1">
-            <div class="main-content-wrapper">
-                <form id="createTutoriaForm" class="d-flex flex-column" style="gap: 2rem;">
-                    <div class="details-card bg-white rounded-3 shadow p-5 space-y-4">
-                        <div class="mb-3">
-                            <label for="nombreTutoria" class="form-label text-muted fw-medium">Nombre de la Tutoría</label>
-                            <input type="text" id="nombreTutoria" class="form-control form-input-ucab" placeholder="Ej: Cálculo I - Básico">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="numeroCupos" class="form-label text-muted fw-medium">Número de Cupos</label>
-                            <input type="number" id="numeroCupos" class="form-control form-input-ucab" placeholder="Ej: 10" min="10" max="20" value="10">
-                            <div id="cuposHelp" class="form-text mt-2 text-muted">El número de cupos debe ser entre 10 y 20.</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="descripcionTutoria" class="form-label text-muted fw-medium">Descripción</label>
-                            <textarea id="descripcionTutoria" rows="3" class="form-control form-input-ucab" placeholder="Describe los temas que se cubrirán en esta tutoría..."></textarea>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4 pt-4">
-                        <h3 class="fs-5 fw-bold text-dark">Seleccionar Horario</h3>
-
-                        <div class="horario-grid" id="horarioContainer">
-                            <div class="schedule-card" data-dia="Lunes" data-hora="7:00 AM - 9:00 AM">Lunes 7:00 AM - 9:00 AM</div>
-                            <div class="schedule-card" data-dia="Martes" data-hora="9:00 AM - 11:00 AM">Martes 9:00 AM - 11:00 AM</div>
-                            <div class="schedule-card" data-dia="Miércoles" data-hora="11:00 AM - 1:00 PM">Miércoles 11:00 AM - 1:00 PM</div>
-                            <div class="schedule-card" data-dia="Jueves" data-hora="1:00 PM - 3:00 PM">Jueves 1:00 PM - 3:00 PM</div>
-                            <div class="d-none d-md-block"></div>
-                            <div class="d-none d-md-block"></div>
-                        </div>
-
-                        <!-- Mensajes de validación debajo de horarios -->
-                        <div id="horarioError" class="text-danger mt-2 d-none">Debes seleccionar al menos un horario</div>
-                    </div>
-
-                    <div class="text-center pt-5">
-                        <button type="submit" id="submitBtn" class="btn btn-ucab-primary fw-bold py-3 px-5 rounded-pill shadow-sm">
-                            Crear tutoria
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </main>
-
-        <footer class="footer-fixed d-flex justify-content-center align-items-center mt-auto">
-            <span class="opacity-75">© 2025 UCAB - Universidad Católica Andrés Bello</span>
-        </footer>
+  <div class="topbar">
+    <div class="brand">Programa Estudiante‑Tutor</div>
+    <div class="profile">
+      <div class="small muted">Tutor</div>
+      <div class="avatar">MA</div>
     </div>
+  </div>
 
-    <!-- Contenedor para mensajes en página (toast / mensajes personalizados) -->
-    <div id="appMessages" aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 1080;"></div>
+  <main class="container">
+    <div class="card">
+      <div class="grid">
+        <!-- FORMULARIO PRINCIPAL -->
+        <section>
+          <h3 class="mb-2">Crear Tutoría</h3>
+          <p class="small muted">Define la tutoría y publícala para estudiantes.</p>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
-            xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
-            crossorigin="anonymous">
-    </script>
-    
-   <script type="module" src="../src/components/tutoring/crearTutoria.js"></script>
+          <form id="crearTutoriaForm" class="mt-3" novalidate>
+            <div id="formFeedback" aria-live="polite"></div>
 
+            <div class="mb-3">
+              <label for="titulo" class="form-label">Título</label>
+              <input id="titulo" name="titulo" type="text" class="form-control" placeholder="Ej. Álgebra lineal - Repaso" required />
+            </div>
+
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea id="descripcion" name="descripcion" class="form-control" rows="4" placeholder="Breve descripción de la tutoría"></textarea>
+            </div>
+
+            <div class="form-row mb-3">
+              <div style="width:160px">
+                <label for="cupo" class="form-label">Cupo</label>
+                <select
+                  id="cupo"
+                  name="cupo"
+                  class="form-select form-control"
+                  required
+                  aria-describedby="cupoHelp"
+                >
+                  <option value="" disabled>Seleccione cupo</option>
+                  <option value="10" selected>10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                  <option value="14">14</option>
+                  <option value="15">15</option>
+                  <option value="16">16</option>
+                  <option value="17">17</option>
+                  <option value="18">18</option>
+                  <option value="19">19</option>
+                  <option value="20">20</option>
+                </select>
+                <div id="cupoHelp" class="form-text small muted">Seleccione un cupo entre <strong>10</strong> y <strong>20</strong>.</div>
+              </div>
+            </div>
+
+
+            <div class="form-footer">
+              <a href="/gestion.html" class="btn btn-outline-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Publicar tutoría</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- SIDEBAR HORARIOS -->
+        <aside>
+          <div class="mb-2">
+            <h5 class="mb-0">Horarios</h5>
+            <div class="small muted">Selecciona los horarios ya creados</div>
+          </div>
+
+          <div class="card p-2 horarios-panel">
+            <div id="horariosList" class="horarios-list">
+              <div class="no-horarios">Cargando horarios...</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <script src="/src/components/tutoring/crearTutoria.js" defer></script>
 </body>
 </html>
