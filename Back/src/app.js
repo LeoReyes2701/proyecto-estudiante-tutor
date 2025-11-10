@@ -2,77 +2,118 @@
 const express = require('express');
 const path = require('path');
 
+const UserRepository = require('./repositories/UserRepository');
+const TutoriaRepository = require('./repositories/TutoriaRepository');
+
+const AuthController = require('./controllers/authController');
+const TutoriaController = require('./controllers/tutoriaController');
+
+const authRoutesFactory = require('./routes/authRoutes');
+const tutoriaRoutesFactory = require('./routes/tutoriaRoutes');
+
+const validation = require('./middleware/validation');
+const authMiddleware = require('./middleware/authMiddleware');
+
 const app = express();
 
-// Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Serve frontend static files (Front/public)
+// Rutas estáticas: servir /src primero (módulos) y luego public
 const frontPublic = path.resolve(__dirname, '..', '..', 'Front', 'public');
+const frontSrc = path.resolve(__dirname, '..', '..', 'Front', 'src');
+
+app.use('/src', express.static(frontSrc));
 app.use(express.static(frontPublic));
 
-// Simple routes to serve key HTML pages
+if ((process.env.NODE_ENV || 'development') === 'development') {
+  console.info('[app] static public:', frontPublic);
+  console.info('[app] static src under /src:', frontSrc);
+}
+
+// Repositories
+const userRepo = new UserRepository();
+const tutoriaRepo = new TutoriaRepository();
+
+// Controllers (inyección de dependencias)
+const authcontroller = new AuthController({ userRepository: userRepo });
+const tutoriaController = new TutoriaController({ tutoriaRepository: tutoriaRepo, userRepository: userRepo });
+
+// Routes (API) - monta auth y tutoria routes
+app.use('/auth', authRoutesFactory({
+  authController: authcontroller,
+  validateRegister: validation.validateRegister,
+  validateLogin: validation.validateLogin
+}));
+
+app.use('/tutorias', tutoriaRoutesFactory({ tutoriaController, authMiddleware }));
+
+// Helper: leer cookie 'usuario' desde header (base64 JSON)
+function readUsuarioCookie(req) {
+  const cookieHeader = req.headers.cookie || '';
+  const parts = cookieHeader.split(';').map(p => p.trim()).filter(Boolean);
+  const kv = parts.find(p => p.startsWith('usuario='));
+  if (!kv) return null;
+  const val = kv.split('=')[1];
+  if (!val) return null;
+  try {
+    return JSON.parse(Buffer.from(val, 'base64').toString('utf8'));
+  } catch (e) {
+    return null;
+  }
+}
+
+// Pages: servir archivos HTML explícitos que existen en Front/public
+app.get(['/', '/index.html', '/login.html'], (req, res) => {
+  return res.sendFile(path.join(frontPublic, 'login.html'));
+});
+
+// servir /login (sin .html) para compatibilidad con enlaces que usan /login
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(frontPublic, 'login.html'));
+  return res.sendFile(path.join(frontPublic, 'login.html'));
 });
 
-app.get('/crear-cuenta', (req, res) => {
-  res.sendFile(path.join(frontPublic, 'crearCuenta.html'));
+app.get('/crearCuenta.html', (req, res) => {
+  return res.sendFile(path.join(frontPublic, 'crearCuenta.html'));
 });
 
+// gestión para TUTORES: requiere cookie usuario con rol 'tutor'
 app.get('/gestion.html', (req, res) => {
-  res.sendFile(path.join(frontPublic, 'gestion.html'));
+  const user = readUsuarioCookie(req);
+  if (!user) return res.redirect('/login.html');
+  if (String(user.rol || '').toLowerCase() !== 'tutor') return res.redirect('/login.html');
+  return res.sendFile(path.join(frontPublic, 'gestion.html'));
 });
 
-// Minimal auth-related endpoints used by the frontend during development.
-// Replace or extend these with your real auth & data logic.
-app.post('/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ error: 'email y password son requeridos' });
-
-  // Development stub: accept any institutional email
-  if (!email.endsWith('@est.ucab.edu.ve')) return res.status(401).json({ error: 'Correo no institucional' });
-
-  // Return a minimal successful response; frontend will redirect a posteriori
-  return res.json({ ok: true, redirect: '/gestion.html', token: 'dev-token' });
+// gestión para ESTUDIANTES: requiere cookie usuario con rol 'estudiante'
+app.get('/gestion_estudiante.html', (req, res) => {
+  const user = readUsuarioCookie(req);
+  if (!user) return res.redirect('/login.html');
+  if (String(user.rol || '').toLowerCase() !== 'estudiante') return res.redirect('/login.html');
+  return res.sendFile(path.join(frontPublic, 'gestion_estudiante.html'));
 });
 
-app.post('/auth/logout', (req, res) => {
-  // Development stub: simply respond OK
-  return res.json({ ok: true, redirect: '/login' });
+// proteger crearTutoria (ejemplo) -> solo tutores
+app.get('/crearTutoria.html', (req, res) => {
+  const user = readUsuarioCookie(req);
+  if (!user) return res.redirect('/login.html');
+  if (String(user.rol || '').toLowerCase() !== 'tutor') return res.redirect('/login.html');
+  return res.sendFile(path.join(frontPublic, 'crearTutoria.html'));
 });
 
-app.get('/auth/profile', (req, res) => {
-  // Development stub: return a demo profile
-  return res.json({
-    userId: 'demo',
-    email: 'demo@est.ucab.edu.ve',
-    nombre: 'Demo',
-    apellido: 'Usuario',
-    rol: 'estudiante'
-  });
-});
+// Health
+app.get('/health', (req, res) => res.json({ ok: true }));
 
-app.get('/auth/user/:email', (req, res) => {
-  const email = decodeURIComponent(req.params.email || '');
-  if (!email) return res.status(400).json({ error: 'Email requerido' });
-  if (email.includes('noexiste')) return res.status(404).json({ error: 'No encontrado' });
+// Optional: quick request logger for debugging (uncomment while debugging)
+// app.use((req, res, next) => { console.log('[REQ]', req.method, req.url); next(); });
 
-  return res.json({
-    userId: 'u-' + Date.now(),
-    email,
-    nombre: 'Nombre',
-    apellido: 'Apellido',
-    rol: 'tutor'
-  });
-});
-
-// Basic error handler
+// Minimal error handler
 app.use((err, req, res, next) => {
-  console.error(err && err.stack || err);
   if (res.headersSent) return next(err);
-  res.status(500).json({ error: 'Error interno del servidor' });
+  const status = err && err.status ? err.status : 500;
+  const payload = { error: err && err.message ? err.message : 'Internal server error' };
+  if ((process.env.NODE_ENV || 'development') === 'development') payload.stack = err.stack;
+  res.status(status).json(payload);
 });
 
 module.exports = app;

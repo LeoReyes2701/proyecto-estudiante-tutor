@@ -1,63 +1,76 @@
-const Tutoria = require('../models/tutoria');
+// Back/src/controllers/tutoriacontroller.js
+const Tutoria = require('../models/Tutoria');
 
 class TutoriaController {
-  constructor(repository) {
-    if (!repository) throw new Error('TutoriaController requires a repository instance');
-    this.repo = repository;
+  constructor({ tutoriaRepository, userRepository } = {}) {
+    if (!tutoriaRepository) throw new Error('TutoriaController requires tutoriaRepository');
+    if (!userRepository) throw new Error('TutoriaController requires userRepository');
+    this.tutoriaRepository = tutoriaRepository;
+    this.userRepository = userRepository;
 
-    // bind para usar métodos directamente como handlers
-    this.createTutoria = this.createTutoria.bind(this);
-    this.getTutorias = this.getTutorias.bind(this);
-    this.getTutoriaById = this.getTutoriaById.bind(this);
-    this.deleteTutoria = this.deleteTutoria.bind(this);
+    this.create = this.create.bind(this);
+    this.list = this.list.bind(this);
+    this.getById = this.getById.bind(this);
   }
 
-  createTutoria(req, res) {
+  // POST /tutorias  (protected; req.user.sub contains userId)
+  async create(req, res) {
     try {
-      const tutoria = new Tutoria(req.body);
-      const valid = tutoria.validate();
-      if (!valid.ok) {
-        return res.status(400).json({ error: 'Datos inválidos', field: valid.field, message: valid.message });
-      }
-      const saved = this.repo.save(tutoria.toJSON());
-      return res.status(201).json({ message: 'Tutoría creada exitosamente', data: saved });
+      const userId = req.user && req.user.sub;
+      if (!userId) return res.status(401).json({ error: 'No autorizado' });
+
+      const raw = req.body || {};
+      const titulo = raw.titulo ? String(raw.titulo).trim() : '';
+      const descripcion = raw.descripcion ? String(raw.descripcion).trim() : '';
+      const fecha = raw.fecha ? String(raw.fecha).trim() : '';
+
+      if (!titulo || !descripcion || !fecha) return res.status(400).json({ error: 'Faltan campos obligatorios' });
+
+      // Verificar que usuario existe
+      const user = await Promise.resolve(this.userRepository.findById(userId));
+      if (!user) return res.status(404).json({ error: 'Usuario creador no encontrado' });
+
+      const id = Date.now().toString() + '-' + Math.random().toString(36).slice(2, 9);
+      const tutoria = new Tutoria({
+        id,
+        titulo,
+        descripcion,
+        fecha,
+        creadorId: user.id,
+        creadorNombre: `${user.nombre} ${user.apellido}`,
+        createdAt: new Date().toISOString()
+      });
+
+      await Promise.resolve(this.tutoriaRepository.save(tutoria));
+
+      return res.status(201).json({ ok: true, tutoria: tutoria.toJSON() });
     } catch (err) {
-      console.error('createTutoria error:', err);
-      return res.status(500).json({ error: 'Error interno al crear tutoría' });
+      console.error('[TutoriaController.create]', err);
+      return res.status(500).json({ error: 'Error al crear tutoría' });
     }
   }
 
-  getTutorias(req, res) {
+  // GET /tutorias
+  async list(req, res) {
     try {
-      const all = this.repo.all();
-      return res.status(200).json(all);
+      const all = await Promise.resolve(this.tutoriaRepository.getAll());
+      return res.json({ ok: true, data: all.map(t => t.toJSON()) });
     } catch (err) {
-      console.error('getTutorias error:', err);
-      return res.status(500).json({ error: 'Error interno al obtener tutorías' });
+      console.error('[TutoriaController.list]', err);
+      return res.status(500).json({ error: 'Error al listar tutorías' });
     }
   }
 
-  getTutoriaById(req, res) {
+  // GET /tutorias/:id
+  async getById(req, res) {
     try {
-      const { id } = req.params;
-      const found = this.repo.findById(id);
-      if (!found) return res.status(404).json({ error: 'Tutoría no encontrada' });
-      return res.status(200).json(found);
+      const id = req.params.id;
+      const t = await Promise.resolve(this.tutoriaRepository.findById(id));
+      if (!t) return res.status(404).json({ error: 'Tutoría no encontrada' });
+      return res.json({ ok: true, data: t.toJSON() });
     } catch (err) {
-      console.error('getTutoriaById error:', err);
-      return res.status(500).json({ error: 'Error interno' });
-    }
-  }
-
-  deleteTutoria(req, res) {
-    try {
-      const { id } = req.params;
-      const removed = this.repo.removeById(id);
-      if (!removed) return res.status(404).json({ error: 'Tutoría no encontrada' });
-      return res.status(200).json({ message: 'Tutoría eliminada' });
-    } catch (err) {
-      console.error('deleteTutoria error:', err);
-      return res.status(500).json({ error: 'Error interno al eliminar' });
+      console.error('[TutoriaController.getById]', err);
+      return res.status(500).json({ error: 'Error al obtener tutoría' });
     }
   }
 }

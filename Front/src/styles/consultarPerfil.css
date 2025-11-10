@@ -1,50 +1,110 @@
+/* /src/styles/consultarPerfil.css - actualizado para mostrar botón Volver y lista dinámica */
+
+:root{
+  --ucab-blue: #0b3d91;
+  --ucab-primary: #0b3d91;
+  --accent: #0b8ae6;
+  --light-grey-bg: #f4f7fb;
+  --muted: #6c757d;
+}
+
+/* Base */
 body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--light-grey-bg);
-            color: #333;
-        }
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--light-grey-bg);
+  color: #333;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-        .text-ucab-blue {
-            color: var(--ucab-blue) !important;
-        }
+/* Encabezado / hero */
+.bg-ucab-blue {
+  background: linear-gradient(90deg, var(--ucab-primary), var(--accent));
+  color: #fff;
+}
+.text-ucab-blue { color: var(--ucab-blue) !important; }
 
-        .header-strip {
-            background-color: #34495e; 
-            color: white;
-            padding: 15px 0;
-            margin-bottom: 20px;
-        }
-        
-       
-        .profile-card {
-            max-width: 800px;
-            margin: auto;
-            border-radius: 12px;
-        }
+/* Page containers */
+.page-container { min-height: 100vh; display: flex; flex-direction: column; }
 
-        .tutor-card {
-            border-left: 5px solid var(--ucab-primary); 
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        
-        .tutor-card:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
+/* Remove specific hiding rules for navbar items (they've been removed from HTML) */
 
-       
-        .user-icon {
-            width: 50px;
-            height: 50px;
-            background-color: var(--ucab-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
+/* Ensure the Volver button is visible and styled */
+#btnVolver {
+  min-width: 84px;
+  font-weight: 600;
+  border-radius: 6px;
+  color: var(--ucab-blue);
+}
 
-         
+/* Profile card */
+.profile-card {
+  max-width: 800px;
+  margin: auto;
+  border-radius: 12px;
+  background: #fff;
+  padding: 18px;
+}
 
-        
+/* Tutorías container (lista dinámica) */
+#tutoriasListContainer { margin-top: 8px; }
+
+/* Plantilla de cada tutoría (se puede clonar desde JS) */
+.tutor-item,
+.tutor-card {
+  display: block;
+  border-left: 5px solid var(--ucab-primary);
+  transition: all 0.2s;
+  cursor: pointer;
+  background: #fff;
+  padding: 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(11,61,145,0.04);
+}
+.tutor-item:hover,
+.tutor-card:hover {
+  box-shadow: 0 6px 14px rgba(11,61,145,0.08);
+  transform: translateY(-3px);
+}
+.tutor-item h6 { margin-bottom: 6px; }
+.tutor-item .meta { font-size: 0.9rem; color: var(--muted); }
+
+/* Empty state */
+.tutor-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 18px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(11,61,145,0.03);
+}
+
+/* User icon / avatar */
+.user-icon {
+  width: 50px;
+  height: 50px;
+  background-color: var(--ucab-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Utilities and text */
+.fw-medium { font-weight: 500; }
+.text-muted { color: var(--muted) !important; }
+.text-ucab-blue { color: var(--ucab-blue) !important; }
+
+/* Footer */
+.footer-fixed { background: transparent; padding: 18px 0; }
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .profile-card { margin: 16px; padding: 16px; }
+  .bg-ucab-blue { padding: 24px 12px; }
+}
+
+/* Small adjustments to match Bootstrap integration */
+.card.shadow-sm { border: none; }

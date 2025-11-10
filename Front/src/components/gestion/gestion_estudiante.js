@@ -1,9 +1,9 @@
-// /src/components/gestion/gestion.js
+// /src/components/gestion/gestion_estudiante.js
 const btnConsultarPerfil = document.getElementById('btnConsultarPerfil');
 const btnConsultarHorario = document.getElementById('btnConsultarHorario');
 const btnConsultarTutoria = document.getElementById('btnConsultarTutoria');
-const btnCrearTutoria = document.getElementById('btnCrearTutoria');
-const btnCrearHorario = document.getElementById('btnCrearHorario');
+const btnConsultarInscripcion = document.getElementById('btnConsultarInscripcion');
+const btnInscribirseCurso = document.getElementById('btnInscribirseCurso');
 const btnLogout = document.getElementById('btnLogout');
 
 const modalEl = document.getElementById('modalResult');
@@ -14,6 +14,7 @@ const modalBody = document.getElementById('modalBody');
 function openPage(url) {
   window.location.href = url;
 }
+
 function showModal(title, html) {
   if (!modal) {
     alert(title + '\n\n' + (typeof html === 'string' ? html : JSON.stringify(html)));
@@ -24,19 +25,38 @@ function showModal(title, html) {
   modal.show();
 }
 
-// Asociaciones exactas a rutas (ajusta si tus archivos se llaman distinto)
+// Asociaciones: rutas destino (ajusta si tus archivos se llaman distinto)
 btnConsultarPerfil?.addEventListener('click', () => openPage('/consultarPerfil.html'));
 btnConsultarHorario?.addEventListener('click', () => openPage('/consultarHorario.html'));
-btnConsultarTutoria?.addEventListener('click', () => openPage('/consultarTutoria.html'));
-btnCrearTutoria?.addEventListener('click', () => openPage('/crearTutoria.html'));
-btnCrearHorario?.addEventListener('click', () => openPage('/crearHorario.html'));
+btnConsultarTutoria?.addEventListener('click', () => openPage('/consultartutoria.html'));
+btnConsultarInscripcion?.addEventListener('click', () => openPage('/InscribirseCurso.html'));
+
+// Acción de inscribirse: por defecto redirige a /inscribirse.html
+// Si prefieres que haga una petición POST, reemplaza la navegación por fetch POST.
+btnInscribirseCurso?.addEventListener('click', () => {
+  // Intentamos abrir una página de inscripción. Si no existe, mostramos modal con instrucción.
+  const target = '/inscribirse.html';
+  // comprobación simple: intentar navegar
+  fetch(target, { method: 'HEAD' })
+    .then(resp => {
+      if (resp.ok) {
+        openPage(target);
+      } else {
+        showModal('Inscripción', '<p>Página de inscripción no disponible. Contacta al administrador.</p>');
+      }
+    })
+    .catch(() => {
+      // fallback: mostrar modal
+      showModal('Inscripción', '<p>Página de inscripción no disponible. Contacta al administrador.</p>');
+    });
+});
 
 btnLogout?.addEventListener('click', () => {
   document.cookie = 'usuario=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
   window.location.href = '/login.html';
 });
 
-// fetch perfil para personalizar cabecera
+// Mostrar nombre / email en la cabecera si hay sesión
 (async function fetchProfile(){
   try {
     const res = await fetch('/auth/profile', { credentials: 'same-origin' });
@@ -50,6 +70,6 @@ btnLogout?.addEventListener('click', () => {
       if (sessionState) sessionState.textContent = `Sesión: ${json.user.email || ''}`;
     }
   } catch (e) {
-    console.debug('[gestion] profile fetch failed', e);
+    console.debug('[gestion_estudiante] profile fetch failed', e);
   }
 })();

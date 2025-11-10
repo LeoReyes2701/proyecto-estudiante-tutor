@@ -1,72 +1,60 @@
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--light-grey);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; 
-        }
-        
-       
-        .login-container {
-            flex-grow: 1; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px; 
-        }
+/* /src/styles/login.css - estilos mínimos específicos para crearCuenta.html */
+:root{
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --accent: #0d6efd;
+  --muted: #6c757d;
+}
 
-       
-        .login-card {
-            background-color: var(--white);
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            max-width: 500px; 
-            width: 100%; 
-        }
+body{
+  background: var(--bg);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  margin: 0;
+  padding: 0;
+  color: #212529;
+}
 
+.container{
+  background: var(--card);
+  border-radius: 10px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(10,15,30,0.06);
+}
 
-        .role-selection .btn {
-            border: 1px solid #ced4da;
-            color: #495057;
-            background-color: var(--white);
-            font-weight: 500;
-            padding: 10px;
-            transition: all 0.2s;
-        }
+h3{
+  margin-bottom: 18px;
+  font-weight: 600;
+}
 
-        .role-selection .btn.active-role, .role-selection .btn:focus {
-            background-color: var(--white);
-            border-color: var(--ucab-link);
-            color: var(--ucab-link);
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25); 
-            z-index: 2; 
-        }
-    
-        .header-login {
-            background-color: var(--ucab-blue);
-            color: var(--white);
-            padding: 15px 20px;
-        }
-        .footer-login {
-            background-color: var(--ucab-blue); 
-            color: var(--white);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: center; 
-            align-items: center;
-            width: 100%;
-            font-size: 0.9em;
-            position: relative; 
-        }
-        
-        
-        .form-control {
-            background-color: var(--light-grey); 
-            border: 1px solid #ced4da;
-            padding: 10px;
-        }
+/* inputs */
+.form-control, .form-select {
+  border-radius: 8px;
+  border: 1px solid #e6e9f2;
+  padding: 10px 12px;
+  box-shadow: none;
+}
 
-        .text-register {
-            font-size: 0.9em;
-        }
+/* botón */
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-weight: 600;
+}
+
+/* mensajes */
+#regError {
+  font-size: 0.95rem;
+}
+
+/* estado deshabilitado */
+button:disabled {
+  opacity: 0.66;
+  cursor: not-allowed;
+}
+
+/* responsive tweaks */
+@media (max-width: 420px) {
+  .container { margin: 1.5rem 12px; padding: 18px; }
+}

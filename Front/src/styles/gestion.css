@@ -1,0 +1,182 @@
+/* /src/styles/gestion.css - Estilos completos para gestion.html (botones uniformes) */
+
+:root{
+  --ucab-blue: #0b3d91;
+  --accent: #0b8ae6;
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --muted: #6c757d;
+  --btn-gradient: linear-gradient(90deg, var(--ucab-blue), var(--accent));
+  --btn-shadow: 0 8px 18px rgba(11,61,145,0.12);
+}
+
+/* Base layout */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: linear-gradient(180deg, #eaf3ff 0%, var(--bg) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Container card */
+.container-card {
+  width: 100%;
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 2rem;
+}
+
+/* Left visual panel */
+.panel-visual {
+  background: linear-gradient(135deg, rgba(11,61,145,0.95), rgba(11,138,230,0.95));
+  color: #fff;
+  border-radius: 12px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  box-shadow: 0 10px 30px rgba(11,61,145,0.12);
+}
+
+.logo-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* Main actions card */
+.card-actions {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 6px 20px rgba(30,40,60,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Actions grid */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Button base (visual parity) */
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 10px;
+  border-radius: 10px;
+  border: 1px solid #e6eefb;
+  background: #fff;
+  cursor: pointer;
+  transition: all .12s ease;
+  font-weight: 600;
+  min-height: 56px;
+  box-sizing: border-box;
+}
+
+/* Hover lift */
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--btn-shadow);
+}
+
+/* Primary class kept for semantics but will be visually unified below */
+.action-btn.primary {
+  border: none;
+  color: #fff;
+}
+
+/* Uniform button appearance: overwrite multiple selectors so every button looks the same */
+.action-btn,
+.action-btn.primary,
+.btn-primary,
+.btn-ghost,
+.btn-outline-secondary {
+  background: var(--btn-gradient);
+  color: #fff !important;
+  border: none !important;
+  box-shadow: var(--btn-shadow);
+}
+
+/* Hover for unified buttons */
+.action-btn:hover,
+.action-btn.primary:hover,
+.btn-primary:hover,
+.btn-ghost:hover,
+.btn-outline-secondary:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.03);
+  box-shadow: 0 10px 22px rgba(11,61,145,0.14);
+}
+
+/* Consistent sizing */
+.action-btn,
+.btn-primary,
+.btn-ghost,
+.btn-outline-secondary {
+  min-height: 56px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+/* Muted text */
+.muted {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* Footer */
+.page-foot {
+  text-align: center;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+/* Responsive behavior */
+@media (max-width: 900px) {
+  .container-card {
+    grid-template-columns: 1fr;
+  }
+  .panel-visual {
+    order: 2;
+    padding: 18px;
+    border-radius: 10px;
+  }
+  .card-actions {
+    order: 1;
+  }
+  .actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
