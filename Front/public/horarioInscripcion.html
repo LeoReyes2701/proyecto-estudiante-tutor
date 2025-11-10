@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consultar Horario - Programa Estudiante-Tutor</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/styles/styles.css">
+    <link rel="stylesheet" href="../src/styles/horarioInscripcion.css">
+    
+    
+</head>
+<body class="p-0 light-grey-bg">
+    <div class="page-container">
+        
+        <header class="navbar navbar-expand-lg navbar-dark bg-ucab-blue py-3">
+            <div class="container-fluid mx-lg-5">
+                <a class="navbar-brand fw-bold fs-5 me-5" href="#">
+                    UCAB <span class="fw-normal">Programa Estudiante-Tutor</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mb-2 mb-lg-0" style="margin-left: 250px;">
+                        <li class="nav-item"><a class="nav-link pb-1" href="#">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link pb-1" href="#">Mis Inscripciones</a></li>
+                        <li class="nav-item"><a class="nav-link pb-1 active" aria-current="page" href="#">Mi Horario</a></li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center pb-1" href="#">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-circle me-2" viewBox="0 0 16 16">
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                                </svg>
+                                <span>Perfil</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        
+        <div class="bg-ucab-blue text-white p-5">
+            <div class="container-fluid mx-lg-5">
+                <h1 class="fw-bold display-5">Horario de Cursos Seleccionados</h1>
+            </div>
+        </div>
+
+        
+        <main class="py-5 px-3">
+            <div class="container mx-lg-5">
+                <div class="bg-white p-4 p-md-5 rounded shadow-sm">
+                    
+                   
+                    <div class="d-flex align-items-center text-secondary mb-4 border-bottom pb-3">
+                        <i class="bi bi-book-fill text-primary fs-4 me-3"></i>
+                        <span id="curso-titulo" class="fs-5 fw-medium text-dark">Cargando Opciones...</span>
+                    </div>
+
+                    <div id="horario-list" class="d-grid gap-3">
+                       
+                        <div id="loading-indicator" class="text-center p-5 text-secondary">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <p class="mt-2">Cargando opciones de horario...</p>
+                        </div>
+                    </div>
+
+                </div> 
+
+               
+                <div class="d-flex justify-content-end mt-4">
+                    <button id="btn-confirmar" class="btn btn-success btn-lg fw-bold px-5 py-2 shadow" disabled>
+                        Confirmar Horario
+                    </button>
+                </div>
+            </div>
+        </main>
+       
+        <footer class="footer-fixed d-flex justify-content-center align-items-center mt-auto">
+            <span class="opacity-75">© 2025 UCAB - Universidad Católica Andrés Bello</span>
+        </footer>
+    </div>
+    
+    
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirmación Exitosa</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modal-message" class="text-dark"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="horarioInscripcion.js"></script>
+
+    

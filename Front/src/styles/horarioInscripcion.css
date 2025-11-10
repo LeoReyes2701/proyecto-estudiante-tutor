@@ -1,0 +1,36 @@
+        body {
+            background-color: #f4f7f9; /* Fondo gris muy claro */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+         .card-horario {
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            transition: border 0.3s, background-color 0.3s;
+            cursor: pointer;
+        }
+        .card-horario:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-selected {
+            border: 2px solid #28a745 !important; 
+            background-color: #e6ffed !important; 
+        }
+        .footer-fixed {
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 15px 0;
+            text-align: center;
+        }
+        .page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex-grow: 1;
+        }
+
+         .bg-ucab-blue {
+            background-color: var(--ucab-blue) !important;
+        }
