@@ -1,12 +1,11 @@
-// /src/components/schedule/crearHorario.js
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('createHorarioForm');
   const dia = document.getElementById('diaSemana');
   const inicio = document.getElementById('horaInicio');
   const fin = document.getElementById('horaFin');
 
-  const MAX_MINUTES = 120; // 2 horas
-  const MIN_MINUTES = 20;  // 20 minutos
+  const MAX_MINUTES = 120;
+  const MIN_MINUTES = 20;
 
   const log = (...args) => console.log('[crearHorario]', ...args);
 
@@ -44,6 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
     return { ok: true, duration: diff };
   }
 
+  async function horarioDuplicado(slot, tutorId) {
+    try {
+      const res = await fetch(`/horarios?tutorId=${encodeURIComponent(tutorId)}`, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        credentials: 'same-origin'
+      });
+      if (!res.ok) return false;
+      const existentes = await res.json();
+      return existentes.some(h =>
+        h.day === slot.day &&
+        h.horaInicio === slot.horaInicio &&
+        h.horaFin === slot.horaFin
+      );
+    } catch (err) {
+      log('error checking duplicates', err);
+      return false;
+    }
+  }
+
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     log('submit fired');
@@ -54,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return showFormMessage(v.msg, 'error');
     }
 
-    // Obtener usuario desde localStorage (cookie alternativa no contemplada aquí)
     let usuario = null;
     try {
       usuario = JSON.parse(localStorage.getItem('usuario')) || null;
@@ -86,8 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
     log('payload base', payloadBase);
     showFormMessage('Validando horario...', 'info');
 
+    // Verificar si ya existe un horario idéntico
+    if (await horarioDuplicado(slot, tutorId)) {
+      showFormMessage('Ya existe un horario idéntico. No se puede duplicar.', 'error');
+      return;
+    }
+
     try {
-      // 1) Preview request (sin confirm) para que el backend valide y devuelva preview o errores
       const previewRes = await fetch('/horarios', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -97,12 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
       log('preview response', previewRes.status, previewJson);
 
       if (!previewRes.ok) {
-        const err = previewJson && (previewJson.error || previewJson.message) ? (previewJson.error || previewJson.message) : `Error ${previewRes.status}`;
+        const err = previewJson?.error || previewJson?.message || `Error ${previewRes.status}`;
         showFormMessage(err, 'error');
         return;
       }
 
-      // 2) Confirmar creación
       const payloadCreate = { ...payloadBase, confirm: 'yes' };
       showFormMessage('Creando horario...', 'info');
       const createRes = await fetch('/horarios', {
@@ -119,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const errMsg = createJson && (createJson.error || createJson.message) ? (createJson.error || createJson.message) : `Error ${createRes.status}`;
+      const errMsg = createJson?.error || createJson?.message || `Error ${createRes.status}`;
       showFormMessage(errMsg, 'error');
     } catch (err) {
       log('network error', err);
@@ -127,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Mejora UX: ajustar opciones de horaFin según horaInicio seleccionada
   inicio.addEventListener('change', () => {
     const s = timeToMinutes(inicio.value);
     if (!Number.isFinite(s)) return;

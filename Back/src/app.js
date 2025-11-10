@@ -57,6 +57,11 @@ const tutoriaController = new TutoriaController({
   scheduleRepository: scheduleRepo
 });
 
+console.log('[app] tutoriaController ready:', {
+  hasCreate: typeof tutoriaController.create === 'function',
+  hasList: typeof tutoriaController.list === 'function'
+});
+
 // Normalizar scheduleController: si el módulo exporta una fábrica que acepta repositorio, invocarla
 let scheduleController = null;
 try {
@@ -87,7 +92,7 @@ app.use(
 // Tutorias (usa authMiddleware para rutas protegidas)
 app.use('/tutorias', tutoriaRoutesFactory({ tutoriaController, authMiddleware }));
 
-// Montar routes de horarios (horarios)
+// Mount horarios routes
 let schedulesRouter = null;
 try {
   if (typeof scheduleRoutesModule === 'function') {
@@ -129,86 +134,25 @@ if (!schedulesRouter || (typeof schedulesRouter !== 'function' && typeof schedul
     }
   });
 
-  // NOTA: fallback POST deliberately removed to avoid duplicate handlers.
   schedulesRouter = fallbackRouter;
 }
 
 app.use('/horarios', schedulesRouter);
 console.log('[app] /horarios mounted, schedulesRouter type:', schedulesRouter && (schedulesRouter.use ? 'router' : typeof schedulesRouter));
 
-// DEBUG: listar rutas expuestas por schedulesRouter
-try {
-  const router = schedulesRouter;
-  if (router && router.stack && Array.isArray(router.stack)) {
-    console.log('[debug] schedulesRouter routes:');
-    router.stack.forEach((layer) => {
-      if (layer.route && layer.route.path) {
-        const methods = layer.route.methods ? Object.keys(layer.route.methods).join(',') : '';
-        console.log('  route', layer.route.path, 'methods:', methods);
-      } else if (layer.name === 'router' && layer.handle && layer.handle.stack) {
-        layer.handle.stack.forEach((L) => {
-          if (L.route && L.route.path) {
-            const m = L.route.methods ? Object.keys(L.route.methods).join(',') : '';
-            console.log('  subroute', L.route.path, 'methods:', m);
-          }
-        });
-      } else {
-        console.log('  layer', layer.name || '(unknown layer)', layer.regexp && layer.regexp.toString());
-      }
-    });
-  } else {
-    console.log('[debug] schedulesRouter has no stack or is not express Router');
-  }
-} catch (e) {
-  console.error('[debug] error enumerating schedulesRouter routes', e);
-}
-
-// Si no hay POST en '/' en el schedulesRouter, montar uno que delegue a scheduleController.create
-(function ensurePostOnSchedules() {
+// DEBUG temporal: inspeccionar headers y cantidad de tutorías
+app.get('/__debug/tutorias-headers', async (req, res) => {
   try {
-    let hasRootPost = false;
-    const router = schedulesRouter;
-    if (router && router.stack && Array.isArray(router.stack)) {
-      for (const layer of router.stack) {
-        if (layer.route && layer.route.path === '/' && layer.route.methods && layer.route.methods.post) {
-          hasRootPost = true;
-          break;
-        }
-        if (layer.name === 'router' && layer.handle && layer.handle.stack) {
-          for (const L of layer.handle.stack) {
-            if (L.route && L.route.path === '/' && L.route.methods && L.route.methods.post) {
-              hasRootPost = true;
-              break;
-            }
-          }
-          if (hasRootPost) break;
-        }
-      }
-    }
-
-    if (!hasRootPost) {
-      console.log('[app] schedulesRouter has no POST / — registering delegator to scheduleController.create');
-      const delegator = express.Router();
-      delegator.post('/', async (req, res, next) => {
-        try {
-          if (!scheduleController || typeof scheduleController.create !== 'function') {
-            return res.status(500).json({ error: 'Schedule create handler not available' });
-          }
-          return scheduleController.create(req, res, next);
-        } catch (err) {
-          console.error('[delegator POST /horarios] error', err);
-          return res.status(500).json({ error: 'Error interno' });
-        }
-      });
-      // mount delegator BEFORE existing router so POST / is handled by delegator
-      app.use('/horarios', delegator);
-    } else {
-      console.log('[app] schedulesRouter already defines POST /');
-    }
-  } catch (e) {
-    console.error('[app] ensurePostOnSchedules error', e);
+    console.log('[debug] headers:', { cookie: req.headers.cookie, authorization: req.headers.authorization });
+    const count = typeof tutoriaRepo !== 'undefined' && (tutoriaRepo.readAll || tutoriaRepo.listAll)
+      ? (await (tutoriaRepo.readAll ? tutoriaRepo.readAll() : tutoriaRepo.listAll())).length
+      : null;
+    return res.json({ ok: true, cookie: req.headers.cookie || null, tutoriaCount: count });
+  } catch (err) {
+    console.error('[debug] error', err);
+    return res.status(500).json({ error: 'debug error' });
   }
-})();
+});
 
 // Helper: leer cookie 'usuario' desde header (base64 JSON)
 function readUsuarioCookie(req) {

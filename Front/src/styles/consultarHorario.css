@@ -66,3 +66,51 @@
   background-color: #0b4a7a !important;
   color: #fff;
 }
+
+/* ---------------------------
+   Botón Volver compartido
+   Use this same rule in:
+   - consultarTutoria.css
+   - consultarPerfil.css
+   and add the class to the HTML button:
+   class="btn btn-outline-light btn-sm btn-volver"
+   --------------------------- */
+
+.btn-volver {
+  --btn-border-color: rgba(255,255,255,0.9);
+  --btn-text-color: rgba(255,255,255,0.97);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  border-radius: 6px;
+  border: 1px solid var(--btn-border-color);
+  color: var(--btn-text-color);
+  background: transparent;
+  text-decoration: none;
+  transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  cursor: pointer;
+}
+
+.btn-volver:hover,
+.btn-volver:focus {
+  background-color: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(11,79,138,0.06);
+  text-decoration: none;
+}
+
+.btn-volver:active {
+  transform: translateY(0);
+}
+
+/* Small responsive tweak so the button aligns nicely on mobile */
+@media (max-width: 576px) {
+  .btn-volver {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.82rem;
+  }
+}

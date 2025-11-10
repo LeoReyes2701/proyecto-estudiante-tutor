@@ -9,27 +9,36 @@ if (form) {
     regError.classList.add('visually-hidden');
     regError.textContent = '';
 
-    const nombre = String((document.getElementById('nombre') || {}).value || '').trim();
-    const apellido = String((document.getElementById('apellido') || {}).value || '').trim();
-    const email = String((document.getElementById('email') || {}).value || '').trim();
-    const password = String((document.getElementById('password') || {}).value || '');
-    const rol = String((document.getElementById('rol') || {}).value || 'estudiante').trim().toLowerCase();
+    const nombre = getValue('nombre');
+    const apellido = getValue('apellido');
+    const email = getValue('email');
+    const password = getValue('password');
+    const confirmPassword = getValue('confirmPassword');
+    const rol = getValue('rol').toLowerCase();
 
-    // validaciones básicas en cliente
-    if (!nombre || !apellido || !email || !password) {
+    // Validaciones básicas
+    if (!nombre || !apellido || !email || !password || !confirmPassword) {
       showError('Completa todos los campos obligatorios.');
       return;
     }
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showError('Ingresa un correo válido.');
       return;
     }
+
     if (password.length < 6) {
       showError('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
+
+    if (password !== confirmPassword) {
+      showError('Las contraseñas no coinciden.');
+      markInvalid('confirmPassword');
+      return;
+    }
+
     if (!['estudiante', 'tutor', 'profesor'].includes(rol)) {
-      // aceptar alias "profesor"
       showError('Rol inválido.');
       return;
     }
@@ -39,7 +48,7 @@ if (form) {
       apellido,
       email,
       password,
-      rol // enviado tal cual; backend normalizará profesor->tutor
+      rol
     };
 
     try {
@@ -50,6 +59,7 @@ if (form) {
         body: JSON.stringify(payload),
         credentials: 'same-origin'
       });
+
       const json = await resp.json().catch(() => null);
 
       if (!resp.ok || !json) {
@@ -59,17 +69,12 @@ if (form) {
       }
 
       if (json.ok) {
-        // éxito: redirigir según el servidor o mostrar confirmación
-        const redirect = json.redirect || '/';
-        // pequeña pausa para feedback
         regBtn.textContent = 'Registrado';
         setTimeout(() => {
-          window.location.href = redirect;
+          window.location.href = json.redirect || '/';
         }, 600);
-        return;
       } else {
         showError(json.error || 'No se pudo registrar.');
-        return;
       }
     } catch (err) {
       console.error('[crearCuenta] network error', err);
@@ -78,6 +83,10 @@ if (form) {
       setLoading(false);
     }
   });
+}
+
+function getValue(id) {
+  return String((document.getElementById(id) || {}).value || '').trim();
 }
 
 function showError(msg) {
@@ -92,5 +101,13 @@ function setLoading(isLoading) {
   } else {
     regBtn.disabled = false;
     regBtn.innerHTML = 'Crear cuenta';
+  }
+}
+
+function markInvalid(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add('is-invalid');
+    el.addEventListener('input', () => el.classList.remove('is-invalid'), { once: true });
   }
 }

@@ -1,60 +1,105 @@
-/* /src/styles/login.css - estilos mínimos específicos para crearCuenta.html */
-:root{
-  --bg: #f5f7fb;
-  --card: #ffffff;
-  --accent: #0d6efd;
+:root {
+  --ucab-blue: #0b4a7a;
+  --ucab-primary: #0b4a7a;
+  --accent: #0b8ae6;
+  --light-grey-bg: #f4f7fb;
   --muted: #6c757d;
+  --card-text: #222;
 }
 
-body{
-  background: var(--bg);
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--light-grey-bg);
+  color: var(--card-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bg-ucab-blue {
+  background-color: var(--ucab-blue) !important;
+  color: #fff;
+}
+
+.text-ucab-blue {
+  color: var(--ucab-blue) !important;
+}
+
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-card {
+  max-width: 800px;
+  margin: auto;
+  border-radius: 12px;
+  background: #fff;
+  padding: 18px;
+  color: var(--card-text);
+}
+
+#fechaPerfil {
+  font-size: 0.9rem;
+  color: var(--muted);
   margin: 0;
-  padding: 0;
-  color: #212529;
 }
 
-.container{
-  background: var(--card);
-  border-radius: 10px;
-  padding: 28px;
-  box-shadow: 0 8px 24px rgba(10,15,30,0.06);
+.user-icon {
+  width: 50px;
+  height: 50px;
+  background-color: var(--ucab-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
 }
 
-h3{
-  margin-bottom: 18px;
-  font-weight: 600;
+.fw-medium {
+  font-weight: 500;
 }
 
-/* inputs */
-.form-control, .form-select {
-  border-radius: 8px;
-  border: 1px solid #e6e9f2;
-  padding: 10px 12px;
-  box-shadow: none;
+.text-muted {
+  color: var(--muted) !important;
 }
 
-/* botón */
-.btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-weight: 600;
+.footer-fixed {
+  background: transparent;
+  padding: 18px 0;
 }
 
-/* mensajes */
-#regError {
-  font-size: 0.95rem;
+/* Botón Volver */
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  min-width: 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.97);
+  background: transparent;
+  box-sizing: border-box;
+  text-decoration: none;
+  transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  cursor: pointer;
 }
 
-/* estado deshabilitado */
-button:disabled {
-  opacity: 0.66;
-  cursor: not-allowed;
+.btn-volver:hover,
+.btn-volver:focus {
+  background-color: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(11, 79, 138, 0.06);
+  text-decoration: none;
 }
 
-/* responsive tweaks */
-@media (max-width: 420px) {
-  .container { margin: 1.5rem 12px; padding: 18px; }
+@media (max-width: 576px) {
+  .btn-volver {
+    padding: 0.22rem 0.5rem;
+    font-size: 0.82rem;
+  }
 }

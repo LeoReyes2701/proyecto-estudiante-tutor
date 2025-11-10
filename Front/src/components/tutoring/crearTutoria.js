@@ -1,127 +1,141 @@
-class CrearTutoria {
-  constructor(formId = 'crearTutoriaForm') {
-    this.form = document.getElementById(formId);
-    if (!this.form) return console.warn(`#${formId} no encontrado`);
-    this.horarioContainer = document.getElementById('horarioContainer');
-    this.selectedInput = document.getElementById('selectedSchedule');
-    this.alertContainer = document.getElementById('pageAlertContainer') || this.form;
-    this.selected = null;
-    this.init();
+// Módulo para página crearTutoria.html
+// Valida campos y obliga que cupo esté entre 10 y 20 (inclusive)
+// Debe cargarse como module desde la página
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('crearTutoriaForm');
+  const inputTitulo = document.getElementById('titulo');
+  const inputDescripcion = document.getElementById('descripcion');
+  const inputCupo = document.getElementById('cupo');
+  const submitBtn = document.getElementById('crearTutoriaSubmit');
+  const feedback = document.getElementById('formFeedback');
+
+  // Reglas de cupo
+  const MIN_CUPO = 10;
+  const MAX_CUPO = 20;
+
+  function setFeedback(msg, type = 'danger') {
+    if (!feedback) return;
+    feedback.textContent = msg;
+    feedback.className = ''; // reset classes
+    feedback.classList.add('mt-3', 'small');
+    if (type === 'success') feedback.classList.add('text-success');
+    else feedback.classList.add('text-danger');
   }
 
-  async init() {
-    this.attachListeners();
-    await this.loadSchedules();
+  function clearFeedback() {
+    if (!feedback) return;
+    feedback.textContent = '';
+    feedback.className = '';
   }
 
-  attachListeners() {
-    this.form.addEventListener('submit', (e) => this.onSubmit(e));
-    const btnReset = document.getElementById('resetSelection');
-    if (btnReset) btnReset.addEventListener('click', () => this.clearSelection());
+  function parseCupoValue() {
+    if (!inputCupo) return NaN;
+    const v = inputCupo.value;
+    if (v === null || v === undefined || String(v).trim() === '') return NaN;
+    return Number(v);
   }
 
-  async loadSchedules() {
-    try {
-      const res = await fetch('/data/schedules.json', { cache: 'no-store' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const schedules = await res.json();
-      this.renderSchedules(schedules);
-    } catch (err) {
-      console.error('Error cargando schedules.json', err);
-      this.horarioContainer.innerHTML = '<div class="text-danger">No se pudieron cargar los horarios</div>';
+  function validateCupo() {
+    const n = parseCupoValue();
+    if (!Number.isFinite(n)) {
+      setFeedback(`Cupo inválido. Debe ser un número entre ${MIN_CUPO} y ${MAX_CUPO}.`);
+      return false;
     }
+    const ni = Math.floor(n);
+    if (ni < MIN_CUPO) {
+      setFeedback(`El cupo mínimo permitido es ${MIN_CUPO}.`);
+      return false;
+    }
+    if (ni > MAX_CUPO) {
+      setFeedback(`El cupo máximo permitido es ${MAX_CUPO}.`);
+      return false;
+    }
+    clearFeedback();
+    return true;
   }
 
-  renderSchedules(schedules = []) {
-    if (!Array.isArray(schedules) || schedules.length === 0) {
-      this.horarioContainer.innerHTML = '<div class="text-muted">No hay horarios disponibles</div>';
-      return;
+  function validateTitle() {
+    if (!inputTitulo) return false;
+    if (String(inputTitulo.value || '').trim() === '') {
+      setFeedback('El título es requerido.');
+      return false;
     }
+    return true;
+  }
 
-    this.horarioContainer.innerHTML = '';
-    schedules.forEach((s, idx) => {
-      const card = document.createElement('div');
-      card.className = 'schedule-card';
-      card.tabIndex = 0;
-      card.setAttribute('data-dia', s.dia || '');
-      card.setAttribute('data-hora', s.hora || '');
-      card.setAttribute('data-id', s.id ?? idx);
-      card.textContent = `${s.dia} ${s.hora}`;
+  function updateSubmitState() {
+    const ok = validateTitle() && validateCupo();
+    if (submitBtn) submitBtn.disabled = !ok;
+    return ok;
+  }
 
-      card.addEventListener('click', () => this.toggleSelect(card));
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.toggleSelect(card); }
-      });
-
-      this.horarioContainer.appendChild(card);
+  // Live validation on cupo and title
+  if (inputCupo) {
+    inputCupo.addEventListener('input', () => {
+      validateCupo();
+      updateSubmitState();
     });
   }
 
-  toggleSelect(card) {
-    // Desactivar previos
-    Array.from(this.horarioContainer.querySelectorAll('.schedule-card.active')).forEach(c => c.classList.remove('active'));
-    // Activar actual
-    card.classList.add('active');
-    this.selected = {
-      id: card.getAttribute('data-id'),
-      dia: card.getAttribute('data-dia'),
-      hora: card.getAttribute('data-hora')
-    };
-    if (this.selectedInput) this.selectedInput.value = JSON.stringify(this.selected);
+  if (inputTitulo) {
+    inputTitulo.addEventListener('input', () => {
+      clearFeedback();
+      updateSubmitState();
+    });
   }
 
-  clearSelection() {
-    Array.from(this.horarioContainer.querySelectorAll('.schedule-card.active')).forEach(c => c.classList.remove('active'));
-    this.selected = null;
-    if (this.selectedInput) this.selectedInput.value = '';
-  }
+  // Form submit handler
+  if (form) {
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      clearFeedback();
 
-  showMessage(msg, type = 'success', timeout = 4000) {
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = `
-      <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-        ${msg}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>`;
-    this.alertContainer.innerHTML = '';
-    this.alertContainer.appendChild(wrapper);
-    if (timeout > 0) setTimeout(() => {
-      try { const el = wrapper.querySelector('.alert'); if (window.bootstrap && el) bootstrap.Alert.getOrCreateInstance(el).close(); else wrapper.innerHTML = ''; } catch (e) { wrapper.innerHTML = ''; }
-    }, timeout);
-  }
+      if (!updateSubmitState()) return;
 
-  async onSubmit(e) {
-    e.preventDefault();
-    const asignatura = (this.form.querySelector('#asignaturaInput')?.value || '').trim();
-    if (!asignatura) return this.showMessage('La asignatura es obligatoria', 'danger');
+      const titulo = String(inputTitulo.value || '').trim();
+      const descripcion = String((inputDescripcion && inputDescripcion.value) || '').trim();
+      const cupoVal = Math.floor(parseCupoValue());
 
-    if (!this.selected) return this.showMessage('Selecciona un horario disponible', 'danger');
+      const payload = { titulo, descripcion, cupo: cupoVal };
 
-    const payload = {
-      asignatura,
-      descripcion: this.form.querySelector('#descripcionInput')?.value || '',
-      schedule: this.selected
-    };
+      try {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Creando...';
+        }
 
-    try {
-      const res = await fetch('/api/tutorias', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const json = await (res.headers.get('content-type')?.includes('application/json') ? res.json() : null);
-      if (res.ok) {
-        this.showMessage(json?.mensaje || 'Tutoría creada con éxito', 'success');
-        this.form.reset();
-        this.clearSelection();
-      } else {
-        this.showMessage(json?.error || json?.mensaje || `Error ${res.status}`, 'danger');
+        const resp = await fetch('/tutorias', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+          const body = await resp.json().catch(() => null);
+          setFeedback(body && body.error ? `Error: ${body.error}` : `Error en servidor (${resp.status})`);
+          return;
+        }
+
+        const data = await resp.json().catch(() => null);
+        setFeedback('Tutoría creada correctamente.', 'success');
+
+        // Opcional: redirigir a gestión o limpiar formulario
+        form.reset();
+        updateSubmitState();
+      } catch (err) {
+        console.error('Error creando tutoria', err);
+        setFeedback('No se pudo conectar con el servidor.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Crear tutoría';
+        }
       }
-    } catch (err) {
-      console.error('Error creando tutoría', err);
-      this.showMessage('Error al conectar con el servidor', 'danger');
-    }
+    });
   }
-}
 
-document.addEventListener('DOMContentLoaded', () => new CrearTutoria('crearTutoriaForm'));
+  // Inicializar estado
+  updateSubmitState();
+});

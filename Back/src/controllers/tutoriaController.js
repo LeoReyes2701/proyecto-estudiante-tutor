@@ -1,7 +1,17 @@
-// Back/src/controllers/tutoriaController.js
-// Exporta una clase que puede instanciarse con new TutoriaController({ tutoriaRepository, userRepository, scheduleRepository })
-
 const Tutoria = require('../models/Tutoria');
+
+function parseUsuarioCookie(cookieHeader = '') {
+  try {
+    const cookie = String(cookieHeader || '').split(';').map(s => s.trim()).find(s => s.startsWith('usuario='));
+    if (!cookie) return null;
+    const val = cookie.split('=')[1];
+    if (!val) return null;
+    return JSON.parse(Buffer.from(val, 'base64').toString('utf8'));
+  } catch (e) {
+    console.warn('[tutoriaController] parseUsuarioCookie failed', e);
+    return null;
+  }
+}
 
 class TutoriaController {
   constructor(options = {}) {
@@ -10,7 +20,6 @@ class TutoriaController {
     this.userRepository = options.userRepository || null;
     this.scheduleRepository = options.scheduleRepository || null;
 
-    // bind methods si se usan como handlers sin bind
     this.create = this.create.bind(this);
     this.list = this.list.bind(this);
     this.getById = this.getById.bind(this);
@@ -19,7 +28,6 @@ class TutoriaController {
   // POST /tutorias
   async create(req, res) {
     try {
-      // req.user debería venir del authMiddleware (cookie-based)
       if (!req.user || !req.user.id) {
         return res.status(401).json({ error: 'No autorizado' });
       }
@@ -30,24 +38,21 @@ class TutoriaController {
         return res.status(400).json({ error: 'Título requerido' });
       }
 
-      // Determinar horarioId: preferir id si se envía. Si no, intentar resolver con scheduleRepository.
       let horarioId = null;
       if (Array.isArray(slots) && slots.length > 0) {
         const s0 = slots[0];
         horarioId = s0.id || s0.horarioId || s0.scheduleId || null;
 
-        // si no existe id pero tenemos datos de horario (day/start/end) intentamos buscar uno del tutor
         if (!horarioId && this.scheduleRepository && (s0.day || s0.horaInicio || s0.start)) {
           try {
-            // búsqueda conservadora: buscar schedules del tutor y comparar por day+start+end
             const allSchedules = await (this.scheduleRepository.readAll ? this.scheduleRepository.readAll() : this.scheduleRepository.listAll());
             const match = (Array.isArray(allSchedules) ? allSchedules : []).find(sc => {
-              const sd = (sc.day || sc.dia || (sc.slots && sc.slots[0] && sc.slots[0].day) || '').toString();
-              const ss = (sc.start || sc.horaInicio || (sc.slots && sc.slots[0] && sc.slots[0].horaInicio) || '').toString();
-              const se = (sc.end || sc.horaFin || (sc.slots && sc.slots[0] && sc.slots[0].horaFin) || '').toString();
-              const qd = (s0.day || s0.dia || '').toString();
-              const qs = (s0.start || s0.horaInicio || '').toString();
-              const qe = (s0.end || s0.horaFin || '').toString();
+              const sd = String(sc.day || sc.dia || (sc.slots && sc.slots[0] && sc.slots[0].day) || '');
+              const ss = String(sc.start || sc.horaInicio || (sc.slots && sc.slots[0] && sc.slots[0].horaInicio) || '');
+              const se = String(sc.end || sc.horaFin || (sc.slots && sc.slots[0] && sc.slots[0].horaFin) || '');
+              const qd = String(s0.day || s0.dia || '');
+              const qs = String(s0.start || s0.horaInicio || '');
+              const qe = String(s0.end || s0.horaFin || '');
               return sd === qd && ss === qs && se === qe;
             });
             if (match) horarioId = match.id || match._id || null;
@@ -57,36 +62,37 @@ class TutoriaController {
         }
       }
 
+      // Normalizar cupo: aceptar undefined -> model will default to 0, accept numeric-like strings
+      const normalizedCupo = (typeof cupo !== 'undefined') ? (Number.isFinite(Number(cupo)) ? Math.max(0, Math.floor(Number(cupo))) : 0) : undefined;
+
       const newTutoria = new Tutoria({
         titulo: titulo,
         descripcion: descripcion || '',
         creadorId: req.user.id,
         creadorNombre: req.user.email || req.user.nombre || null,
         horarioId: horarioId || null,
-        cupo: typeof cupo !== 'undefined' ? Number(cupo) : undefined
+        cupo: normalizedCupo
       });
 
-      // Persistir: si el repo expone save/create/insert, intentamos varios nombres
       const repo = this.tutoriaRepository;
       let saved = null;
+
+      // repo.save may be synchronous; support both sync and async interfaces
       if (repo.save && typeof repo.save === 'function') {
-        saved = await repo.save(newTutoria.toJSON ? newTutoria.toJSON() : newTutoria);
+        saved = await Promise.resolve(repo.save(newTutoria.toJSON ? newTutoria.toJSON() : newTutoria));
       } else if (repo.create && typeof repo.create === 'function') {
-        saved = await repo.create(newTutoria.toJSON ? newTutoria.toJSON() : newTutoria);
+        saved = await Promise.resolve(repo.create(newTutoria.toJSON ? newTutoria.toJSON() : newTutoria));
       } else if (repo.insert && typeof repo.insert === 'function') {
-        saved = await repo.insert(newTutoria.toJSON ? newTutoria.toJSON() : newTutoria);
+        saved = await Promise.resolve(repo.insert(newTutoria.toJSON ? newTutoria.toJSON() : newTutoria));
+      } else if (repo.readAll && repo.writeAll) {
+        const all = await Promise.resolve(repo.readAll());
+        const arr = Array.isArray(all) ? all : [];
+        const toSave = newTutoria.toJSON ? newTutoria.toJSON() : newTutoria;
+        arr.push(toSave);
+        await Promise.resolve(repo.writeAll(arr));
+        saved = toSave;
       } else {
-        // fallback: try write to readAll + push + persist methods if available
-        if (repo.readAll && repo.writeAll) {
-          const all = await repo.readAll();
-          const arr = Array.isArray(all) ? all : [];
-          const toSave = newTutoria.toJSON ? newTutoria.toJSON() : newTutoria;
-          arr.push(toSave);
-          await repo.writeAll(arr);
-          saved = toSave;
-        } else {
-          throw new Error('TutoriaRepository does not implement save/create/insert');
-        }
+        throw new Error('TutoriaRepository does not implement save/create/insert');
       }
 
       return res.status(201).json({ message: 'Tutoría creada', tutoria: saved });
@@ -100,7 +106,57 @@ class TutoriaController {
   async list(req, res) {
     try {
       const repo = this.tutoriaRepository;
-      const all = await (repo.readAll ? repo.readAll() : repo.listAll ? repo.listAll() : []);
+      if (!repo) return res.status(500).json({ error: 'Repositorio de tutorías no disponible' });
+
+      // LOG: entrada y headers para depuración
+      console.log('[tutoriaController.list] incoming query:', req.query, 'cookie present:', !!req.headers.cookie);
+
+      const all = await Promise.resolve(repo.readAll ? repo.readAll() : (repo.listAll ? repo.listAll() : []));
+      console.log('[tutoriaController.list] total tutorias from repo:', Array.isArray(all) ? all.length : all);
+
+      // Si se solicita ?mine=1, filtrar server-side usando cookie 'usuario' (base64 JSON)
+      if (String(req.query.mine) === '1') {
+        const usuario = parseUsuarioCookie(req.headers.cookie || '');
+        console.log('[tutoriaController.list] parsed usuario:', usuario);
+        if (!usuario || !usuario.id) return res.status(401).json({ error: 'No autorizado' });
+        const myId = String(usuario.id);
+
+        // Filtrado tolerante: distintos nombres/tipos para campo creador
+        const mine = (Array.isArray(all) ? all : []).filter(t => {
+          if (!t) return false;
+
+          // Si t es instancia de Tutoria con toJSON preferimos su forma plain
+          const plain = (t && typeof t.toJSON === 'function') ? t.toJSON() : t;
+
+          // Campos candidatos que pueden contener el id del creador
+          const candidates = [
+            plain.creadorId, plain.creador, plain.userId, plain.ownerId, plain.creatorId, plain.authorId
+          ];
+
+          for (const c of candidates) {
+            if (c === undefined || c === null) continue;
+            if (typeof c === 'object') {
+              const v = String(c.id || c._id || c.creadorId || c.userId || '');
+              if (v === myId) return true;
+            } else {
+              if (String(c) === myId) return true;
+            }
+          }
+
+          // Also check nested creator object shape: plain.creador.id, plain.creador._id
+          if (plain.creador && typeof plain.creador === 'object') {
+            const v = String(plain.creador.id || plain.creador._id || '');
+            if (v === myId) return true;
+          }
+
+          return false;
+        });
+
+        console.log('[tutoriaController.list] filtered mine count:', mine.length);
+        return res.json(mine);
+      }
+
+      // Default: devolver todo
       return res.json(Array.isArray(all) ? all : []);
     } catch (err) {
       console.error('[tutoriaController.list] error', err);
@@ -113,9 +169,12 @@ class TutoriaController {
     try {
       const id = req.params.id;
       const repo = this.tutoriaRepository;
-      const item = (repo.findById && typeof repo.findById === 'function') ? await repo.findById(id) : null;
+      const item = (repo.findById && typeof repo.findById === 'function') ? await Promise.resolve(repo.findById(id)) : null;
       if (!item) return res.status(404).json({ error: 'No encontrado' });
-      return res.json(item);
+
+      // Ensure response shape uses cupo (model Tutoria normalizes)
+      const plain = (item && typeof item.toJSON === 'function') ? item.toJSON() : item;
+      return res.json(plain);
     } catch (err) {
       console.error('[tutoriaController.getById] error', err);
       return res.status(500).json({ error: 'Error interno' });
