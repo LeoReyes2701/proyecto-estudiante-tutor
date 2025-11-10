@@ -47,37 +47,30 @@ const userRepo = new UserRepository();
 const tutoriaRepo = new TutoriaRepository();
 const scheduleRepo = new ScheduleRepository();
 
+// ==========================
+// INSCRIPCIONES
+// ==========================
 const InscripcionRepository = require('./repositories/InscripcionRepository');
 const InscripcionController = require('./controllers/inscripcionController');
 const inscripcionesRoutesFactory = require('./routes/inscripcionesRoutes');
 
-// Repositorio
+// Crear instancia del repositorio
 const inscripcionRepo = new InscripcionRepository();
 
-// Controlador
+// Crear instancia del controlador
 const inscripcionController = new InscripcionController({
   inscripcionRepository: inscripcionRepo,
   userRepository: userRepo,
   tutoriaRepository: tutoriaRepo
 });
 
-module.exports = function ({ inscripcionController }) {
-  const router = express.Router();
 
-  // Validar que el controlador tenga los métodos esperados
-  if (!inscripcionController || typeof inscripcionController.listAll !== 'function') {
-    throw new Error('inscripcionController.listAll debe ser una función');
-  }
 
-  // Ruta GET para listar todas las inscripciones
-  router.get('/', (req, res, next) => {
-    try {
-      return inscripcionController.listAll(req, res, next);
-    } catch (err) {
-      next(err);
-    }
-  });
-}
+// Montar rutas
+app.use('/inscripciones', inscripcionesRoutesFactory({ inscripcionController }));
+
+
+
 
 // Controllers
 const authcontroller = new AuthController({ userRepository: userRepo });
@@ -104,6 +97,7 @@ try {
 } catch (err) {
   scheduleController = scheduleControllerModule;
 }
+
 
 // Rutas (API)
 // Auth

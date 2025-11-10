@@ -16,5 +16,14 @@
     "password": "123456",
     "rol": "estudiante",
     "createdAt": "2025-11-10T16:02:05.609Z"
+  },
+  {
+    "id": "1762792408487-n4eij3x",
+    "nombre": "maria",
+    "apellido": "fuen",
+    "email": "eee@est.ucab.edu.ve",
+    "password": "qqqqqq",
+    "rol": "estudiante",
+    "createdAt": "2025-11-10T16:33:28.487Z"
   }
 ]

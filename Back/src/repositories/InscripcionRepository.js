@@ -19,7 +19,7 @@ class InscripcionRepository {
       const data = JSON.parse(raw);
       return Array.isArray(data) ? data : [];
     } catch (err) {
-      console.error('[InscripcionRepository.readAll] JSON corrupto, reseteando', err);
+      console.error('[InscripcionRepository._readAll] JSON corrupto, reseteando', err);
       fs.writeFileSync(this.filePath, '[]', 'utf8');
       return [];
     }
@@ -30,25 +30,32 @@ class InscripcionRepository {
     fs.writeFileSync(this.filePath, JSON.stringify(arr, null, 2), 'utf8');
   }
 
+  // API pública
   all() {
     return this._readAll();
   }
 
   save(inscripcion) {
     const all = this._readAll();
-    all.push(inscripcion);
+    const toSave = inscripcion && typeof inscripcion.toJSON === 'function' ? inscripcion.toJSON() : inscripcion;
+    // Asignar id si no existe
+    if (!toSave.id) {
+      toSave.id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      toSave.createdAt = new Date().toISOString();
+    }
+    all.push(toSave);
     this._writeAll(all);
-    return inscripcion;
+    return toSave;
   }
 
   findByUser(userId) {
     const all = this._readAll();
-    return all.filter(i => i.userId === userId);
+    return all.filter(i => String(i.userId) === String(userId));
   }
 
   findByTutoria(tutoriaId) {
     const all = this._readAll();
-    return all.filter(i => i.tutoriaId === tutoriaId);
+    return all.filter(i => String(i.tutoriaId) === String(tutoriaId));
   }
 }
 
