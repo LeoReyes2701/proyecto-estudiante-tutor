@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": "1762809628519-l064bye",
+    "titulo": "MATES",
+    "descripcion": "hola",
+    "cupo": 16,
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorCorreo": null,
+    "horarioId": "1762793643806-0xt3wi7",
+    "estudiantesInscritos": [
+      "1762810321837-tii981f"
+    ],
+    "createdAt": "2025-11-10T21:20:28.519Z"
+  }
+]

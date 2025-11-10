@@ -22,5 +22,17 @@
     ],
     "createdAt": "2025-11-10T18:00:28.761Z",
     "id": "1762797628761-kda8pgo"
+  },
+  {
+    "tutorId": "1762742426736-rjzvbd4",
+    "slots": [
+      {
+        "day": "Viernes",
+        "horaInicio": "15:00",
+        "horaFin": "16:40"
+      }
+    ],
+    "createdAt": "2025-11-10T21:29:14.483Z",
+    "id": "1762810154483-gtjys5s"
   }
 ]

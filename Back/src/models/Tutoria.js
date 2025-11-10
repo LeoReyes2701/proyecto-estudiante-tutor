@@ -4,20 +4,22 @@ class Tutoria {
     this.titulo = String(obj.titulo || '').trim();
     this.descripcion = String(obj.descripcion || '').trim();
 
-    // Nuevo atributo cupo (número)
-    //  - si viene obj.cupo se usa su valor numérico
-    //  - si no viene pero existe obj.fecha y parece un número, lo tomamos como fallback
-    //  - en cualquier otro caso cupo = 0
+    // cupo: número entero ≥ 0
     const rawCupo = typeof obj.cupo !== 'undefined' ? obj.cupo : obj.fecha;
     const n = Number(rawCupo);
     this.cupo = Number.isFinite(n) && !Number.isNaN(n) ? Math.max(0, Math.floor(n)) : 0;
 
-    // Relation to creator
+    // creador
     this.creadorId = obj.creadorId || null;
-    this.creadorNombre = obj.creadorNombre || null;
+    this.creadorCorreo = obj.creadorCorreo || null;
 
-    // Relation to schedule (horario) used when creating the tutoria
+    // horario asociado
     this.horarioId = obj.horarioId || obj.scheduleId || null;
+
+    // lista de estudiantes inscritos (IDs)
+    this.estudiantesInscritos = Array.isArray(obj.estudiantesInscritos)
+      ? obj.estudiantesInscritos.map(id => String(id))
+      : [];
 
     this.createdAt = obj.createdAt || new Date().toISOString();
   }
@@ -29,8 +31,9 @@ class Tutoria {
       descripcion: this.descripcion,
       cupo: this.cupo,
       creadorId: this.creadorId,
-      creadorNombre: this.creadorNombre,
+      creadorCorreo: this.creadorCorreo,
       horarioId: this.horarioId,
+      estudiantesInscritos: this.estudiantesInscritos,
       createdAt: this.createdAt
     };
   }

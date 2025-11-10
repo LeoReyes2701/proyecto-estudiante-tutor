@@ -1,22 +1,42 @@
-.nav-link.active {
-    border-bottom: 2px solid white;
+/* /src/styles/InscribirseCurso.css */
+
+.bg-ucab-blue {
+  background-color: #0b3d91;
 }
 
-
-.page-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--light-grey);
+.btn-ucab-primary {
+  background: linear-gradient(90deg, #0b3d91, #0b8ae6);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(11,61,145,0.12);
+  transition: all 0.2s ease;
 }
 
+.btn-ucab-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 10px 22px rgba(11,61,145,0.14);
+}
 
 .sticky-footer-btn {
-    position: sticky;
-    bottom: 0;
-    z-index: 1020;
-    padding: 20px 0;
-    background-color: var(--white);
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-    margin-top: auto; 
+  position: sticky;
+  bottom: 0;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.card h3 {
+  text-align: center;
+}
+
+#inscripcionMsg {
+  font-size: 1rem;
+  color: #0b7a3b;
+}
+#inscripcionMsg.error {
+  color: #b72b2b;
 }

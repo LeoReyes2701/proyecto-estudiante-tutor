@@ -60,12 +60,23 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Volver
-    if (volverBtn) {
-      volverBtn.addEventListener("click", (ev) => {
-        ev && ev.preventDefault();
-        window.location.href = "/gestion.html";
-      });
+    if (!volverBtn) return;
+
+    try {
+      const cookie = document.cookie.split(';').map(s => s.trim()).find(s => s.startsWith('usuario='));
+      if (!cookie) return;
+      const raw = cookie.split('=')[1];
+      const usuario = JSON.parse(atob(decodeURIComponent(raw)));
+      const rol = (usuario.rol || '').toLowerCase();
+
+      if (rol === 'estudiante') {
+        volverBtn.href = 'gestion_estudiante.html';
+      } else {
+        volverBtn.href = 'gestion.html';
+      }
+    } catch (e) {
+      console.warn('[btnVolver] No se pudo determinar el rol del usuario', e);
+      volverBtn.href = 'gestion.html'; // fallback
     }
 
     // Mostrar tutorías: primero intentar fuente localStorage.tutorias (si existe), luego endpoint
@@ -169,4 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Error en perfil:", e);
     try { window.location.href = "/login.html"; } catch (e) {}
   }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+
 });
