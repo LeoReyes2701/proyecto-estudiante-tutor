@@ -6,159 +6,223 @@
   <title>Crear Tutoría — Programa Estudiante‑Tutor</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    :root{
-      --ucab-blue:#0b3d91;
-      --accent:#0b8ae6;
-      --bg:#f4f7fb;
-      --card:#ffffff;
-      --muted:#6c757d;
-    }
-    html,body{height:100%;margin:0;font-family:Inter, Roboto, Arial, sans-serif;background:linear-gradient(180deg,#eaf3ff 0%,var(--bg)100%);}
-    .topbar{background:#fff;border-bottom:1px solid #eef3fb;padding:10px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 18px rgba(20,40,80,0.03);}
-    .brand{font-weight:700;color:var(--ucab-blue);letter-spacing:0.2px}
-    .nav-actions{margin-left:16px;display:flex;gap:8px;align-items:center}
-    .nav-actions .btn{font-weight:600}
-    .container{max-width:1100px;margin:20px auto;padding:18px}
-    .card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 8px 30px rgba(11,61,145,0.04)}
-    .grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
-    .form-row{display:flex;gap:12px}
-    label{font-weight:600}
-    .muted{color:var(--muted)}
-    .profile{margin-left:auto;display:flex;align-items:center;gap:10px}
-    .avatar{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#0b3d91,#0b8ae6);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
-    @media(max-width:900px){.grid{grid-template-columns:1fr;}.profile{display:none}}
-    .btn-ghost{background:#fff;border:1px solid #e6eefb}
-  </style>
+  <link rel="stylesheet" href="/src/styles/crearTutoria.css">
 </head>
 <body>
+
   <div class="topbar">
-    <div class="brand">UCAB — Programa Estudiante‑Tutor</div>
-
-    <nav class="nav-actions" aria-label="Navegación principal">
-      <!-- botones superiores removidos -->
-    </nav>
-
-    <div class="profile" role="region" aria-label="Perfil">
-      <div class="avatar" id="avatar">PE</div>
-      <div>
-        <div id="perfilName" style="font-weight:700">Perfil</div>
-        <div style="font-size:0.85rem;color:var(--muted)" id="perfilEmail">usuario@est.ucab.edu.ve</div>
-      </div>
+    <div class="brand">Programa Estudiante‑Tutor</div>
+    <div class="profile">
+      <div class="small muted">Tutor</div>
+      <div class="avatar">MA</div>
     </div>
   </div>
 
   <main class="container">
-    <div class="card grid">
-      <section>
-        <h3>Crear Tutoría</h3>
-        <p class="muted">Crea una nueva tutoría indicando los datos básicos. Completa el formulario y pulsa "Guardar".</p>
+    <div class="card">
+      <div class="grid">
+        <!-- FORMULARIO PRINCIPAL -->
+        <section>
+          <h3 class="mb-2">Crear Tutoría</h3>
+          <p class="small muted">Define la tutoría y publícala para estudiantes.</p>
 
-        <form id="formCrearTutoria" class="mt-3">
-          <div class="mb-3">
-            <label for="titulo">Título</label>
-            <input id="titulo" name="titulo" class="form-control" required />
-          </div>
-
-          <div class="mb-3">
-            <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" name="descripcion" class="form-control" rows="4" required></textarea>
-          </div>
-
-          <div class="form-row mb-3">
-            <div style="flex:1">
-              <label for="fecha">Fecha</label>
-              <input id="fecha" name="fecha" type="date" class="form-control" />
+          <form id="crearTutoriaForm" class="mt-3">
+            <div class="mb-3">
+              <label for="titulo" class="form-label">Título</label>
+              <input id="titulo" name="titulo" type="text" class="form-control" placeholder="Ej. Álgebra lineal - Repaso" required />
             </div>
-            <div style="width:150px">
-              <label for="hora">Hora</label>
-              <input id="hora" name="hora" type="time" class="form-control" />
+
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea id="descripcion" name="descripcion" class="form-control" rows="4" placeholder="Breve descripción de la tutoría"></textarea>
+            </div>
+
+            <div class="form-row mb-3">
+              <div style="width:120px">
+                <label for="cupo" class="form-label">Cupo</label>
+                <input id="cupo" name="cupo" type="number" min="1" class="form-control" value="1" />
+              </div>
+            </div>
+
+            <div class="form-footer">
+              <a href="/gestion.html" class="btn btn-outline-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Publicar tutoría</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- SIDEBAR HORARIOS (selección de horarios existentes del tutor) -->
+        <aside>
+          <div class="d-flex align-items-start justify-content-between mb-2">
+            <div>
+              <h5 class="mb-0">Horarios</h5>
+              <div class="small muted">Selecciona los horarios ya creados</div>
             </div>
           </div>
 
-          <div class="mb-3">
-            <label for="lugar">Lugar</label>
-            <input id="lugar" name="lugar" class="form-control" placeholder="Aula / En línea" />
+          <div class="card p-2">
+            <div id="horariosList" class="horarios-list">
+              <div class="no-horarios">Cargando horarios...</div>
+            </div>
+
+            <div class="mt-3 d-flex gap-2">
+              <button id="refreshSlots" class="btn btn-sm btn-outline-primary">Refrescar</button>
+              <button id="clearSelection" class="btn btn-sm btn-outline-secondary">Borrar selección</button>
+            </div>
           </div>
-
-          <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <button type="button" id="btnCancelar" class="btn btn-outline-secondary">Cancelar</button>
-          </div>
-
-          <div id="formMsg" class="mt-3 muted" role="status" aria-live="polite"></div>
-        </form>
-      </section>
-
-      <!-- aside de Acciones rápidas eliminado según petición -->
-      <aside aria-hidden="true"></aside>
+        </aside>
+      </div>
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      const horariosList = document.getElementById('horariosList');
+      const refreshBtn = document.getElementById('refreshSlots');
+      const clearBtn = document.getElementById('clearSelection');
 
-  <script type="module">
-    // gestión de interacciones básicas; conecta botones con las páginas/funciones existentes
-    const redirect = (path) => { window.location.href = path; };
+      // Estado local: horarios disponibles y selección
+      let horarios = [];
+      let selectedIdx = new Set();
 
-    // Acciones rápidas removidas - ya no se referencian
-
-    // Formulario: enviar al endpoint de tutorías si existe
-    const form = document.getElementById('formCrearTutoria');
-    const formMsg = document.getElementById('formMsg');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      formMsg.textContent = 'Guardando...';
-      const payload = {
-        titulo: document.getElementById('titulo').value.trim(),
-        descripcion: document.getElementById('descripcion').value.trim(),
-        fecha: document.getElementById('fecha').value,
-        hora: document.getElementById('hora').value,
-        lugar: document.getElementById('lugar').value.trim()
-      };
-
-      try {
-        const token = localStorage.getItem('authToken');
-        const res = await fetch('/tutorias', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-          },
-          body: JSON.stringify(payload)
-        });
-        const json = await res.json().catch(() => ({}));
-        if (res.ok) {
-          formMsg.textContent = 'Tutoría creada correctamente';
-          form.reset();
-          const ul = document.getElementById('listaTutoriaRecientes');
-          if (ul) ul.innerHTML = `<li>${payload.titulo || 'Tutoría nueva'} — ${payload.fecha || 'sin fecha'}</li>`;
-          return;
-        } else {
-          formMsg.textContent = json && (json.error || json.message) ? (json.error || json.message) : `Error ${res.status}`;
-        }
-      } catch (err) {
-        console.error(err);
-        formMsg.textContent = 'Error de red al crear la tutoría';
+      // Reemplaza esta función para extraer el tutorId real (cookie, header, etc.)
+      function currentTutorId() {
+        // si tu app inyecta usuario via cookie 'usuario' en base64 JSON (como en app.js), leerla:
+        try {
+          const cookie = document.cookie.split(';').map(s=>s.trim()).find(s => s.startsWith('usuario='));
+          if (cookie) {
+            const val = cookie.split('=')[1];
+            const user = JSON.parse(atob(val));
+            return user && user.id ? String(user.id) : null;
+          }
+        } catch(e) {}
+        // fallback: intentar cabecera simulada via global (o null)
+        return null;
       }
-    });
 
-    // Cancelar -> volver a gestion.html
-    document.getElementById('btnCancelar').addEventListener('click', () => {
-      redirect('/gestion.html');
-    });
+      // render
+      function renderSlots() {
+        horariosList.innerHTML = '';
+        if (!Array.isArray(horarios) || horarios.length === 0) {
+          const n = document.createElement('div');
+          n.className = 'no-horarios';
+          n.textContent = 'No hay horarios creados por este tutor.';
+          horariosList.appendChild(n);
+          return;
+        }
 
-    // Perfil: cargar usuario local si existe
-    (function initProfile() {
-      const usuarioJson = localStorage.getItem('usuario');
-      if (!usuarioJson) return;
-      try {
-        const u = JSON.parse(usuarioJson);
-        document.getElementById('perfilName').textContent = u.nombre ? `${u.nombre} ${u.apellido || ''}` : 'Perfil';
-        document.getElementById('perfilEmail').textContent = u.email || '';
-        document.getElementById('avatar').textContent = (u.nombre ? u.nombre.charAt(0) : 'P') + (u.apellido ? u.apellido.charAt(0) : '');
-      } catch (e) { /* ignore */ }
+        horarios.forEach((s, idx) => {
+          const item = document.createElement('div');
+          item.className = 'horario-item';
+          item.dataset.idx = idx;
+
+          const left = document.createElement('div');
+          left.style.display = 'flex';
+          left.style.alignItems = 'center';
+          left.innerHTML = `
+            <input type="checkbox" data-idx="${idx}" ${selectedIdx.has(idx) ? 'checked' : ''} aria-label="Seleccionar horario">
+            <div>
+              <div class="horario-meta">${s.day || s.dia || '—'} • ${s.start || s.horaInicio || '—'} — ${s.end || s.horaFin || '—'}</div>
+              <div class="small muted">${s.note || (s.description ? s.description.slice(0,60) : '')}</div>
+            </div>
+          `;
+
+          const actions = document.createElement('div');
+          actions.style.display = 'flex';
+          actions.style.gap = '8px';
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'btn btn-sm btn-outline-primary';
+          toggleBtn.textContent = selectedIdx.has(idx) ? 'Deseleccionar' : 'Seleccionar';
+          toggleBtn.onclick = () => {
+            if (selectedIdx.has(idx)) selectedIdx.delete(idx);
+            else selectedIdx.add(idx);
+            renderSlots();
+          };
+
+          actions.appendChild(toggleBtn);
+          item.appendChild(left);
+          item.appendChild(actions);
+          horariosList.appendChild(item);
+
+          // checkbox handler
+          item.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+            const i = Number(e.target.dataset.idx);
+            if (e.target.checked) selectedIdx.add(i);
+            else selectedIdx.delete(i);
+            renderSlots();
+          });
+        });
+      }
+
+      // fetch horarios del backend para el tutor actual
+      async function loadHorarios() {
+        horariosList.innerHTML = '<div class="no-horarios">Cargando horarios...</div>';
+        try {
+          // Si tu backend expone /horarios?tutorId=..., úsalo.
+          // Intentamos deducir tutorId; si null, llamamos /horarios (filtrado en servidor)
+          const tutorId = currentTutorId();
+          const query = tutorId ? `?tutorId=${encodeURIComponent(tutorId)}` : '';
+          const res = await fetch('/horarios' + query, { headers: { 'Accept': 'application/json' } });
+          if (!res.ok) throw new Error('Error al cargar horarios');
+          const data = await res.json();
+          // normalizar array de slots: cada elemento puede tener campos distintos según tu modelo
+          horarios = Array.isArray(data) ? data.map(h => ({
+            id: h.id || h._id || null,
+            day: h.day || h.dia || (h.slots && h.slots[0] && h.slots[0].day) || '',
+            start: h.start || h.horaInicio || (h.slots && h.slots[0] && h.slots[0].horaInicio) || '',
+            end: h.end || h.horaFin || (h.slots && h.slots[0] && h.slots[0].horaFin) || '',
+            note: h.note || h.descripcion || ''
+          })) : [];
+          selectedIdx = new Set();
+          renderSlots();
+        } catch (err) {
+          console.error(err);
+          horariosList.innerHTML = '<div class="no-horarios">No se pudieron cargar los horarios.</div>';
+        }
+      }
+
+      refreshBtn.addEventListener('click', loadHorarios);
+      clearBtn.addEventListener('click', () => {
+        selectedIdx.clear();
+        renderSlots();
+      });
+
+      // Al enviar el formulario, adjuntar la selección de horarios (ids) al payload
+      document.getElementById('crearTutoriaForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const titulo = document.getElementById('titulo').value.trim();
+        if (!titulo) { alert('El título es requerido'); return; }
+        const selected = Array.from(selectedIdx).map(i => horarios[i]).filter(Boolean).map(s => ({ id: s.id, day: s.day, start: s.start, end: s.end }));
+
+        const payload = {
+          titulo,
+          descripcion: document.getElementById('descripcion').value.trim(),
+          cupo: Number(document.getElementById('cupo').value) || 1,
+          // adjuntamos slots seleccionados (backend deberá interpretar)
+          slots: selected
+        };
+
+        try {
+          const res = await fetch('/tutorias', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(()=>({ error: 'Error' }));
+            alert('No se pudo crear la tutoría: ' + (err.error || err.message || res.status));
+            return;
+          }
+          alert('Tutoría publicada correctamente');
+          window.location.href = '/gestion.html';
+        } catch (err) {
+          console.error(err);
+          alert('Error de red al crear la tutoría');
+        }
+      });
+
+      // cargar initial
+      loadHorarios();
     })();
   </script>
 </body>

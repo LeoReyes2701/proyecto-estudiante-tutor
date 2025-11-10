@@ -1,13 +1,25 @@
 // Back/src/models/Schedule.js
 class Schedule {
-  constructor(userId, slots = []) {
-    if (!userId) throw new Error('userId es requerido');
+  /**
+   * tutorId: identificador del tutor que crea el horario
+   * slots: array de slots. Cada slot puede tener las claves:
+   *   - day, start, end
+   *   - day, horaInicio, horaFin
+   */
+  constructor(tutorId, slots = []) {
+    if (!tutorId) throw new Error('tutorId es requerido');
     if (!Array.isArray(slots)) throw new Error('slots debe ser un array');
     this.id = Date.now().toString();
-    this.userId = String(userId);
+    this.tutorId = String(tutorId);
     this.slots = [];
     this.createdAt = new Date().toISOString();
-    slots.forEach(s => this.addSlot(s.day, s.start, s.end));
+    slots.forEach(s => {
+      // aceptar ambos formatos de campo (start/end o horaInicio/horaFin)
+      const day = s.day || s.dia;
+      const start = s.start || s.horaInicio || s.hora_inicio;
+      const end = s.end || s.horaFin || s.hora_fin;
+      this.addSlot(day, start, end);
+    });
   }
 
   static timeToMinutes(time) {
@@ -19,6 +31,11 @@ class Schedule {
     return hh * 60 + mm;
   }
 
+  /**
+   * addSlot acepta day, start, end donde start/end pueden venir en formato "HH:MM"
+   * o cualquier string convertible. Internamente se almacenan como horaInicio/horaFin
+   * para coincidir con lo que envía el HTML.
+   */
   addSlot(day, start, end) {
     if (!day) throw new Error('El campo day es obligatorio');
     const sMin = Schedule.timeToMinutes(String(start));
@@ -29,19 +46,24 @@ class Schedule {
 
     const overlap = this.slots.some(slot => {
       if (slot.day !== day) return false;
-      const ss = Schedule.timeToMinutes(slot.start);
-      const ee = Schedule.timeToMinutes(slot.end);
+      const ss = Schedule.timeToMinutes(slot.horaInicio || slot.start);
+      const ee = Schedule.timeToMinutes(slot.horaFin || slot.end);
       return !(eMin <= ss || sMin >= ee);
     });
     if (overlap) throw new Error('El slot se solapa con otro existente');
 
-    this.slots.push({ day, start: String(start), end: String(end) });
+    // Guardar con las claves que pide el HTML: dia, horaInicio, horaFin
+    this.slots.push({
+      day,
+      horaInicio: String(start),
+      horaFin: String(end)
+    });
   }
 
   toJSON() {
     return {
       id: this.id,
-      userId: this.userId,
+      tutorId: this.tutorId,
       slots: this.slots.map(s => ({ ...s })),
       createdAt: this.createdAt
     };

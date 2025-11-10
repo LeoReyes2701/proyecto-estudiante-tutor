@@ -1,69 +1,146 @@
-        .details-card {
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 900px; 
-            width: 100%;
-        }
-        
-        .main-content-wrapper {
-             max-width: 900px; 
-             margin: 0 auto;
-        }
+:root{
+  --ucab-blue:#0b3d91;
+  --accent:#0b8ae6;
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --muted:#6c757d;
+}
 
-        .form-input-ucab {
-<<<<<<< HEAD
-            background-color: var(--light-grey);
-=======
-            background-color: var(--white);
->>>>>>> origin/leonardo
-            border: 1px solid #ddd;
-            padding: 0.75rem 1rem; 
-            border-radius: 0.5rem;
-            width: 100%;
-        }
-       
-        .schedule-card {
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid #ddd; 
-            border-radius: 0.5rem;
-            padding: 1rem 0.5rem;
-            text-align: center;
-            font-weight: 500;
-<<<<<<< HEAD
-            background-color: white;
-=======
-            background-color: rgb(255, 255, 255);
->>>>>>> origin/leonardo
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
+html,body{
+  height:100%;
+  margin:0;
+  font-family:Inter, Roboto, Arial, sans-serif;
+  background:linear-gradient(180deg,#eaf3ff 0%,var(--bg)100%);
+}
 
-        .schedule-card.selected, .schedule-card:hover {
-            border-color: #3498db;
-            color: #3498db;
-        }
-        
-        .horario-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
+.topbar{
+  background:#fff;
+  border-bottom:1px solid #eef3fb;
+  padding:10px 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  box-shadow:0 4px 18px rgba(20,40,80,0.03);
+}
 
-        @media (min-width: 768px) {
-            .horario-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        .footer-fixed {
-            width: 100%;
-            background-color: var(--ucab-blue);
-            color: white;
-            padding: 15px 0;
-            font-size: 0.875rem;
-            flex-shrink: 0; 
-        }
-        .page-container {
-             display: flex;
-             flex-direction: column;
-             min-height: 100vh;
-        }
+.brand{
+  font-weight:700;
+  color:var(--ucab-blue);
+  letter-spacing:0.2px;
+}
+
+.container{
+  max-width:1100px;
+  margin:20px auto;
+  padding:18px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:10px;
+  padding:20px;
+  box-shadow:0 8px 30px rgba(11,61,145,0.04);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:18px;
+}
+
+label{
+  font-weight:600;
+}
+
+.muted{
+  color:var(--muted);
+}
+
+.profile{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.avatar{
+  width:40px;
+  height:40px;
+  border-radius:8px;
+  background:linear-gradient(135deg,#0b3d91,#0b8ae6);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr;}
+  .profile{display:none;}
+}
+
+/* Horarios list */
+.horarios-list {
+  max-height: 360px;
+  overflow:auto;
+  border:1px solid #eef6ff;
+  border-radius:8px;
+  background:#fbfdff;
+  padding:8px;
+}
+
+.horario-item {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px;
+  border-radius:6px;
+  margin-bottom:6px;
+  cursor:pointer;
+}
+
+.horario-item input {
+  margin-right:10px;
+}
+
+.horario-item:hover {
+  background: linear-gradient(90deg, rgba(11,138,230,0.04), transparent);
+}
+
+.horario-meta {
+  font-size:0.95rem;
+  color:#334155;
+  font-weight:600;
+  text-align:right;
+}
+
+.no-horarios {
+  padding:12px;
+  color:var(--muted);
+  text-align:center;
+}
+
+.small {
+  font-size:0.86rem;
+  color:var(--muted);
+}
+
+.form-footer {
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-top:14px;
+}
+
+.slot-controls {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.slot-controls .form-select,
+.slot-controls .form-control {
+  height:40px;
+}

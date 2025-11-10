@@ -1,209 +1,144 @@
-<<<<<<< HEAD
-// Front/src/components/schedule/crearHorario.js
-const d = document;
+// /src/components/schedule/crearHorario.js
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('createHorarioForm');
+  const dia = document.getElementById('diaSemana');
+  const inicio = document.getElementById('horaInicio');
+  const fin = document.getElementById('horaFin');
 
-class CrearHorario {
-  constructor() {
-    this.form = d.getElementById('createScheduleForm');
-    this.userIdInput = d.getElementById('userIdInput');
-    this.daySelect = d.getElementById('daySelect');
-    this.startInput = d.getElementById('startInput');
-    this.endInput = d.getElementById('endInput');
-    this.submitBtn = d.getElementById('submitSchedule');
-    this.resetBtn = d.getElementById('resetForm');
-    this.formError = d.getElementById('formError');
-    this.saveStatus = d.getElementById('saveStatus');
-    this.serverSchedules = d.getElementById('serverSchedules');
-    this.appMessages = d.getElementById('appMessages');
-    this.init();
+  const MAX_MINUTES = 120; // 2 horas
+  const MIN_MINUTES = 20;  // 20 minutos
+
+  const log = (...args) => console.log('[crearHorario]', ...args);
+
+  const timeToMinutes = (t) => {
+    if (!t) return NaN;
+    const parts = String(t).split(':').map(Number);
+    if (parts.length !== 2 || parts.some(v => Number.isNaN(v))) return NaN;
+    return parts[0] * 60 + parts[1];
+  };
+
+  function showFormMessage(text, type = 'info') {
+    let container = document.getElementById('crearHorarioMsg');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'crearHorarioMsg';
+      container.setAttribute('role', 'status');
+      container.style.marginTop = '12px';
+      container.style.fontWeight = '600';
+      form.appendChild(container);
+    }
+    container.textContent = text;
+    container.style.color = type === 'error' ? '#b72b2b' : type === 'success' ? '#0b7a3b' : '#334155';
   }
 
-  init() {
-    this.form.addEventListener('submit', (e) => this.onSubmit(e));
-    this.resetBtn.addEventListener('click', () => this.onReset());
-    window.addEventListener('load', () => this.loadServerSchedules());
+  function validateTimes() {
+    const s = timeToMinutes(inicio.value);
+    const e = timeToMinutes(fin.value);
+    if (!Number.isFinite(s) || !Number.isFinite(e)) {
+      return { ok: false, msg: 'Selecciona hora de inicio y hora de fin válidas.' };
+    }
+    if (e <= s) return { ok: false, msg: 'La hora de fin debe ser posterior a la hora de inicio.' };
+    const diff = e - s;
+    if (diff < MIN_MINUTES) return { ok: false, msg: `La duración mínima es ${MIN_MINUTES} minutos.` };
+    if (diff > MAX_MINUTES) return { ok: false, msg: 'La diferencia entre inicio y fin no puede ser mayor a 2 horas.' };
+    return { ok: true, duration: diff };
   }
 
-  pushAlert(msg, type='info') {
-    const el = document.createElement('div');
-    el.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
-    this.appMessages.appendChild(el);
-    setTimeout(() => { try { el.querySelector('.alert').classList.remove('show'); } catch(e){} }, 4000);
-  }
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    log('submit fired');
 
-  validateSlot(day, start, end) {
-    if (!day) return 'Selecciona un día';
-    if (!start || !end) return 'Selecciona hora de inicio y fin';
-    const [sh, sm] = start.split(':').map(Number);
-    const [eh, em] = end.split(':').map(Number);
-    if ([sh, sm, eh, em].some(v => Number.isNaN(v))) return 'Formato de hora inválido';
-    const sMin = sh*60 + sm;
-    const eMin = eh*60 + em;
-    if (sMin >= eMin) return 'La hora de inicio debe ser anterior a la de fin';
-    if (eMin - sMin < 20) return 'La duración mínima es 20 minutos';
-    return null;
-  }
+    const v = validateTimes();
+    if (!v.ok) {
+      log('validation failed', v.msg);
+      return showFormMessage(v.msg, 'error');
+    }
 
-  async onSubmit(e) {
-    e.preventDefault();
-    const userId = this.userIdInput.value.trim();
-    const day = this.daySelect.value;
-    const start = this.startInput.value;
-    const end = this.endInput.value;
-
-    if (!userId) return this.showError('userId es obligatorio');
-    const v = this.validateSlot(day, start, end);
-    if (v) return this.showError(v);
-
-    const payload = { role: 'tutor', userId, slots: [{ day, start, end }], confirm: 'yes' };
-
+    // Obtener usuario desde localStorage (cookie alternativa no contemplada aquí)
+    let usuario = null;
     try {
-      this.setSaving(true, 'Guardando...');
-      const res = await fetch('/api/schedules', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const json = await res.json().catch(() => null);
-      this.setSaving(false);
-
-      if (res.status === 201) {
-        this.pushAlert('Horario guardado correctamente', 'success');
-        this.onReset();
-        this.loadServerSchedules();
-        return;
-      }
-
-      if (res.status === 200 && json && json.message === 'Horario ya existe') {
-        this.pushAlert('El horario ya existe', 'info');
-        this.loadServerSchedules();
-        return;
-      }
-
-      const msg = json?.error || json?.message || `Error ${res.status}`;
-      this.showError(msg);
-    } catch (err) {
-      console.error('Error guardando horario', err);
-      this.setSaving(false);
-      this.showError('Error de red al guardar horario');
+      usuario = JSON.parse(localStorage.getItem('usuario')) || null;
+    } catch (e) {
+      log('error parsing usuario from localStorage', e);
     }
-  }
-
-  showError(msg) {
-    this.formError.textContent = msg;
-    this.formError.classList.remove('d-none');
-    this.pushAlert(msg, 'danger');
-    setTimeout(() => this.formError.classList.add('d-none'), 5000);
-  }
-
-  onReset() {
-    this.userIdInput.value = '';
-    this.daySelect.value = '';
-    this.startInput.value = '';
-    this.endInput.value = '';
-    this.saveStatus.textContent = '';
-  }
-
-  setSaving(active, text='') {
-    if (active) {
-      this.submitBtn.setAttribute('disabled', 'disabled');
-      this.saveStatus.textContent = text;
-    } else {
-      this.submitBtn.removeAttribute('disabled');
-      this.saveStatus.textContent = '';
-    }
-  }
-
-  async loadServerSchedules() {
-    try {
-      const res = await fetch('/api/schedules', { cache: 'no-store' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const arr = await res.json();
-      this.renderServerSchedules(arr || []);
-    } catch (err) {
-      console.error('Error cargando schedules', err);
-      this.serverSchedules.innerHTML = '<div class="text-danger">No se pudieron cargar horarios</div>';
-    }
-  }
-
-  renderServerSchedules(arr) {
-    if (!arr || arr.length === 0) {
-      this.serverSchedules.innerHTML = '<div class="text-muted">No hay horarios en el servidor</div>';
+    if (!usuario) {
+      showFormMessage('Debes iniciar sesión como tutor para crear horarios.', 'error');
       return;
     }
-    this.serverSchedules.innerHTML = '';
-    arr.forEach(s => {
-      const card = document.createElement('div');
-      card.className = 'card p-2 mb-2';
-      const slotsHtml = (s.slots || []).map(sl => `<div class="small">${sl.day} • ${sl.start} - ${sl.end}</div>`).join('');
-      card.innerHTML = `<div class="d-flex justify-content-between"><div><strong>${s.userId}</strong></div><div class="text-muted">${s.createdAt ?? ''}</div></div><div class="mt-2">${slotsHtml}</div>`;
-      this.serverSchedules.appendChild(card);
+    if (String((usuario.rol || '')).toLowerCase() !== 'tutor') {
+      showFormMessage('Debes tener el rol tutor para crear horarios.', 'error');
+      return;
+    }
+
+    const tutorId = usuario.id || usuario.userId || usuario.tutorId;
+    if (!tutorId) {
+      showFormMessage('No se encontró identificador de tutor en sesión.', 'error');
+      return;
+    }
+
+    const slot = { day: dia.value, horaInicio: inicio.value, horaFin: fin.value };
+    const payloadBase = {
+      role: 'tutor',
+      tutorId,
+      slots: [slot]
+    };
+
+    log('payload base', payloadBase);
+    showFormMessage('Validando horario...', 'info');
+
+    try {
+      // 1) Preview request (sin confirm) para que el backend valide y devuelva preview o errores
+      const previewRes = await fetch('/horarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payloadBase)
+      });
+      const previewJson = await previewRes.json().catch(() => ({}));
+      log('preview response', previewRes.status, previewJson);
+
+      if (!previewRes.ok) {
+        const err = previewJson && (previewJson.error || previewJson.message) ? (previewJson.error || previewJson.message) : `Error ${previewRes.status}`;
+        showFormMessage(err, 'error');
+        return;
+      }
+
+      // 2) Confirmar creación
+      const payloadCreate = { ...payloadBase, confirm: 'yes' };
+      showFormMessage('Creando horario...', 'info');
+      const createRes = await fetch('/horarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payloadCreate)
+      });
+      const createJson = await createRes.json().catch(() => ({}));
+      log('create response', createRes.status, createJson);
+
+      if (createRes.ok || createRes.status === 201) {
+        showFormMessage('Horario creado correctamente', 'success');
+        setTimeout(() => { window.location.href = '/gestion.html'; }, 900);
+        return;
+      }
+
+      const errMsg = createJson && (createJson.error || createJson.message) ? (createJson.error || createJson.message) : `Error ${createRes.status}`;
+      showFormMessage(errMsg, 'error');
+    } catch (err) {
+      log('network error', err);
+      showFormMessage('Error de red creando el horario', 'error');
+    }
+  });
+
+  // Mejora UX: ajustar opciones de horaFin según horaInicio seleccionada
+  inicio.addEventListener('change', () => {
+    const s = timeToMinutes(inicio.value);
+    if (!Number.isFinite(s)) return;
+    const opts = Array.from(fin.options);
+    opts.forEach(opt => {
+      if (!opt.value) return;
+      const v = timeToMinutes(opt.value);
+      opt.disabled = !(v > s && (v - s) <= MAX_MINUTES);
     });
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => new CrearHorario());
-=======
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('createHorarioForm');
-
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const inicio = document.getElementById('horaInicio').value;
-                const fin = document.getElementById('horaFin').value;
-                const dia = document.getElementById('diaSemana').value;
-                
-                let isValid = true;
-                
-                // Validación de campos vacíos
-                if (inicio === "" || fin === "" || dia === "") {
-                    alertPlaceholder('Por favor, selecciona un día, hora de inicio y hora de fin.', 'warning');
-                    isValid = false;
-                } 
-                
-                // Validación de lógica: La hora de inicio debe ser estrictamente anterior a la hora de fin.
-                if (isValid && inicio >= fin) {
-                    console.error("Error: La hora de inicio debe ser anterior a la hora de fin.");
-                    alertPlaceholder('Error: La hora de inicio debe ser anterior a la hora de fin.', 'danger');
-                    isValid = false;
-                }
-
-                if (isValid) {
-                    // Simulación de envío exitoso
-                    alertPlaceholder('Horario creado con éxito: ' + dia + ', de ' + inicio + ' a ' + fin, 'success');
-                    console.log("Horario válido. Datos a enviar:", { dia, inicio, fin });
-                    form.reset();
-                }
-            });
-
-            // Función para mostrar un mensaje temporal (reemplaza alert())
-            function alertPlaceholder(message, type) {
-                let alertDiv = document.getElementById('tempAlert');
-                
-                if (alertDiv) {
-                    alertDiv.remove();
-                }
-
-                alertDiv = document.createElement('div');
-                alertDiv.id = 'tempAlert';
-                // Posición fija centrada en la parte superior
-                alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3 w-75 w-md-50`;
-                alertDiv.role = 'alert';
-                alertDiv.style.zIndex = '1050'; 
-
-                alertDiv.innerHTML = `<strong>${message}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-                
-                document.body.appendChild(alertDiv);
-                
-                // Desaparecer automáticamente después de 4 segundos
-                setTimeout(() => {
-                    const currentAlert = document.getElementById('tempAlert');
-                    if(currentAlert) {
-                        new bootstrap.Alert(currentAlert).close();
-                    }
-                }, 4000);
-            }
+    if (timeToMinutes(fin.value) <= s || (timeToMinutes(fin.value) - s) > MAX_MINUTES) {
+      fin.value = '';
+    }
+  });
 });
->>>>>>> origin/leonardo

@@ -1,41 +1,68 @@
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f8f9fa; 
-    color: #333;
+/* ../src/styles/consultarHorario.css */
+
+/* Card layout */
+.schedule-card {
+  margin-bottom: 18px;
+  border-radius: 10px;
+  padding: 16px;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  background: #ffffff;
+  border: 1px solid rgba(20, 30, 48, 0.04);
 }
 
- .schedule-card {
-    border-left: 6px solid var(--ucab-blue);
-    border-radius: 0.5rem;
-    transition: transform 0.2s, box-shadow 0.2s;
-    background-color: white;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
+/* Hover */
 .schedule-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 51, 102, 0.1); 
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(19, 37, 75, 0.08);
 }
 
-        
+/* Day title and hours */
 .day-title {
-    color: var(--ucab-blue);
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-    display: flex; 
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  font-size: 1.05rem;
 }
-        
+
 .day-hours {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #555;
+  text-align: right;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.25;
 }
-        
+
+/* Improve layout for mobile */
+@media (max-width: 576px) {
+  .day-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .day-hours {
+    text-align: left;
+    margin-top: 8px;
+  }
+}
+
+/* Page container tweaks */
 .page-content-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
+  max-width: 900px;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
+/* Message bar */
+#consultarHorarioMsg {
+  text-align: center;
+  font-size: 0.98rem;
+  padding: 8px 12px;
+}
+
+/* Accent for UCAB theme (reuse header color if needed) */
+.bg-ucab-blue {
+  background-color: #0b4a7a !important;
+  color: #fff;
 }

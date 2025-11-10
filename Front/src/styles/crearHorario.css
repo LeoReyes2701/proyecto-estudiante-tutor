@@ -1,4 +1,4 @@
- .footer-fixed {
+        .footer-fixed {
             background-color: var(--ucab-blue);
             color: white;
             padding: 15px 0;
@@ -42,5 +42,3 @@
             color: var(--text-muted) !important; 
             font-size: 0.9rem;
         }
-
-       
