@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "tutorId": "1762742426736-rjzvbd4",
+    "slots": [
+      {
+        "day": "Lunes",
+        "horaInicio": "07:00",
+        "horaFin": "08:50"
+      }
+    ],
+    "createdAt": "2025-11-10T16:54:03.806Z",
+    "id": "1762793643806-0xt3wi7"
+  },
+  {
+    "tutorId": "1762742426736-rjzvbd4",
+    "slots": [
+      {
+        "day": "Miércoles",
+        "horaInicio": "16:00",
+        "horaFin": "16:50"
+      }
+    ],
+    "createdAt": "2025-11-10T18:00:28.761Z",
+    "id": "1762797628761-kda8pgo"
+  }
+]
