@@ -47,6 +47,24 @@ const userRepo = new UserRepository();
 const tutoriaRepo = new TutoriaRepository();
 const scheduleRepo = new ScheduleRepository();
 
+const InscripcionRepository = require('./repositories/InscripcionRepository');
+const InscripcionController = require('./controllers/inscripcionController');
+const inscripcionesRoutesFactory = require('./routes/inscripcionesRoutes');
+
+// Repositorio
+const inscripcionRepo = new InscripcionRepository();
+
+// Controlador
+const inscripcionController = new InscripcionController({
+  inscripcionRepository: inscripcionRepo,
+  userRepository: userRepo,
+  tutoriaRepository: tutoriaRepo
+});
+
+// Rutas
+app.use('/inscripciones', inscripcionesRoutesFactory({ inscripcionController }));
+
+
 // Controllers
 const authcontroller = new AuthController({ userRepository: userRepo });
 
