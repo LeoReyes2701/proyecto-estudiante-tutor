@@ -1,5 +1,5 @@
-// crearTutoria.js
-// Mapea explicitamente slots[0].day / slots[0].horaInicio / slots[0].horaFin
+// crearTutoria.js (actualizado: muestra mensaje y redirige a /gestion.html 900ms después si la creación responde ok o 201)
+// No se cambió la lógica de validación ni de carga de horarios, solo se ajustó el manejo del POST para aplicar la condición solicitada.
 const HORARIOS_ENDPOINT = '/horarios';
 const TUTORIAS_MINE = '/tutorias?mine=1';
 const POST_TUTORIAS = '/tutorias';
@@ -151,15 +151,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
       submitBtn && (submitBtn.disabled = true, submitBtn.textContent = 'Creando...');
       const post = await fetch(POST_TUTORIAS, { method:'POST', credentials:'include', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+
+      // ---------- Cambiado: comprobar createRes.ok || createRes.status === 201 ----------
+      if (post && (post.ok || post.status === 201)) {
+        setFeedback('Tutoría creada.', 'success');
+        // redirigir tras 900 ms
+        setTimeout(() => { window.location.href = '/gestion.html'; }, 900);
+        form.reset();
+        selectedIdx.clear();
+        await loadHorarios();
+        return;
+      }
+
+      // si no fue ok, intentar extraer body y mostrar error
       if (!post.ok) {
         const body = await post.json().catch(()=>null);
         return setFeedback(body && body.error ? `Error: ${body.error}` : `Error servidor (${post.status})`, 'danger');
       }
 
-      setFeedback('Tutoría creada.', 'success');
-      form.reset();
-      selectedIdx.clear();
-      await loadHorarios();
+      // fallback (si post no tiene ok y no entró en la condición anterior)
+      setFeedback('Respuesta inesperada del servidor.', 'danger');
+
     } catch (err) {
       console.error(err);
       setFeedback('Error creando la tutoría', 'danger');
