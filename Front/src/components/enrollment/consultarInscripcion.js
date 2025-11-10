@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
   emptyMessage.className = 'text-center text-muted mt-4';
   document.querySelector('main').prepend(emptyMessage);
 
-  const userId = "USR-12345"; // ⚠️ cambiar por el id del usuario actual
+  const userId = "USR-12345"; // cambiar por el id del usuario actual
 
-  // 1️⃣ función principal para obtener los datos
+  // función principal para obtener los datos
   async function fetchInscripcion() {
     try {
       const [insRes, tutRes, userRes] = await Promise.all([
@@ -49,13 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 2️⃣ Mostrar mensaje vacío o error
+  // Mostrar mensaje vacío o error
   function showEmpty(message) {
     emptyMessage.textContent = message || 'No hay inscripción disponible.';
     emptyMessage.classList.remove('d-none');
   }
 
-  // 3️⃣ Renderizar los datos de la inscripción
+  // Renderizar los datos de la inscripción
   function renderInscripcion({ inscripcion, tutoria, tutor }) {
     emptyMessage.classList.add('d-none');
 
@@ -83,6 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // 4️⃣ Inicializar
+  //Inicializar
   fetchInscripcion();
 });

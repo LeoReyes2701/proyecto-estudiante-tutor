@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const container = document.querySelector('.row');
   const btnInscribirse = document.querySelector('.btn-ucab-primary');
-  const currentUserId = 'user1'; // temporal hasta conectar login real
+  const currentUserId = localStorage.getItem('userId');
+
 
   const message = document.createElement('div');
   message.className = 'text-center mt-4 text-muted fs-5';
