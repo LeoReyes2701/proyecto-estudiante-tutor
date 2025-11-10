@@ -1,4 +1,4 @@
-const Inscripcion = require('../models/Inscripciones');
+const Inscripcion = require('../models/inscripcion');
 
 class InscripcionController {
   constructor({ inscripcionRepository, userRepository, tutoriaRepository }) {

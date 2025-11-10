@@ -61,9 +61,23 @@ const inscripcionController = new InscripcionController({
   tutoriaRepository: tutoriaRepo
 });
 
-// Rutas
-app.use('/inscripciones', inscripcionesRoutesFactory({ inscripcionController }));
+module.exports = function ({ inscripcionController }) {
+  const router = express.Router();
 
+  // Validar que el controlador tenga los métodos esperados
+  if (!inscripcionController || typeof inscripcionController.listAll !== 'function') {
+    throw new Error('inscripcionController.listAll debe ser una función');
+  }
+
+  // Ruta GET para listar todas las inscripciones
+  router.get('/', (req, res, next) => {
+    try {
+      return inscripcionController.listAll(req, res, next);
+    } catch (err) {
+      next(err);
+    }
+  });
+}
 
 // Controllers
 const authcontroller = new AuthController({ userRepository: userRepo });
