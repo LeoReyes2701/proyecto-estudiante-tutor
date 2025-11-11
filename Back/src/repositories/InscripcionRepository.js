@@ -29,7 +29,13 @@ class InscripcionRepository {
     }
 
     // Agregar e intentar persistir
-    tutoria.estudiantesInscritos.push(String(estudianteId));
+    const hoy = new Date();
+    const dia = String(hoy.getDate()).padStart(2, "0");
+    const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+    const año = String(hoy.getFullYear()).slice(-2);
+    const fecha = `${dia}/${mes}/${año}`;
+
+    tutoria.estudiantesInscritos.push({ id: String(estudianteId), fecha });
 
     // Intentar actualizar el repositorio. Soportamos varios métodos posibles: update(id, obj), save(obj), replace(id,obj)
     if (typeof this.tutoriaRepo.update === 'function') {

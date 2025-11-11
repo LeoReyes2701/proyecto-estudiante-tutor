@@ -1,15 +1,18 @@
 [
   {
-    "id": "1762809628519-l064bye",
-    "titulo": "MATES",
-    "descripcion": "hola",
-    "cupo": 16,
-    "creadorId": "1762742426736-rjzvbd4",
-    "creadorCorreo": null,
-    "horarioId": "1762793643806-0xt3wi7",
+    "id": "1762818294742-dybcyxy",
+    "titulo": "hola 213",
+    "descripcion": "13223",
+    "cupo": 10,
+    "creadorId": "1762814845675-8s4k5oh",
+    "creadorNombre": "mao anez",
+    "horarioId": "1762814882209-n8gorwz",
     "estudiantesInscritos": [
-      "1762810321837-tii981f"
+      {
+        "id": "1762814926275-dh70m2d",
+        "fecha": "10/11/25"
+      }
     ],
-    "createdAt": "2025-11-10T21:20:28.519Z"
+    "createdAt": "10/11/25"
   }
 ]

@@ -76,23 +76,19 @@ body {
   gap: 10px;
   padding: 12px 10px;
   border-radius: 10px;
-  border: 1px solid #e6eefb;
-  background: #fff;
+  border: none;
+  background: var(--btn-gradient);
+  color: #fff;
   cursor: pointer;
   transition: all .12s ease;
   font-weight: 600;
   min-height: 56px;
+  box-shadow: var(--btn-shadow);
 }
 
 .action-btn:hover {
   transform: translateY(-3px);
-  box-shadow: var(--btn-shadow);
-}
-
-.action-btn.primary {
-  border: none;
-  background: var(--btn-gradient);
-  color: #fff;
+  box-shadow: 0 10px 24px rgba(11,61,145,0.18);
 }
 
 .muted {

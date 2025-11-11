@@ -1,14 +1,4 @@
-// Back/src/models/User.js
 class User {
-  /**
-   * Acepta:
-   *   new User(id, nombre, apellido, email, password, rol)
-   * o
-   *   new User({ id, nombre, apellido, email, password, rol, createdAt })
-   *
-   * Solo se conservan los atributos que indicaste:
-   *  id, nombre, apellido, email, password, rol, createdAt
-   */
   constructor(idOrObj, nombre, apellido, email, password, rol) {
     const src = (typeof idOrObj === 'object' && idOrObj !== null)
       ? idOrObj
@@ -21,19 +11,17 @@ class User {
     this.password = (src.password === undefined) ? null : src.password;
     this.rol = String(src.rol || '').trim().toLowerCase();
 
-    // Normalizar rol: profesor -> tutor, por compatibilidad; solo 'tutor' o 'estudiante'
-    if (this.rol === 'profesor') this.rol = 'tutor';
-    if (this.rol !== 'tutor' && this.rol !== 'estudiante') this.rol = 'estudiante';
+    // Fecha en formato dd/mm/yy
+    const hoy = new Date();
+    const dia = String(hoy.getDate()).padStart(2, "0");
+    const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+    const año = String(hoy.getFullYear()).slice(-2);
 
-    // createdAt (ISO)
-    if (src.createdAt && !isNaN(new Date(src.createdAt).getTime())) {
-      this.createdAt = new Date(src.createdAt).toISOString();
-    } else {
-      this.createdAt = new Date().toISOString();
-    }
+    // Si viene una fecha en formato ISO, la ignoramos
+    const isISO = typeof src.createdAt === 'string' && src.createdAt.includes('T');
+    this.createdAt = (!isISO && src.createdAt) ? src.createdAt : `${dia}/${mes}/${año}`;
   }
 
-  // Representación pública (no incluye password)
   toPublic() {
     return {
       id: this.id,
@@ -45,7 +33,6 @@ class User {
     };
   }
 
-  // Objeto guardado en almacenamiento (incluye password)
   toJSON() {
     return {
       id: this.id,

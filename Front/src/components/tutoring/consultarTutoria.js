@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const created = document.createElement('p');
         created.className = 'text-muted small mt-3 mb-0';
         const d = new Date(tutoria.createdAt);
-        created.textContent = `Creada: ${isNaN(d.getTime()) ? tutoria.createdAt : d.toLocaleString()}`;
+        created.textContent = `Creada: ${isNaN(d.getTime()) ? tutoria.createdAt : d.toLocaleDateString()}`;
         cardBody.appendChild(created);
       }
 

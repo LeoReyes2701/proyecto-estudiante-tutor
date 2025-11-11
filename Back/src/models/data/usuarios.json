@@ -1,29 +1,20 @@
 [
   {
-    "id": "1762742426736-rjzvbd4",
+    "id": "1762814845675-8s4k5oh",
     "nombre": "mao",
     "apellido": "anez",
     "email": "manez@est.ucab.edu.ve",
     "password": "123456",
     "rol": "tutor",
-    "createdAt": "2025-11-10T02:40:26.736Z"
+    "createdAt": "10/11/25"
   },
   {
-    "id": "1762783762571-x9tgzf5",
+    "id": "1762814926275-dh70m2d",
     "nombre": "test",
     "apellido": "test",
     "email": "test@est.ucab.edu.ve",
     "password": "123456",
-    "rol": "tutor",
-    "createdAt": "2025-11-10T14:09:22.571Z"
-  },
-  {
-    "id": "1762810321837-tii981f",
-    "nombre": "mao2",
-    "apellido": "anez",
-    "email": "manez2@est.ucab.edu.ve",
-    "password": "123456",
     "rol": "estudiante",
-    "createdAt": "2025-11-10T21:32:01.837Z"
+    "createdAt": "10/11/25"
   }
 ]
