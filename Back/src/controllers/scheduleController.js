@@ -48,81 +48,67 @@ async function create(req, res) {
     const normalizedSlots = _normalizeSlots(slots);
     if (!normalizedSlots.length) return res.status(400).json({ error: 'slots missing or empty' });
 
+    // Leer todos los horarios existentes
+    const allRaw = await scheduleRepo.readAll();
+    const all = Array.isArray(allRaw) ? allRaw : [];
+
+    // Validar duplicados exactos
+    const existsExact = all.some(existing =>
+      String(existing.tutorId || existing.userId) === String(creatorId) &&
+      _slotsKey(existing.slots) === _slotsKey(normalizedSlots)
+    );
+    if (existsExact) {
+      const existing = all.find(e =>
+        String(e.tutorId || e.userId) === String(creatorId) &&
+        _slotsKey(e.slots) === _slotsKey(normalizedSlots)
+      );
+      return res.status(200).json({ message: 'Horario ya existe', horario: existing });
+    }
+
+    // Validar solapamiento
+    const tutorSchedules = all.filter(s => String(s.tutorId || s.userId) === String(creatorId));
+    const conflicts = [];
+    for (const newSlot of normalizedSlots) {
+      const newStart = timeToMinutes(newSlot.horaInicio);
+      const newEnd = timeToMinutes(newSlot.horaFin);
+      if (Number.isNaN(newStart) || Number.isNaN(newEnd)) {
+        return res.status(400).json({ error: 'Formato de hora inválido en slots' });
+      }
+      for (const existingSch of tutorSchedules) {
+        for (const existSlot of (existingSch.slots || [])) {
+          if ((existSlot.day || '').toLowerCase() !== (newSlot.day || '').toLowerCase()) continue;
+          const exStart = timeToMinutes(existSlot.horaInicio || existSlot.start);
+          const exEnd = timeToMinutes(existSlot.horaFin || existSlot.end);
+          if (Number.isNaN(exStart) || Number.isNaN(exEnd)) continue;
+          if (rangesOverlap(newStart, newEnd, exStart, exEnd)) {
+            conflicts.push({ newSlot, conflictingExisting: { scheduleId: existingSch.id || null, slot: existSlot } });
+          }
+        }
+      }
+    }
+    if (conflicts.length) {
+      return res.status(409).json({ error: 'Hay solapamiento con un horario ya existente', conflicts: conflicts.slice(0, 5) });
+    }
+
     // Preview when no confirm provided
     if (confirm === undefined || confirm === null) {
-      return res.status(200).json({ message: 'Confirma la creación', preview: { tutorId: creatorId, slots: normalizedSlots } });
+      return res.status(200).json({ message: 'Confirma para continuar', preview: { tutorId: creatorId, slots: normalizedSlots } });
     }
 
     const c = String(confirm).toLowerCase();
-    if (c === 'no') return res.status(200).json({ message: 'Horario no creado' });
+    if (c === 'no') return res.status(200).json({ message: 'Horario NO creado...' });
 
     if (c === 'yes') {
       // Leer una sola vez
       const allRaw = await scheduleRepo.readAll();
       const all = Array.isArray(allRaw) ? allRaw : [];
 
-      // 1) Prevent exact duplicate (same tutor + same slots)
-      const existsExact = all.some(existing =>
-        String(existing.tutorId || existing.userId) === String(creatorId) &&
-        _slotsKey(existing.slots) === _slotsKey(normalizedSlots)
-      );
-      if (existsExact) {
-        const existing = all.find(e =>
-          String(e.tutorId || e.userId) === String(creatorId) &&
-          _slotsKey(e.slots) === _slotsKey(normalizedSlots)
-        );
-        return res.status(200).json({ message: 'Horario ya existe', horario: existing });
-      }
-
-      // 2) Check overlaps with other schedules of the same tutor
-      const tutorSchedules = all.filter(s => String(s.tutorId || s.userId) === String(creatorId));
-      const conflicts = [];
-
-      for (const newSlot of normalizedSlots) {
-        const newStart = timeToMinutes(newSlot.horaInicio);
-        const newEnd = timeToMinutes(newSlot.horaFin);
-        if (Number.isNaN(newStart) || Number.isNaN(newEnd)) return res.status(400).json({ error: 'Formato de hora inválido en slots' });
-
-        for (const existingSch of tutorSchedules) {
-          for (const existSlot of (existingSch.slots || [])) {
-            if ((existSlot.day || '').toLowerCase() !== (newSlot.day || '').toLowerCase()) continue;
-            const exStart = timeToMinutes(existSlot.horaInicio || existSlot.start);
-            const exEnd = timeToMinutes(existSlot.horaFin || existSlot.end);
-            if (Number.isNaN(exStart) || Number.isNaN(exEnd)) continue;
-            if (rangesOverlap(newStart, newEnd, exStart, exEnd)) {
-              conflicts.push({
-                newSlot,
-                conflictingExisting: { scheduleId: existingSch.id || null, slot: existSlot }
-              });
-            }
-          }
-        }
-      }
-
-      if (conflicts.length) {
-        return res.status(409).json({ error: 'Los horarios se solapan', conflicts: conflicts.slice(0, 5) });
-      }
-
-      // 3) Double-check idempotency via repository helper (defensivo)
-      if (typeof scheduleRepo.findByTutorAndSlots === 'function') {
-        const existing = await scheduleRepo.findByTutorAndSlots(creatorId, normalizedSlots);
-        if (existing) return res.status(200).json({ message: 'Horario ya existe', horario: existing });
-      } else {
-        // Fallback: re-check among 'all' just before saving (avoids race when repo has no helper)
-        const existing = all.find(e =>
-          String(e.tutorId || e.userId) === String(creatorId) &&
-          _slotsKey(e.slots) === _slotsKey(normalizedSlots)
-        );
-        if (existing) return res.status(200).json({ message: 'Horario ya existe', horario: existing });
-      }
-
       // 4) Guardar
       const toSave = { tutorId: creatorId, slots: normalizedSlots, createdAt: new Date().toISOString() };
       const saved = await scheduleRepo.save(toSave);
-      return res.status(201).json({ message: 'Horario creado exitosamente', horario: saved });
+      return res.status(201).json({ message: 'Horario creado exitosamente...', horario: saved });
     }
-
-    return res.status(400).json({ error: 'Confirmación inválida' });
+    
   } catch (err) {
     console.error('[scheduleController.create] error', err);
     return res.status(500).json({ error: 'Error interno del servidor' });
