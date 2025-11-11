@@ -1,14 +1,8 @@
-// inscribirseCurso.js
-// Versión robusta que entiende el formato mostrado en la imagen:
-// - tutoria.id (string con guiones) o tutoria._id
-// - campos: titulo, descripcion, cupo, creadorId, creadorNombre, horarioId, estudiantesInscritos (array), createdAt (string)
-// - usuarios en /usuarios para resolver email del creador
 document.addEventListener('DOMContentLoaded', () => {
   const grid = document.getElementById('cursoGrid');
   const btn = document.getElementById('btnInscribirse');
   const msg = document.getElementById('inscripcionMsg');
 
-  // Botón volver (ya está en el HTML)
   document.getElementById('btnVolver')?.addEventListener('click', () => {
     window.location.href = 'gestion_estudiante.html';
   });
@@ -83,12 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return map;
   };
 
-  // Normaliza y devuelve un id "stable" para una tutoria (string)
   const getTutoriaId = (t) => {
     return String(t?.id ?? t?._id ?? t?.tutoriaId ?? '');
   };
 
-  // Cuenta inscritos de forma segura
   const countInscritos = (t) => {
     if (!Array.isArray(t?.estudiantesInscritos)) return 0;
     return t.estudiantesInscritos.length;
@@ -101,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const scheduleMap = buildScheduleMap(schedules);
     const userMap = buildUserMap(users);
 
-    // Mostrar sólo tutorías donde el usuario NO esté inscrito
     const disponibles = (tutorias || []).filter(t => {
       const inscritos = Array.isArray(t.estudiantesInscritos)
         ? t.estudiantesInscritos.map(e => (typeof e === 'string' ? e : (e && (e.id || e.userId || e._id))).toString())
@@ -130,17 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
       pTutor.style.fontSize = '0.9rem';
       pTutor.textContent = `Tutor: ${tutoria.creadorNombre ?? tutoria.creador ?? 'Desconocido'}`;
 
-      // resolver email del creador
-      const creatorId = String(tutoria.creadorId ?? tutoria.creador ?? tutoria.userId ?? '');
-      const creator = creatorId ? userMap.get(String(creatorId)) : null;
-      const emailText = creator ? (creator.email || creator.correo || creator.username || '') : (tutoria.creadorEmail || 'No disponible');
-
-      const pEmail = document.createElement('p');
-      pEmail.className = 'text-muted mb-1 text-center';
-      pEmail.style.fontSize = '0.85rem';
-      pEmail.textContent = `Email: ${emailText}`;
-
-      // cupo: inscritos / capacidad
       const inscritosCount = countInscritos(tutoria);
       const capacity = Number.isFinite(Number(tutoria.cupo)) ? Number(tutoria.cupo) : (tutoria.cupos ?? '');
       const pCupo = document.createElement('p');
@@ -148,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
       pCupo.style.fontSize = '0.9rem';
       pCupo.textContent = `Cupo: ${inscritosCount} / ${capacity}`;
 
-      // horario
       const horarioDiv = document.createElement('div');
       horarioDiv.className = 'text-muted small mb-2';
       horarioDiv.innerHTML = '<strong>Horario:</strong><br>';
@@ -172,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
         horarioDiv.appendChild(line);
       }
 
-      // checkbox
       const checkDiv = document.createElement('div');
       checkDiv.className = 'form-check mt-3 d-flex justify-content-center';
 
@@ -191,10 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
       checkDiv.appendChild(input);
       checkDiv.appendChild(label);
 
-      // armado tarjeta
       card.appendChild(h3);
       card.appendChild(pTutor);
-      card.appendChild(pEmail);
       card.appendChild(pCupo);
       card.appendChild(horarioDiv);
       card.appendChild(checkDiv);
@@ -218,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('/usuarios', { credentials: 'include' })
       ]);
 
-      // tolerante: si algún recurso falla, lo indicamos y seguimos con lo que haya
       const tutorias = tRes.ok ? await safeJson(tRes) : [];
       const schedules = sRes.ok ? await safeJson(sRes) : [];
       const users = uRes && uRes.ok ? await safeJson(uRes) : [];
@@ -230,18 +205,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // helper parse-safe
   async function safeJson(response) {
     const text = await response.text().catch(() => '');
     try { return JSON.parse(text); } catch { return []; }
   }
 
-  // handler inscribirse
   if (btn) {
     btn.addEventListener('click', async () => {
       showMessage('');
       const estudianteId = getUsuarioId();
-      if (!estudianteId) {
+            if (!estudianteId) {
         showMessage('No hay sesión activa. Inicia sesión como estudiante.', 'error');
         return;
       }
@@ -269,7 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (successCount > 0) {
         showMessage(`Inscripción completada en ${successCount} curso(s).`);
-        setTimeout(() => { window.location.href = 'gestion_estudiante.html'; }, 1200);
+        setTimeout(() => {
+          window.location.href = 'gestion_estudiante.html';
+        }, 1200);
       } else {
         showMessage('No se pudo completar la inscripción.', 'error');
       }

@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     h5.appendChild(left);
     h5.appendChild(right);
-
     card.appendChild(h5);
 
     return card;
@@ -80,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadAndRender() {
     clearMessage();
-    wrapper.innerHTML = ''; // remove sample content
+    wrapper.innerHTML = '';
 
     const usuarioRaw = localStorage.getItem('usuario');
     if (!usuarioRaw) {
@@ -97,7 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const usuarioId = usuario.id || usuario.userId || null;
+    const usuarioId = usuario.id || usuario.userId || usuario._id || null;
+    const role = String(usuario.role || usuario.rol || (usuario.isTutor ? 'tutor' : '') || usuario.tipo || '').toLowerCase();
+    const isTutor = ['tutor', 'teacher', 'profesor', 'admin'].includes(role);
+
     if (!usuarioId) {
       showMessage('Identificador de usuario no encontrado en sesión.', 'error');
       return;
@@ -106,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
     showMessage('Cargando horarios...', 'info');
 
     try {
-      // Load tutorias and horarios in parallel
       const [tutoriasRes, horariosRes] = await Promise.all([
         fetch('/tutorias', { credentials: 'include' }),
         fetch('/horarios', { credentials: 'include' })
@@ -126,34 +127,40 @@ document.addEventListener('DOMContentLoaded', () => {
       const allTutorias = await tutoriasRes.json();
       const allHorarios = await horariosRes.json();
 
-      // Filtrar tutorías donde el usuario esté inscrito
-      const inscritas = (allTutorias || []).filter(t => {
-        if (!Array.isArray(t.estudiantesInscritos)) return false;
-        return t.estudiantesInscritos.some(e => {
-          const id = typeof e === 'string' ? e : e.id;
-          return String(id) === String(usuarioId);
-        });
-      });
+      let relevantTutorias = [];
 
-      if (!inscritas.length) {
-        showMessage('No estás inscrito en ninguna tutoría.', 'info');
+      if (isTutor) {
+        // Mostrar tutorías creadas por el tutor
+        relevantTutorias = allTutorias.filter(t => {
+          const cid = t.creadorId || t.creador || t.userId;
+          return String(cid) === String(usuarioId);
+        });
+      } else {
+        // Mostrar tutorías donde el usuario está inscrito
+        relevantTutorias = allTutorias.filter(t => {
+          if (!Array.isArray(t.estudiantesInscritos)) return false;
+          return t.estudiantesInscritos.some(e => {
+            const id = typeof e === 'string' ? e : e.id || e.userId || e._id;
+            return String(id) === String(usuarioId);
+          });
+        });
+      }
+
+      if (!relevantTutorias.length) {
+        showMessage(isTutor ? 'No has creado ninguna tutoría.' : 'No estás inscrito en ninguna tutoría.', 'info');
         return;
       }
 
-      // Obtener set de horarioIds relevantes desde tutorias inscritas
-      const horarioIds = new Set(inscritas.map(t => String(t.horarioId)).filter(Boolean));
-
-      // Filtrar schedules que tengan id en horarioIds
-      const mineSchedules = (allHorarios || []).filter(s => horarioIds.has(String(s.id || s._id || s._id)));
+      const horarioIds = new Set(relevantTutorias.map(t => String(t.horarioId)).filter(Boolean));
+      const mineSchedules = allHorarios.filter(s => horarioIds.has(String(s.id || s._id)));
 
       if (!mineSchedules.length) {
-        showMessage('No se encontraron horarios asociados a tus inscripciones.', 'info');
+        showMessage('No se encontraron horarios asociados.', 'info');
         return;
       }
 
       clearMessage();
 
-      // Aplanar slots de los schedules encontrados y adjuntar info útil
       const allSlots = [];
       mineSchedules.forEach(sch => {
         (sch.slots || []).forEach(slot => {
@@ -165,8 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       const byDay = groupSlotsByDay(allSlots);
-
-      // Orden días con preferencia Lunes..Domingo
       const order = ['Lunes','Martes','Miércoles','Miercoles','Jueves','Viernes','Sábado','Sabado','Domingo'];
       const days = Object.keys(byDay).sort((a,b) => {
         const ia = order.findIndex(x => x.toLowerCase() === a.toLowerCase());
