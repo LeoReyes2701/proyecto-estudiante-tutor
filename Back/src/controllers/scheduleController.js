@@ -163,4 +163,21 @@ async function getByUserId(req, res) {
   }
 }
 
-module.exports = { create, getAll, getByTutorId, getByUserId };
+async function getById(req, res) {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: 'Debe especificar id' });
+    
+    const schedule = await scheduleRepo.findById(id);
+    if (!schedule) {
+      return res.status(404).json({ error: 'Horario no encontrado' });
+    }
+    
+    return res.json(schedule);
+  } catch (err) {
+    console.error('[scheduleController.getById] error', err);
+    return res.status(500).json({ error: 'Error interno' });
+  }
+}
+
+module.exports = { create, getAll, getByTutorId, getByUserId, getById };

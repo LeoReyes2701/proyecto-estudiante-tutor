@@ -110,6 +110,26 @@ app.use(
   })
 );
 
+// Usuarios (ruta simple para obtener lista de usuarios)
+app.get('/usuarios', async (req, res) => {
+  try {
+    const users = await userRepo.findAll();
+    // Retornar sin passwords
+    const safeUsers = users.map(u => ({
+      id: u.id,
+      nombre: u.nombre,
+      apellido: u.apellido,
+      email: u.email,
+      rol: u.rol,
+      createdAt: u.createdAt
+    }));
+    res.json(safeUsers);
+  } catch (err) {
+    console.error('[GET /usuarios] error', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
 // Tutorias (usa authMiddleware para rutas protegidas)
 app.use('/tutorias', tutoriaRoutesFactory({ tutoriaController, authMiddleware }));
 
@@ -213,21 +233,7 @@ try {
     }
 
     if (!hasRootPost) {
-      console.log('[app] schedulesRouter has no POST / — registering delegator to scheduleController.create');
-      const delegator = express.Router();
-      delegator.post('/', async (req, res, next) => {
-        try {
-          if (!scheduleController || typeof scheduleController.create !== 'function') {
-            return res.status(500).json({ error: 'Schedule create handler not available' });
-          }
-          return scheduleController.create(req, res, next);
-        } catch (err) {
-          console.error('[delegator POST /horarios] error', err);
-          return res.status(500).json({ error: 'Error interno' });
-        }
-      });
-      // mount delegator BEFORE existing router so POST / is handled by delegator
-      app.use('/horarios', delegator);
+      console.log('[app] schedulesRouter has no POST / — skipping delegator to avoid conflicts');
     } else {
       console.log('[app] schedulesRouter already defines POST /');
     }
@@ -253,7 +259,7 @@ function readUsuarioCookie(req) {
 
 // Páginas públicas y protección para vistas específicas
 app.get(['/', '/index.html', '/login.html', '/login'], (req, res) => {
-  return res.sendFile(path.join(frontPublic, 'login.html'));
+  return res.sendFile(path.join(frontPublic, 'logIn.html'));
 });
 
 app.get('/crearCuenta.html', (req, res) => {
@@ -262,22 +268,22 @@ app.get('/crearCuenta.html', (req, res) => {
 
 app.get('/gestion.html', (req, res) => {
   const user = readUsuarioCookie(req);
-  if (!user) return res.redirect('/login.html');
-  if (String(user.rol || '').toLowerCase() !== 'tutor') return res.redirect('/login.html');
+  if (!user) return res.redirect('/logIn.html');
+  if (String(user.rol || '').toLowerCase() !== 'tutor') return res.redirect('/logIn.html');
   return res.sendFile(path.join(frontPublic, 'gestion.html'));
 });
 
 app.get('/gestion_estudiante.html', (req, res) => {
   const user = readUsuarioCookie(req);
-  if (!user) return res.redirect('/login.html');
-  if (String(user.rol || '').toLowerCase() !== 'estudiante') return res.redirect('/login.html');
+  if (!user) return res.redirect('/logIn.html');
+  if (String(user.rol || '').toLowerCase() !== 'estudiante') return res.redirect('/logIn.html');
   return res.sendFile(path.join(frontPublic, 'gestion_estudiante.html'));
 });
 
 app.get('/crearTutoria.html', (req, res) => {
   const user = readUsuarioCookie(req);
-  if (!user) return res.redirect('/login.html');
-  if (String(user.rol || '').toLowerCase() !== 'tutor') return res.redirect('/login.html');
+  if (!user) return res.redirect('/logIn.html');
+  if (String(user.rol || '').toLowerCase() !== 'tutor') return res.redirect('/logIn.html');
   return res.sendFile(path.join(frontPublic, 'crearTutoria.html'));
 });
 

@@ -25,5 +25,23 @@
     "password": "qqqqqq",
     "rol": "estudiante",
     "createdAt": "2025-11-10T16:33:28.487Z"
+  },
+  {
+    "id": "1762828342013-9swc8hp",
+    "nombre": "mari",
+    "apellido": "f",
+    "email": "kkk@est.ucab.edu.ve",
+    "password": "aaaaaaa",
+    "rol": "estudiante",
+    "createdAt": "2025-11-11T02:32:22.013Z"
+  },
+  {
+    "id": "1762836239745-icmi1rv",
+    "nombre": "maria",
+    "apellido": "fue",
+    "email": "maria@est.ucab.edu.ve",
+    "password": "qqqqqq",
+    "rol": "estudiante",
+    "createdAt": "2025-11-11T04:43:59.745Z"
   }
 ]

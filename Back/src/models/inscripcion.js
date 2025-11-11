@@ -1,8 +1,9 @@
 class Inscripcion {
-  constructor({ id = null, userId, tutoriaId } = {}) {
+  constructor({ id = null, userId, tutoriaId, horarioId = null } = {}) {
     this.id = id || Inscripcion.generateId();
     this.userId = typeof userId === 'string' ? userId.trim() : null;
     this.tutoriaId = typeof tutoriaId === 'string' ? tutoriaId.trim() : null;
+    this.horarioId = typeof horarioId === 'string' ? horarioId.trim() : null;
     this.fecha = new Date().toISOString(); // Fecha automática de inscripción
   }
 
@@ -20,12 +21,18 @@ class Inscripcion {
 
   // Representación en JSON
   toJSON() {
-    return {
+    const result = {
       id: this.id,
       userId: this.userId,
       tutoriaId: this.tutoriaId,
       fecha: this.fecha
     };
+
+    if (this.horarioId) {
+      result.horarioId = this.horarioId;
+    }
+
+    return result;
   }
 }
 

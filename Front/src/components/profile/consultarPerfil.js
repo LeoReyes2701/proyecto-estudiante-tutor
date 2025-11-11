@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!raw) {
       // No hay sesión: redirigir al login
       console.warn("No hay usuario en localStorage, redirigiendo a login");
-      window.location.href = "/login.html";
+      window.location.href = "/logIn.html";
       return;
     }
 
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       console.error("Error parseando 'usuario' desde localStorage:", err);
       localStorage.removeItem("usuario");
-      window.location.href = "/login.html";
+      window.location.href = "/logIn.html";
       return;
     }
 
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (logoutBtn) {
       logoutBtn.addEventListener("click", () => {
         try { localStorage.removeItem("usuario"); } catch (e) { /* ignore */ }
-        window.location.href = "/login.html";
+        window.location.href = "/logIn.html";
       });
     }
 
@@ -67,6 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
   } catch (e) {
     console.error("Error inicializando página de perfil:", e);
     // Fallback: redirigir al login para evitar quedar en estado inconsistente
-    window.location.href = "/login.html";
+    window.location.href = "/logIn.html";
   }
 });

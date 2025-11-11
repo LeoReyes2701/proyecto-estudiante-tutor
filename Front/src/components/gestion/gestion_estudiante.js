@@ -28,32 +28,17 @@ function showModal(title, html) {
 // Asociaciones: rutas destino (ajusta si tus archivos se llaman distinto)
 btnConsultarPerfil?.addEventListener('click', () => openPage('/consultarPerfil.html'));
 btnConsultarHorario?.addEventListener('click', () => openPage('/consultarHorario.html'));
-btnConsultarTutoria?.addEventListener('click', () => openPage('/consultartutoria.html'));
-btnConsultarInscripcion?.addEventListener('click', () => openPage('/InscribirseCurso.html'));
+btnConsultarTutoria?.addEventListener('click', () => openPage('/consultarTutoria.html'));
+btnConsultarInscripcion?.addEventListener('click', () => openPage('/consultarInscripcion.html'));
 
-// Acción de inscribirse: por defecto redirige a /inscribirse.html
-// Si prefieres que haga una petición POST, reemplaza la navegación por fetch POST.
+// Acción de inscribirse: redirige a la página de inscripción en cursos
 btnInscribirseCurso?.addEventListener('click', () => {
-  // Intentamos abrir una página de inscripción. Si no existe, mostramos modal con instrucción.
-  const target = '/inscribirse.html';
-  // comprobación simple: intentar navegar
-  fetch(target, { method: 'HEAD' })
-    .then(resp => {
-      if (resp.ok) {
-        openPage(target);
-      } else {
-        showModal('Inscripción', '<p>Página de inscripción no disponible. Contacta al administrador.</p>');
-      }
-    })
-    .catch(() => {
-      // fallback: mostrar modal
-      showModal('Inscripción', '<p>Página de inscripción no disponible. Contacta al administrador.</p>');
-    });
+  openPage('/InscribirseCurso.html');
 });
 
 btnLogout?.addEventListener('click', () => {
   document.cookie = 'usuario=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
-  window.location.href = '/login.html';
+  window.location.href = '/logIn.html';
 });
 
 // Mostrar nombre / email en la cabecera si hay sesión

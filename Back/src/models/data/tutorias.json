@@ -8,5 +8,95 @@
     "creadorNombre": "manez@est.ucab.edu.ve",
     "horarioId": "1762748844625-vszd63h",
     "createdAt": "2025-11-10T04:44:20.427Z"
+  },
+  {
+    "id": "1762818506088-52c4git",
+    "titulo": "Matemáticas Básicas",
+    "descripcion": "Tutoría de matemáticas para estudiantes de primer año",
+    "fecha": "",
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorNombre": "manez@est.ucab.edu.ve",
+    "horarioId": "1762818463681-vuae4ew",
+    "createdAt": "2025-11-10T23:48:26.088Z"
+  },
+  {
+    "id": "1762820000001-js101",
+    "titulo": "JavaScript para Principiantes",
+    "descripcion": "Aprende los conceptos básicos de JavaScript: variables, funciones, arrays y objetos",
+    "fecha": "",
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorNombre": "manez@est.ucab.edu.ve",
+    "horarioId": "1762825000001-wed1",
+    "createdAt": "2025-11-10T23:50:00.001Z"
+  },
+  {
+    "id": "1762820000002-phys01",
+    "titulo": "Física I - Mecánica",
+    "descripcion": "Conceptos fundamentales de mecánica clásica: cinemática, dinámica y energía",
+    "fecha": "",
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorNombre": "manez@est.ucab.edu.ve",
+    "horarioId": "1762825000003-thu1",
+    "createdAt": "2025-11-10T23:50:00.002Z"
+  },
+  {
+    "id": "1762820000003-chem01",
+    "titulo": "Química General",
+    "descripcion": "Introducción a la química: estructura atómica, enlaces químicos y reacciones",
+    "fecha": "",
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorNombre": "manez@est.ucab.edu.ve",
+    "horarioId": "1762825000004-fri1",
+    "createdAt": "2025-11-10T23:50:00.003Z"
+  },
+  {
+    "id": "1762820000004-calc01",
+    "titulo": "Cálculo Diferencial",
+    "descripcion": "Límites, derivadas y sus aplicaciones en problemas de optimización",
+    "fecha": "",
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorNombre": "manez@est.ucab.edu.ve",
+    "horarioId": "1762825000005-sat1",
+    "createdAt": "2025-11-10T23:50:00.004Z"
+  },
+  {
+    "id": "1762820000005-eng01",
+    "titulo": "Inglés Intermedio",
+    "descripcion": "Mejora tu nivel de inglés: gramática, vocabulario y conversación",
+    "fecha": "",
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorNombre": "manez@est.ucab.edu.ve",
+    "horarioId": "1762825000006-tue2",
+    "createdAt": "2025-11-10T23:50:00.005Z"
+  },
+  {
+    "id": "1762820000006-bio01",
+    "titulo": "Biología Celular",
+    "descripcion": "Estructura y función de la célula: organelos, metabolismo y división celular",
+    "fecha": "",
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorNombre": "manez@est.ucab.edu.ve",
+    "horarioId": "1762825000007-mon2",
+    "createdAt": "2025-11-10T23:50:00.006Z"
+  },
+  {
+    "id": "1762825000007-hist01",
+    "titulo": "Historia de Venezuela",
+    "descripcion": "Recorrido por los principales eventos históricos de Venezuela desde la época colonial hasta la actualidad",
+    "fecha": "",
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorNombre": "manez@est.ucab.edu.ve",
+    "horarioId": "1762825000002-wed2",
+    "createdAt": "2025-11-11T01:50:00.007Z"
+  },
+  {
+    "id": "1762825000008-art01",
+    "titulo": "Arte y Diseño",
+    "descripcion": "Fundamentos del arte visual: composición, color, perspectiva y técnicas de diseño",
+    "fecha": "",
+    "creadorId": "1762742426736-rjzvbd4",
+    "creadorNombre": "manez@est.ucab.edu.ve",
+    "horarioId": "1762825000008-thu2",
+    "createdAt": "2025-11-11T01:50:00.008Z"
   }
 ]

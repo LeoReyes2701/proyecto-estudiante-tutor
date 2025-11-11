@@ -1,7 +1,12 @@
+:root {
+    --ucab-blue: #0b3d91;
+    --light-grey: #f8f9fa;
+    --white: #ffffff;
+}
+
 .nav-link.active {
     border-bottom: 2px solid white;
 }
-
 
 .page-container {
     min-height: 100vh;
@@ -9,7 +14,6 @@
     flex-direction: column;
     background-color: var(--light-grey);
 }
-
 
 .sticky-footer-btn {
     position: sticky;
@@ -19,4 +23,55 @@
     background-color: var(--white);
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
     margin-top: auto; 
+}
+
+.bg-ucab-blue {
+    background-color: var(--ucab-blue) !important;
+}
+
+.btn-ucab-primary {
+    background-color: var(--ucab-blue);
+    border-color: var(--ucab-blue);
+    color: white;
+}
+
+.btn-ucab-primary:hover {
+    background-color: #083a87;
+    border-color: #083a87;
+}
+
+.card.tutoria-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.card.tutoria-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.card.tutoria-card.selected {
+    border-color: var(--ucab-blue);
+    background-color: #f0f4ff;
+}
+
+.form-check-input:checked {
+    background-color: var(--ucab-blue);
+    border-color: var(--ucab-blue);
+}
+
+.tutoria-title {
+    color: var(--ucab-blue);
+    font-weight: 600;
+}
+
+.tutoria-description {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.tutoria-creator {
+    color: #495057;
+    font-size: 0.85rem;
+    font-style: italic;
 }

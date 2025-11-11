@@ -42,6 +42,16 @@ class TutoriaRepository {
     return raw.map(r => new Tutoria(r));
   }
 
+  // Compatibilidad: leer como array plano (usado por controllers que esperan readAll)
+  readAll() {
+    return this._readRaw();
+  }
+
+  // alias histórico
+  listAll() {
+    return this._readRaw();
+  }
+
   findById(id) {
     if (!id) return null;
     const raw = this._readRaw();

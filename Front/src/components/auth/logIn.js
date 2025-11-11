@@ -1,8 +1,16 @@
 // Front/src/components/auth/login.js
+import '/src/utils/modals.js';
+
 (() => {
   function q(id){ return document.getElementById(id); }
   function showError(el, text){
-    if(!el) return alert(text);
+    if(!el) {
+      return showAlert(text, {
+        title: 'Error',
+        type: 'error',
+        confirmText: 'Entendido'
+      });
+    }
     el.textContent = text;
     el.classList.remove('visually-hidden');
     setTimeout(()=>el.classList.add('visually-hidden'),4500);
@@ -39,7 +47,7 @@
 
       if (res.ok && json && json.ok) {
         try { localStorage.setItem('usuario', JSON.stringify(json.user)); } catch(e){}
-        window.location.href = json.redirect || '/login.html';
+        window.location.href = json.redirect || '/logIn.html';
         return;
       }
 

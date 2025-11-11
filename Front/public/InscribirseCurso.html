@@ -12,8 +12,8 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="../src/styles/styles.css"> 
-    <link rel="stylesheet" href="../src/styles/InscribirseCurso.css">
+    <link rel="stylesheet" href="/src/styles/styles.css"> 
+    <link rel="stylesheet" href="/src/styles/InscribirseCurso.css">
 </head>
 <body class="p-0">
     <div class="page-container">
@@ -31,19 +31,22 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mb-2 mb-lg-0" style="margin-left: 250px;">
                         <li class="nav-item">
-                            <a class="nav-link active pb-1" aria-current="page" href="#">Inicio</a>
+                            <a class="nav-link pb-1" href="/gestion_estudiante.html">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link pb-1" href="#">Mis Inscripciones</a>
+                            <a class="nav-link pb-1" href="/consultarInscripcion.html">Mis Inscripciones</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link pb-1" href="#">Mi Horario</a>
+                            <a class="nav-link pb-1" href="/consultarHorario.html">Mi Horario</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active pb-1" aria-current="page" href="/InscribirseCurso.html">Inscribirse</a>
                         </li>
                     </ul>
 
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center pb-1" href="#">
+                            <a class="nav-link d-flex align-items-center pb-1" href="/consultarPerfil.html">
                                 <div class="bg-white rounded-circle me-2" style="width: 24px; height: 24px;"></div>
                                 <span>Perfil</span>
                             </a>
@@ -61,15 +64,16 @@
 
         <div class="container-fluid py-5 px-5 flex-grow-1">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-                
-                
-                
+                <!-- Las tutorías se cargarán aquí dinámicamente -->
             </div>
         </div>
 
-        <div class="sticky-footer-btn d-flex justify-content-center">
+        <div class="sticky-footer-btn d-flex justify-content-center gap-3">
+            <button class="btn btn-secondary" type="button" onclick="window.location.href='/gestion_estudiante.html'">
+                Volver
+            </button>
             <button class="btn btn-ucab-primary fw-bold" type="button">
-                OK
+                Inscribirse
             </button>
         </div>
 
@@ -79,7 +83,7 @@
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
             crossorigin="anonymous">
     </script>
-    <script type="module" src="../src/components/enrollment/inscribirseCurso.js"></script>
+    <script type="module" src="/src/components/enrollment/inscribirseCurso.js"></script>
 
 </body>
 </html>
