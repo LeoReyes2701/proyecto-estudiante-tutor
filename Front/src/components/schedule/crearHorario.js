@@ -125,24 +125,68 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const payloadCreate = { ...payloadBase, confirm: 'yes' };
-      showFormMessage('Creando horario...', 'info');
-      const createRes = await fetch('/horarios', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payloadCreate)
-      });
-      const createJson = await createRes.json().catch(() => ({}));
-      log('create response', createRes.status, createJson);
+      if (previewJson.message === "Confirma para continuar") {
+        showFormMessage(previewJson.message, 'info');
 
-      if (createRes.ok || createRes.status === 201) {
-        showFormMessage('Horario creado correctamente', 'success');
-        setTimeout(() => { window.location.href = '/gestion.html'; }, 900);
-        return;
+        // Mostrar botones de confirmación
+        const confirmBox = document.getElementById("confirmMessage");
+        confirmBox.innerHTML = "";
+
+        const confirmYesBtn = document.createElement("button");
+        confirmYesBtn.textContent = "Sí, crear el horario";
+        confirmYesBtn.className = "btn btn-success btn-sm me-2";
+
+        const confirmNoBtn = document.createElement("button");
+        confirmNoBtn.textContent = "No, descartar la creación";
+        confirmNoBtn.className = "btn btn-danger btn-sm";
+
+        confirmBox.appendChild(confirmYesBtn);
+        confirmBox.appendChild(confirmNoBtn);
+
+        // Si el usuario confirma
+        confirmYesBtn.addEventListener("click", async () => {
+          const res2 = await fetch('/horarios', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...payloadBase, confirm: "yes" })
+          });
+
+          let data2 = {};
+          try {
+            data2 = await res2.json();
+          } catch (e) {
+            // Si no hay body JSON, seguimos con objeto vacío
+          }
+
+          if (res2.ok || res2.status === 201) {
+            showFormMessage(data2.message || "Horario creado correctamente", 'success');
+            setTimeout(() => { window.location.href = '/gestion.html'; }, 900);
+          } else {
+            showFormMessage(data2.message || `Error ${res2.status}`, 'error');
+          }
+        });
+
+        // Si el usuario cancela
+        confirmNoBtn.addEventListener("click", async () => {
+          const res2 = await fetch('/horarios', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...payloadBase, confirm: "no" })
+          });
+
+          let data2 = {};
+          try {
+            data2 = await res2.json();
+          } catch (e) {}
+
+          showFormMessage(data2.message || "Horario no creado", 'warning');
+          setTimeout(() => { window.location.href = '/gestion.html'; }, 900);
+        });
+
+      } else {
+        showFormMessage(previewJson.message, 'secondary');
       }
 
-      const errMsg = createJson?.error || createJson?.message || `Error ${createRes.status}`;
-      showFormMessage(errMsg, 'error');
     } catch (err) {
       log('network error', err);
       showFormMessage('Error de red creando el horario', 'error');
