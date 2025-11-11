@@ -26,27 +26,41 @@ class TutoriaRepository {
   }
 
   _normalizeForWrite(arr) {
-    // Normalize array elements to ensure they use `cupo` and do not keep `fecha`
     if (!Array.isArray(arr)) return [];
-    return arr.map(item => {
-      // If item is a Tutoria instance with toJSON, use it
-      const plain = item && typeof item.toJSON === 'function' ? item.toJSON() : (item && typeof item === 'object' ? Object.assign({}, item) : {});
 
-      // If cupo missing but fecha present, try to derive a numeric cupo
+    return arr.map(item => {
+      const plain = item && typeof item.toJSON === 'function'
+        ? item.toJSON()
+        : (item && typeof item === 'object' ? { ...item } : {});
+
+      // cupo
       if (typeof plain.cupo === 'undefined' && typeof plain.fecha !== 'undefined') {
         const n = Number(plain.fecha);
-        plain.cupo = Number.isFinite(n) && !Number.isNaN(n) ? Math.max(0, Math.floor(n)) : 0;
+        plain.cupo = Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
       }
-
-      // Ensure cupo is numeric
       if (typeof plain.cupo !== 'number') {
         const n = Number(plain.cupo);
-        plain.cupo = Number.isFinite(n) && !Number.isNaN(n) ? Math.max(0, Math.floor(n)) : 0;
+        plain.cupo = Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
       }
 
-      // Remove legacy fecha field if present
-      if (typeof plain.fecha !== 'undefined') {
-        delete plain.fecha;
+      // eliminar campo obsoleto
+      if (typeof plain.fecha !== 'undefined') delete plain.fecha;
+
+      // creadorNombre: evitar correos
+      const rawNombre = plain.creadorNombre || '';
+      const pareceCorreo = typeof rawNombre === 'string' && rawNombre.includes('@');
+      if (pareceCorreo || !rawNombre.trim()) {
+        plain.creadorNombre = 'Desconocido';
+      }
+
+      // estudiantesInscritos: normalizar a { id, fecha }
+      if (Array.isArray(plain.estudiantesInscritos)) {
+        plain.estudiantesInscritos = plain.estudiantesInscritos.map(e => {
+          if (typeof e === 'string') return { id: e, fecha: '—' };
+          const id = typeof e?.id === 'string' ? e.id : String(e?.id || '');
+          const fecha = typeof e?.fecha === 'string' ? e.fecha : '—';
+          return { id, fecha };
+        });
       }
 
       return plain;
@@ -66,10 +80,8 @@ class TutoriaRepository {
     }
   }
 
-  // --- Existing API (kept) ---
   getAll() {
-    const raw = this._readRaw();
-    return raw.map(r => new Tutoria(r));
+    return this._readRaw().map(r => new Tutoria(r));
   }
 
   findById(id) {
@@ -95,11 +107,7 @@ class TutoriaRepository {
     return t;
   }
 
-  // --- Backwards-compatible aliases / async-friendly wrappers ---
-
-  // Synchronous aliases expected by controllers
   readAll() {
-    // return plain array of objects (legacy callers may expect plain objects)
     return this._readRaw();
   }
 
@@ -108,15 +116,14 @@ class TutoriaRepository {
   }
 
   writeAll(arr) {
-    // expect arr to be array of plain objects or Tutoria
-    const normalized = Array.isArray(arr) ? arr.map(x => (x && x.toJSON ? x.toJSON() : x)) : [];
+    const normalized = Array.isArray(arr)
+      ? arr.map(x => (x && typeof x.toJSON === 'function' ? x.toJSON() : x))
+      : [];
     this._writeRaw(normalized);
     return true;
   }
 
-  // Create/insert convenience methods
   create(tutoria) {
-    // return the saved Tutoria instance
     return this.save(tutoria);
   }
 
@@ -124,7 +131,6 @@ class TutoriaRepository {
     return this.save(tutoria);
   }
 
-  // Async variants (useful if controllers use await or future async I/O)
   async readAllAsync() {
     return this.readAll();
   }

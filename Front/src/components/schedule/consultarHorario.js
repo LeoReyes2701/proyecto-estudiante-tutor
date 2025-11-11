@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const right = document.createElement('div');
     right.className = 'day-hours';
-    // join multiple slots for the day with commas / line breaks
     right.innerHTML = slots
       .map(s => `${timeDisplay(s.horaInicio || s.start)} - ${timeDisplay(s.horaFin || s.end)}`)
       .join('<br>');
@@ -65,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!map[day]) map[day] = [];
       map[day].push(s);
     });
-    // optional: sort slots by start time inside each day
     Object.keys(map).forEach(day => {
       map[day].sort((a, b) => {
         const toMin = t => {
@@ -83,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadAndRender() {
     clearMessage();
     wrapper.innerHTML = ''; // remove sample content
+
     const usuarioRaw = localStorage.getItem('usuario');
     if (!usuarioRaw) {
       showMessage('No hay sesión activa. Inicia sesión para ver tus horarios.', 'error');
@@ -98,48 +97,76 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (!usuario || String((usuario.rol || '')).toLowerCase() !== 'tutor') {
-      showMessage('Debes iniciar sesión como tutor para ver tus horarios.', 'error');
-      return;
-    }
-
-    const tutorId = usuario.id || usuario.userId || usuario.tutorId;
-    if (!tutorId) {
-      showMessage('Identificador de tutor no encontrado en sesión.', 'error');
+    const usuarioId = usuario.id || usuario.userId || null;
+    if (!usuarioId) {
+      showMessage('Identificador de usuario no encontrado en sesión.', 'error');
       return;
     }
 
     showMessage('Cargando horarios...', 'info');
 
     try {
-      const res = await fetch('/horarios');
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        showMessage(body.error || `Error ${res.status} al cargar horarios`, 'error');
+      // Load tutorias and horarios in parallel
+      const [tutoriasRes, horariosRes] = await Promise.all([
+        fetch('/tutorias', { credentials: 'include' }),
+        fetch('/horarios', { credentials: 'include' })
+      ]);
+
+      if (!tutoriasRes.ok) {
+        const body = await tutoriasRes.json().catch(() => ({}));
+        showMessage(body.error || `Error ${tutoriasRes.status} al cargar tutorías`, 'error');
         return;
       }
-      const all = await res.json();
+      if (!horariosRes.ok) {
+        const body = await horariosRes.json().catch(() => ({}));
+        showMessage(body.error || `Error ${horariosRes.status} al cargar horarios`, 'error');
+        return;
+      }
 
-      // Filtrar schedules del mismo tutor (compatibilidad con userId)
-      const mine = (all || []).filter(s => String(s.tutorId || s.userId) === String(tutorId));
-      if (!mine.length) {
-        showMessage('No tienes horarios registrados aún.', 'info');
+      const allTutorias = await tutoriasRes.json();
+      const allHorarios = await horariosRes.json();
+
+      // Filtrar tutorías donde el usuario esté inscrito
+      const inscritas = (allTutorias || []).filter(t => {
+        if (!Array.isArray(t.estudiantesInscritos)) return false;
+        return t.estudiantesInscritos.some(e => {
+          const id = typeof e === 'string' ? e : e.id;
+          return String(id) === String(usuarioId);
+        });
+      });
+
+      if (!inscritas.length) {
+        showMessage('No estás inscrito en ninguna tutoría.', 'info');
+        return;
+      }
+
+      // Obtener set de horarioIds relevantes desde tutorias inscritas
+      const horarioIds = new Set(inscritas.map(t => String(t.horarioId)).filter(Boolean));
+
+      // Filtrar schedules que tengan id en horarioIds
+      const mineSchedules = (allHorarios || []).filter(s => horarioIds.has(String(s.id || s._id || s._id)));
+
+      if (!mineSchedules.length) {
+        showMessage('No se encontraron horarios asociados a tus inscripciones.', 'info');
         return;
       }
 
       clearMessage();
 
-      // Aplanar slots de todos los schedules del tutor y agrupar por día
+      // Aplanar slots de los schedules encontrados y adjuntar info útil
       const allSlots = [];
-      mine.forEach(sch => {
+      mineSchedules.forEach(sch => {
         (sch.slots || []).forEach(slot => {
-          allSlots.push(Object.assign({}, slot, { scheduleId: sch.id || null }));
+          allSlots.push(Object.assign({}, slot, {
+            scheduleId: sch.id || sch._id || null,
+            tutorId: sch.tutorId || sch.userId || null
+          }));
         });
       });
 
       const byDay = groupSlotsByDay(allSlots);
 
-      // Crear cards ordenadas por día (lunes..domingo preferencia) else alphabetical
+      // Orden días con preferencia Lunes..Domingo
       const order = ['Lunes','Martes','Miércoles','Miercoles','Jueves','Viernes','Sábado','Sabado','Domingo'];
       const days = Object.keys(byDay).sort((a,b) => {
         const ia = order.findIndex(x => x.toLowerCase() === a.toLowerCase());
@@ -151,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       days.forEach(day => {
-        const card = buildCard(tutorId, day, byDay[day]);
+        const card = buildCard(usuarioId, day, byDay[day]);
         wrapper.appendChild(card);
       });
     } catch (err) {

@@ -69,10 +69,11 @@ class TutoriaController {
         titulo: titulo,
         descripcion: descripcion || '',
         creadorId: req.user.id,
-        creadorNombre: req.user.email || req.user.nombre || null,
+        creadorNombre: `${req.user.nombre || ''} ${req.user.apellido || ''}`.trim(),
         horarioId: horarioId || null,
         cupo: normalizedCupo
       });
+
 
       const repo = this.tutoriaRepository;
       let saved = null;

@@ -1,146 +1,37 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cursos Disponibles - Programa Estudiante-Tutor</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cursos Disponibles - Programa Estudiante-Tutor</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-          rel="stylesheet" 
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
-          crossorigin="anonymous">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="../src/styles/styles.css"> 
-    <link rel="stylesheet" href="../src/styles/InscribirseCurso.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/styles/InscribirseCurso.css" />
 </head>
 <body class="p-0">
-    <div class="page-container">
-        <header class="navbar navbar-expand-lg navbar-dark bg-ucab-blue py-3">
-            <div class="container-fluid mx-lg-5">
-                
-                <a class="navbar-brand fw-bold fs-5 me-5" href="#">
-                    UCAB <span class="fw-normal">Programa Estudiante-Tutor</span>
-                </a>
-
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mb-2 mb-lg-0" style="margin-left: 250px;">
-                        <li class="nav-item">
-                            <a class="nav-link active pb-1" aria-current="page" href="#">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pb-1" href="#">Mis Inscripciones</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pb-1" href="#">Mi Horario</a>
-                        </li>
-                    </ul>
-
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center pb-1" href="#">
-                                <div class="bg-white rounded-circle me-2" style="width: 24px; height: 24px;"></div>
-                                <span>Perfil</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </header>
-
-        <div class="bg-ucab-blue text-white p-5">
-            <div class="container-fluid mx-lg-5">
-                <h1 class="fw-bold display-5">Cursos Disponibles</h1>
-            </div>
-        </div>
-
-        <div class="container-fluid py-5 px-5 flex-grow-1">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-                
-                <div class="col">
-                    <div class="card p-4 border rounded-3 shadow-sm h-100 d-flex flex-column justify-content-start align-items-center">
-                        <h3 class="fw-medium fs-4 mb-0">Matemáticas I</h3>
-                        
-                        <div class="form-check mt-3">
-                            <input class="form-check-input" type="checkbox" value="" id="matematicas-check" style="width: 20px; height: 20px;">
-                            <label class="form-check-label ms-1" for="matematicas-check">
-                                Seleccionar
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card p-4 border rounded-3 shadow-sm h-100 d-flex flex-column justify-content-start align-items-center">
-                        <h3 class="fw-medium fs-4 mb-0">Física</h3>
-                        <div class="form-check mt-3">
-                            <input class="form-check-input" type="checkbox" value="" id="fisica-check" style="width: 20px; height: 20px;">
-                            <label class="form-check-label ms-1" for="fisica-check">Seleccionar</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card p-4 border rounded-3 shadow-sm h-100 d-flex flex-column justify-content-start align-items-center">
-                        <h3 class="fw-medium fs-4 mb-0">Cálculo</h3>
-                        <div class="form-check mt-3">
-                            <input class="form-check-input" type="checkbox" value="" id="calculo-check" style="width: 20px; height: 20px;">
-                            <label class="form-check-label ms-1" for="calculo-check">Seleccionar</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card p-4 border rounded-3 shadow-sm h-100 d-flex flex-column justify-content-start align-items-center">
-                        <h3 class="fw-medium fs-4 mb-0">Programación</h3>
-                        <div class="form-check mt-3">
-                            <input class="form-check-input" type="checkbox" value="" id="prog-check" style="width: 20px; height: 20px;">
-                            <label class="form-check-label ms-1" for="prog-check">Seleccionar</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card p-4 border rounded-3 shadow-sm h-100 d-flex flex-column justify-content-start align-items-center">
-                        <h3 class="fw-medium fs-4 mb-0">Inglés</h3>
-                        <div class="form-check mt-3">
-                            <input class="form-check-input" type="checkbox" value="" id="ingles-check" style="width: 20px; height: 20px;">
-                            <label class="form-check-label ms-1" for="ingles-check">Seleccionar</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card p-4 border rounded-3 shadow-sm h-100 d-flex flex-column justify-content-start align-items-center">
-                        <h3 class="fw-medium fs-4 mb-0">Ecologia</h3>
-                        <div class="form-check mt-3">
-                            <input class="form-check-input" type="checkbox" value="" id="otra-check" style="width: 20px; height: 20px;">
-                            <label class="form-check-label ms-1" for="otra-check">Seleccionar</label>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-
-        <div class="sticky-footer-btn d-flex justify-content-center">
-            <button class="btn btn-ucab-primary fw-bold" type="button">
-                OK
-            </button>
-        </div>
-
+  <div class="page-container">
+    <div class="bg-ucab-blue text-white p-4 position-relative">
+      <div class="container-fluid mx-lg-5">
+        <h1 class="fw-bold display-5">Cursos Disponibles</h1>
+        <p class="lead mt-2">Selecciona los cursos en los que deseas inscribirte</p>
+      </div>
+      <div class="position-absolute top-0 end-0 m-3">
+        <button id="btnVolver" class="btn-volver">Volver</button>
+      </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
-            crossorigin="anonymous">
-    </script>
-    <script type="module" src="../src/components/enrollment/inscribirseCurso.js"></script>
+    <div class="container-fluid py-5 px-4 flex-grow-1">
+      <div id="cursoGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4"></div>
+      <div id="inscripcionMsg" class="mt-4 fw-bold text-center"></div>
+    </div>
 
+    <div class="footer-fixed d-flex justify-content-center">
+      <button id="btnInscribirse" class="btn btn-primary fw-bold" type="button">INSCRIBIRSE</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="../src/components/enrollment/inscribirseCurso.js"></script>
 </body>
 </html>

@@ -1,17 +1,21 @@
+// Back/src/app.js
 const express = require('express');
 const path = require('path');
 
 const UserRepository = require('./repositories/UserRepository');
 const TutoriaRepository = require('./repositories/TutoriaRepository');
 const ScheduleRepository = require('./repositories/ScheduleRepository');
+const InscripcionRepository = require('./repositories/InscripcionRepository');
 
 const AuthController = require('./controllers/authController');
 const TutoriaController = require('./controllers/tutoriaController');
+const inscripcionControllerModule = require('./controllers/inscripcionController');
 const scheduleControllerModule = require('./controllers/scheduleController');
 const scheduleRoutesModule = require('./routes/scheduleRoutes');
 
 const authRoutesFactory = require('./routes/authRoutes');
 const tutoriaRoutesFactory = require('./routes/tutoriaRoutes');
+const inscripcionRoutesModule = require('./routes/inscripcionRoutes');
 
 const validation = require('./middleware/validation');
 const authMiddleware = require('./middleware/authMiddleware');
@@ -46,20 +50,30 @@ if ((process.env.NODE_ENV || 'development') === 'development') {
 const userRepo = new UserRepository();
 const tutoriaRepo = new TutoriaRepository();
 const scheduleRepo = new ScheduleRepository();
+const inscripcionRepo = new InscripcionRepository();
 
 // Controllers
 const authcontroller = new AuthController({ userRepository: userRepo });
 
-// Inyectar scheduleRepo en controller de tutorías para validaciones de horario
 const tutoriaController = new TutoriaController({
   tutoriaRepository: tutoriaRepo,
   userRepository: userRepo,
   scheduleRepository: scheduleRepo
 });
 
-console.log('[app] tutoriaController ready:', {
-  hasCreate: typeof tutoriaController.create === 'function',
-  hasList: typeof tutoriaController.list === 'function'
+let inscripcionController = null;
+try {
+  // inscripcionController module exports object with method inscribir
+  const mod = inscripcionControllerModule;
+  inscripcionController = typeof mod === 'function' ? (mod({ inscripcionRepository: inscripcionRepo }) || mod) : mod;
+} catch (e) {
+  inscripcionController = inscripcionControllerModule;
+}
+
+console.log('[app] controllers ready:', {
+  auth: !!authcontroller,
+  tutoria: !!tutoriaController,
+  inscripcion: !!inscripcionController
 });
 
 // Normalizar scheduleController: si el módulo exporta una fábrica que acepta repositorio, invocarla
@@ -109,7 +123,6 @@ try {
 }
 
 if (!schedulesRouter || (typeof schedulesRouter !== 'function' && typeof schedulesRouter.use !== 'function')) {
-  // Si no obtuvimos un router, creamos uno mínimo para exponer schedules desde scheduleRepo (solo GETs)
   const fallbackRouter = express.Router();
 
   fallbackRouter.get('/', async (req, res) => {
@@ -139,6 +152,31 @@ if (!schedulesRouter || (typeof schedulesRouter !== 'function' && typeof schedul
 
 app.use('/horarios', schedulesRouter);
 console.log('[app] /horarios mounted, schedulesRouter type:', schedulesRouter && (schedulesRouter.use ? 'router' : typeof schedulesRouter));
+
+// Inscripcion routes (con inyección del controller y authMiddleware)
+let inscripcionRouter = null;
+try {
+  if (typeof inscripcionRoutesModule === 'function') {
+    try {
+      inscripcionRouter = inscripcionRoutesModule({ inscripcionController, authMiddleware });
+    } catch (e) {
+      inscripcionRouter = inscripcionRoutesModule();
+    }
+  } else {
+    inscripcionRouter = inscripcionRoutesModule;
+  }
+} catch (err) {
+  inscripcionRouter = null;
+}
+
+// Fallback si no hay router implementado
+if (!inscripcionRouter) {
+  const r = express.Router();
+  r.post('/', (req, res) => res.status(501).json({ error: 'Inscripcion API no implementada en el servidor' }));
+  inscripcionRouter = r;
+}
+app.use('/inscripcion', inscripcionRouter);
+console.log('[app] /inscripcion mounted');
 
 // DEBUG temporal: inspeccionar headers y cantidad de tutorías
 app.get('/__debug/tutorias-headers', async (req, res) => {
@@ -197,6 +235,14 @@ app.get('/crearTutoria.html', (req, res) => {
   if (!user) return res.redirect('/login.html');
   if (String(user.rol || '').toLowerCase() !== 'tutor') return res.redirect('/login.html');
   return res.sendFile(path.join(frontPublic, 'crearTutoria.html'));
+});
+
+// Nueva ruta para inscribirse en cursos (solo estudiantes)
+app.get('/inscribirseCurso.html', (req, res) => {
+  const user = readUsuarioCookie(req);
+  if (!user) return res.redirect('/login.html');
+  if (String(user.rol || '').toLowerCase() !== 'estudiante') return res.redirect('/login.html');
+  return res.sendFile(path.join(frontPublic, 'inscribirseCurso.html'));
 });
 
 // Ahora montamos las rutas estáticas (después de las rutas explícitas anteriores)
