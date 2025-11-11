@@ -28,7 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const res = await fetch('/inscripcion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tutoriaId, estudianteId })
+      body: JSON.stringify({ tutoriaId, estudianteId }),
+      credentials: 'include'
     });
     return res.json();
   };
@@ -61,9 +62,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return map;
   };
 
-  const renderCursos = (tutorias = [], schedules = [], usuarioId = '') => {
+  // NUEVO: construir mapa de usuarios por id
+  const buildUserMap = (users = []) => {
+    const map = new Map();
+    (users || []).forEach(u => {
+      const id = String(u.id || u._id || u.userId || '');
+      if (id) map.set(id, u);
+    });
+    return map;
+  };
+
+  const renderCursos = (tutorias = [], schedules = [], users = [], usuarioId = '') => {
     grid.innerHTML = '';
     const scheduleMap = buildScheduleMap(schedules);
+    const userMap = buildUserMap(users);
 
     const disponibles = tutorias.filter(t => {
       const inscritos = Array.isArray(t.estudiantesInscritos)
@@ -93,10 +105,20 @@ document.addEventListener('DOMContentLoaded', () => {
       pTutor.style.fontSize = '0.9rem';
       pTutor.textContent = `Tutor: ${tutoria.creadorNombre || 'Desconocido'}`;
 
+      // Mostrar email buscando creadorId en users.json
+      const creatorId = tutoria.creadorId || tutoria.creador || tutoria.userId || null;
+      const creator = creatorId ? userMap.get(String(creatorId)) : null;
+      const emailText = creator ? (creator.email || creator.correo || creator.username || '') : (tutoria.creadorEmail || 'No disponible');
+
       const pCupo = document.createElement('p');
       pCupo.className = 'text-muted mb-2 text-center';
       pCupo.style.fontSize = '0.9rem';
       pCupo.textContent = `Cupo: ${tutoria.estudiantesInscritos?.length || 0} / ${tutoria.cupo}`;
+
+      const pEmail = document.createElement('p');
+      pEmail.className = 'text-muted mb-2 text-center';
+      pEmail.style.fontSize = '0.9rem';
+      pEmail.textContent = `Email: ${emailText}`;
 
       const horarioDiv = document.createElement('div');
       horarioDiv.className = 'text-muted small';
@@ -140,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       card.appendChild(h3);
       card.appendChild(pTutor);
+      card.appendChild(pEmail); // añadido
       card.appendChild(pCupo);
       card.appendChild(horarioDiv);
       card.appendChild(checkDiv);
@@ -153,17 +176,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const usuarioId = getUsuarioId();
       if (!usuarioId) throw new Error('Usuario no autenticado');
 
-      const [tRes, sRes] = await Promise.all([
-        fetch('/tutorias'),
-        fetch('/horarios')
+      // ahora cargamos tutorias, horarios y usuarios en paralelo
+      const [tRes, sRes, uRes] = await Promise.all([
+        fetch('/tutorias', { credentials: 'include' }),
+        fetch('/horarios', { credentials: 'include' }),
+        fetch('/usuarios', { credentials: 'include' })
       ]);
 
-      if (!tRes.ok || !sRes.ok) throw new Error('Error al cargar datos');
+      if (!tRes.ok || !sRes.ok || !uRes.ok) throw new Error('Error al cargar datos');
 
       const tutorias = await tRes.json();
       const schedules = await sRes.json();
+      const users = await uRes.json();
 
-      renderCursos(tutorias, schedules, usuarioId);
+      renderCursos(tutorias, schedules, users, usuarioId);
     } catch (err) {
       console.error('[loadTutorias]', err);
       showMessage('No se pudieron cargar las tutorías.', 'error');

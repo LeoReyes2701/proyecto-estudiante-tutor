@@ -42,4 +42,3 @@ function makeController({ inscripcionRepository } = {}) {
 
 // Soportar export directo del objeto o fábrica
 module.exports = makeController;
-

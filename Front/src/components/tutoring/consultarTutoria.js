@@ -2,10 +2,79 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('tutoriasContainer');
   const emptyMessage = document.getElementById('emptyMessage');
 
+  /* Añadir botón "Volver" arriba a la derecha (si no existe en el HTML) y ajustar según rol */
+  (function ensureTopRightBackButton() {
+    try {
+      const headerBar = document.querySelector('.bg-ucab-blue') || document.body;
+      // evita duplicados
+      if (headerBar.querySelector && headerBar.querySelector('#btnVolverTop')) return;
+
+      const btn = document.createElement('button');
+      btn.id = 'btnVolverTop';
+      btn.className = 'btn-volver btn btn-sm btn-outline-secondary';
+      btn.type = 'button';
+
+      if (headerBar === document.body) {
+        btn.style.position = 'fixed';
+        btn.style.top = '12px';
+        btn.style.right = '16px';
+        btn.style.zIndex = 9999;
+      } else {
+        btn.style.position = 'absolute';
+        btn.style.top = '12px';
+        btn.style.right = '16px';
+        headerBar.style.position = headerBar.style.position || 'relative';
+      }
+
+      btn.textContent = 'Volver';
+
+      // destino por defecto (por si no hay usuario)
+      let target = 'gestion.html';
+
+      try {
+        const raw = localStorage.getItem('usuario');
+        if (raw) {
+          const u = JSON.parse(raw);
+          const role = String(u?.role || u?.rol || (u?.isTutor ? 'tutor' : '') || u?.tipo || '').toLowerCase();
+          if (role === 'tutor' || role === 'teacher' || role === 'profesor' || role === 'admin') {
+            target = 'gestion.html';
+          } else {
+            target = 'gestion_estudiante.html';
+          }
+        } else {
+          // sin sesión: llevar a gestión estudiante por seguridad/UX
+          target = 'gestion_estudiante.html';
+        }
+      } catch (e) {
+        // en caso de parse error, dejar target por defecto
+        console.warn('Error leyendo localStorage.usuario para botón Volver', e);
+      }
+
+      btn.addEventListener('click', () => { window.location.href = target; });
+
+      headerBar.appendChild(btn);
+    } catch (e) {
+      console.warn('No se pudo insertar botón Volver:', e);
+    }
+  })();
+
+  const getUsuarioId = () => {
+    try {
+      const raw = localStorage.getItem('usuario');
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      return obj.id || obj.userId || obj._id || null;
+    } catch {
+      return null;
+    }
+  };
+
   async function fetchTutoriasAndSchedules() {
     try {
+      const usuarioId = getUsuarioId();
+
       const [tRes, sRes] = await Promise.all([
-        fetch('/tutorias?mine=1', { credentials: 'include', headers: { 'Accept': 'application/json' } }),
+        fetch('/tutorias', { credentials: 'include', headers: { 'Accept': 'application/json' } }),
         fetch('/horarios', { credentials: 'include', headers: { 'Accept': 'application/json' } })
       ]);
 
@@ -13,20 +82,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let schedules = [];
       if (sRes && sRes.ok) {
-        try { schedules = await sRes.json(); } catch (e) {}
+        try { schedules = await sRes.json(); } catch (e) { schedules = []; }
       }
 
-      const tutorias = await tRes.json();
-      renderTutorias(tutorias, schedules);
+      const allTutorias = await tRes.json();
+
+      // Si no hay usuario (no sesión), mostramos vacío
+      if (!usuarioId) {
+        return showEmpty('No hay sesión activa');
+      }
+
+      // Filtrar tutorías donde el usuario esté inscrito
+      const tutoriasInscritas = (Array.isArray(allTutorias) ? allTutorias : []).filter(t => {
+        if (!Array.isArray(t.estudiantesInscritos)) return false;
+        return t.estudiantesInscritos.some(e => {
+          // e puede ser string id o objeto { id: '...' }
+          const eid = (typeof e === 'string') ? e : (e && (e.id || e.userId || e._id));
+          return String(eid) === String(usuarioId);
+        });
+      });
+
+      renderTutorias(tutoriasInscritas, schedules);
     } catch (error) {
       showEmpty('No se pudo conectar con el servidor');
     }
   }
 
   function showEmpty(message) {
-    container.innerHTML = '';
-    emptyMessage.classList.remove('d-none');
-    emptyMessage.textContent = message || 'No hay tutorías registradas aún.';
+    if (container) container.innerHTML = '';
+    if (emptyMessage) {
+      emptyMessage.classList.remove('d-none');
+      emptyMessage.textContent = message || 'No hay tutorías registradas aún.';
+    }
+  }
+
+  function hideEmpty() {
+    if (emptyMessage) emptyMessage.classList.add('d-none');
   }
 
   function formatCupo(t) {
@@ -36,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function buildSchedulesMap(schedules) {
     const map = new Map();
-    schedules.forEach(s => {
+    (schedules || []).forEach(s => {
       const id = s.id || s._id || s.horarioId || s.idHorario;
       if (id) map.set(String(id), s);
     });
@@ -64,11 +155,25 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
-  function renderTutorias(tutorias, schedules) {
-    container.innerHTML = '';
-    if (!Array.isArray(tutorias) || tutorias.length === 0) return emptyMessage.classList.remove('d-none');
+  function timeDisplay(hhmm) {
+    if (!hhmm) return '';
+    const [hh, mm] = String(hhmm).split(':').map(Number);
+    if (Number.isNaN(hh) || Number.isNaN(mm)) return hhmm;
+    const ampm = hh >= 12 ? 'PM' : 'AM';
+    const h12 = ((hh + 11) % 12) + 1;
+    return `${h12}:${String(mm).padStart(2, '0')} ${ampm}`;
+  }
 
-    emptyMessage.classList.add('d-none');
+  function renderTutorias(tutorias, schedules) {
+    if (!container) return;
+    container.innerHTML = '';
+    if (!Array.isArray(tutorias) || tutorias.length === 0) {
+      // mostrar mensaje vacío
+      if (emptyMessage) emptyMessage.classList.remove('d-none');
+      return;
+    }
+
+    hideEmpty();
     const schedulesMap = buildSchedulesMap(schedules);
 
     tutorias.forEach((tutoria, idx) => {
@@ -99,14 +204,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (tutoria.horarioId) {
         const horario = schedulesMap.get(String(tutoria.horarioId));
-        const data = extractHorarioData(horario);
-        const li = document.createElement('li');
-        if (data) {
-          li.textContent = `Horario: ${data.day || '—'} • ${data.start || '—'} — ${data.end || '—'}`;
+        if (horario && Array.isArray(horario.slots)) {
+          const byDay = {};
+          horario.slots.forEach(s => {
+            const day = s.day || s.dia || 'Sin día';
+            if (!byDay[day]) byDay[day] = [];
+            byDay[day].push(s);
+          });
+          Object.keys(byDay).forEach(day => {
+            const ranges = byDay[day].map(s => `${timeDisplay(s.horaInicio || s.start || '')} - ${timeDisplay(s.horaFin || s.end || '')}`).join(', ');
+            const row = document.createElement('li');
+            row.className = 'value';
+            row.textContent = `${day}: ${ranges}`;
+            horariosList.appendChild(row);
+          });
         } else {
-          li.textContent = `Horario Id: ${tutoria.horarioId}`;
+          const data = extractHorarioData(horario);
+          const li = document.createElement('li');
+          if (data) {
+            li.textContent = `Horario: ${data.day || '—'} • ${data.start || '—'} — ${data.end || '—'}`;
+          } else {
+            li.textContent = `Horario Id: ${tutoria.horarioId}`;
+          }
+          horariosList.appendChild(li);
         }
-        horariosList.appendChild(li);
       } else if (Array.isArray(tutoria.horarios)) {
         tutoria.horarios.forEach(h => {
           const data = extractHorarioData(h);
