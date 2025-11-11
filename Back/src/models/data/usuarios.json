@@ -16,5 +16,14 @@
     "password": "123456",
     "rol": "estudiante",
     "createdAt": "10/11/25"
+  },
+  {
+    "id": "1762830880431-cl5et2z",
+    "nombre": "test",
+    "apellido": "anez",
+    "email": "manez2@est.ucab.edu.ve",
+    "password": "123456",
+    "rol": "estudiante",
+    "createdAt": "10/11/25"
   }
 ]

@@ -1,3 +1,8 @@
+// inscribirseCurso.js
+// Versión robusta que entiende el formato mostrado en la imagen:
+// - tutoria.id (string con guiones) o tutoria._id
+// - campos: titulo, descripcion, cupo, creadorId, creadorNombre, horarioId, estudiantesInscritos (array), createdAt (string)
+// - usuarios en /usuarios para resolver email del creador
 document.addEventListener('DOMContentLoaded', () => {
   const grid = document.getElementById('cursoGrid');
   const btn = document.getElementById('btnInscribirse');
@@ -9,8 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const showMessage = (text, type = 'info') => {
-    msg.textContent = text;
-    msg.className = type === 'error' ? 'error' : '';
+    if (!msg) return;
+    msg.textContent = text || '';
+    msg.className = '';
+    if (type === 'error') msg.classList.add('text-danger', 'fw-bold');
+    else msg.classList.add('text-success', 'fw-bold');
   };
 
   const getUsuarioId = () => {
@@ -18,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const raw = localStorage.getItem('usuario');
       if (!raw) return null;
       const obj = JSON.parse(raw);
-      return obj.id || obj.userId || null;
+      return obj.id || obj.userId || obj._id || null;
     } catch {
       return null;
     }
@@ -31,12 +39,16 @@ document.addEventListener('DOMContentLoaded', () => {
       body: JSON.stringify({ tutoriaId, estudianteId }),
       credentials: 'include'
     });
-    return res.json();
+    const text = await res.text().catch(() => '');
+    try { return JSON.parse(text); } catch { return { ok: res.ok, raw: text }; }
   };
 
   const timeDisplay = (hhmm) => {
     if (!hhmm) return '';
-    const [hh, mm] = hhmm.split(':').map(Number);
+    const parts = String(hhmm).split(':');
+    if (parts.length < 2) return hhmm;
+    const hh = Number(parts[0]);
+    const mm = Number(parts[1]);
     if (Number.isNaN(hh) || Number.isNaN(mm)) return hhmm;
     const ampm = hh >= 12 ? 'PM' : 'AM';
     const h12 = ((hh + 11) % 12) + 1;
@@ -45,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const groupSlotsByDay = (slots = []) => {
     const map = {};
-    slots.forEach(s => {
-      const day = (s.day || 'Sin día').trim();
+    (slots || []).forEach(s => {
+      const day = (s.day || s.dia || 'Sin día').trim();
       if (!map[day]) map[day] = [];
       map[day].push(s);
     });
@@ -55,14 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const buildScheduleMap = (schedules = []) => {
     const map = new Map();
-    schedules.forEach(s => {
-      const id = String(s.id || s._id || '');
+    (schedules || []).forEach(s => {
+      const id = String(s.id || s._id || s.horarioId || '');
       if (id) map.set(id, s);
     });
     return map;
   };
 
-  // NUEVO: construir mapa de usuarios por id
   const buildUserMap = (users = []) => {
     const map = new Map();
     (users || []).forEach(u => {
@@ -72,16 +83,30 @@ document.addEventListener('DOMContentLoaded', () => {
     return map;
   };
 
+  // Normaliza y devuelve un id "stable" para una tutoria (string)
+  const getTutoriaId = (t) => {
+    return String(t?.id ?? t?._id ?? t?.tutoriaId ?? '');
+  };
+
+  // Cuenta inscritos de forma segura
+  const countInscritos = (t) => {
+    if (!Array.isArray(t?.estudiantesInscritos)) return 0;
+    return t.estudiantesInscritos.length;
+  };
+
   const renderCursos = (tutorias = [], schedules = [], users = [], usuarioId = '') => {
+    if (!grid) return;
     grid.innerHTML = '';
+
     const scheduleMap = buildScheduleMap(schedules);
     const userMap = buildUserMap(users);
 
-    const disponibles = tutorias.filter(t => {
+    // Mostrar sólo tutorías donde el usuario NO esté inscrito
+    const disponibles = (tutorias || []).filter(t => {
       const inscritos = Array.isArray(t.estudiantesInscritos)
-        ? t.estudiantesInscritos.map(e => typeof e === 'string' ? e : e.id)
+        ? t.estudiantesInscritos.map(e => (typeof e === 'string' ? e : (e && (e.id || e.userId || e._id))).toString())
         : [];
-      return !inscritos.includes(usuarioId);
+      return !inscritos.includes(String(usuarioId));
     });
 
     if (!disponibles.length) {
@@ -91,48 +116,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     disponibles.forEach(tutoria => {
       const col = document.createElement('div');
-      col.className = 'col';
+      col.className = 'col-12 col-md-6 col-lg-4';
 
       const card = document.createElement('div');
-      card.className = 'card p-4 border rounded-3 shadow-sm h-100 d-flex flex-column justify-content-start';
+      card.className = 'card p-3 border rounded-3 shadow-sm h-100 d-flex flex-column';
 
       const h3 = document.createElement('h3');
-      h3.className = 'fw-medium fs-4 mb-0 text-center';
-      h3.textContent = tutoria.titulo;
+      h3.className = 'fw-medium fs-5 mb-1 text-center';
+      h3.textContent = tutoria.titulo ?? tutoria.nombre ?? '';
 
       const pTutor = document.createElement('p');
-      pTutor.className = 'text-muted mt-2 mb-1 text-center';
+      pTutor.className = 'text-muted mt-1 mb-1 text-center';
       pTutor.style.fontSize = '0.9rem';
-      pTutor.textContent = `Tutor: ${tutoria.creadorNombre || 'Desconocido'}`;
+      pTutor.textContent = `Tutor: ${tutoria.creadorNombre ?? tutoria.creador ?? 'Desconocido'}`;
 
-      // Mostrar email buscando creadorId en users.json
-      const creatorId = tutoria.creadorId || tutoria.creador || tutoria.userId || null;
+      // resolver email del creador
+      const creatorId = String(tutoria.creadorId ?? tutoria.creador ?? tutoria.userId ?? '');
       const creator = creatorId ? userMap.get(String(creatorId)) : null;
       const emailText = creator ? (creator.email || creator.correo || creator.username || '') : (tutoria.creadorEmail || 'No disponible');
 
+      const pEmail = document.createElement('p');
+      pEmail.className = 'text-muted mb-1 text-center';
+      pEmail.style.fontSize = '0.85rem';
+      pEmail.textContent = `Email: ${emailText}`;
+
+      // cupo: inscritos / capacidad
+      const inscritosCount = countInscritos(tutoria);
+      const capacity = Number.isFinite(Number(tutoria.cupo)) ? Number(tutoria.cupo) : (tutoria.cupos ?? '');
       const pCupo = document.createElement('p');
       pCupo.className = 'text-muted mb-2 text-center';
       pCupo.style.fontSize = '0.9rem';
-      pCupo.textContent = `Cupo: ${tutoria.estudiantesInscritos?.length || 0} / ${tutoria.cupo}`;
+      pCupo.textContent = `Cupo: ${inscritosCount} / ${capacity}`;
 
-      const pEmail = document.createElement('p');
-      pEmail.className = 'text-muted mb-2 text-center';
-      pEmail.style.fontSize = '0.9rem';
-      pEmail.textContent = `Email: ${emailText}`;
-
+      // horario
       const horarioDiv = document.createElement('div');
-      horarioDiv.className = 'text-muted small';
+      horarioDiv.className = 'text-muted small mb-2';
       horarioDiv.innerHTML = '<strong>Horario:</strong><br>';
 
-      const horario = scheduleMap.get(String(tutoria.horarioId));
-      const slots = Array.isArray(horario?.slots) ? horario.slots : [];
+      const horario = scheduleMap.get(String(tutoria.horarioId ?? tutoria.horario ?? ''));
+      const slots = Array.isArray(horario?.slots) ? horario.slots : (Array.isArray(tutoria.horarios) ? tutoria.horarios : []);
       const byDay = groupSlotsByDay(slots);
 
-      if (slots.length > 0) {
+      if ((slots || []).length > 0) {
         Object.keys(byDay).forEach(day => {
           const line = document.createElement('div');
           const ranges = byDay[day]
-            .map(s => `${timeDisplay(s.horaInicio)} - ${timeDisplay(s.horaFin)}`)
+            .map(s => `${timeDisplay(s.horaInicio ?? s.start ?? s.inicio ?? '')} - ${timeDisplay(s.horaFin ?? s.end ?? s.fin ?? '')}`)
             .join(', ');
           line.textContent = `${day}: ${ranges}`;
           horarioDiv.appendChild(line);
@@ -143,14 +172,16 @@ document.addEventListener('DOMContentLoaded', () => {
         horarioDiv.appendChild(line);
       }
 
+      // checkbox
       const checkDiv = document.createElement('div');
       checkDiv.className = 'form-check mt-3 d-flex justify-content-center';
 
+      const tid = getTutoriaId(tutoria) || `tmp-${Math.random().toString(36).slice(2,8)}`;
       const input = document.createElement('input');
       input.className = 'form-check-input';
       input.type = 'checkbox';
-      input.id = `check-${tutoria.id}`;
-      input.dataset.tutoriaId = tutoria.id;
+      input.id = `check-${tid}`;
+      input.dataset.tutoriaId = tid;
 
       const label = document.createElement('label');
       label.className = 'form-check-label ms-2';
@@ -160,12 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
       checkDiv.appendChild(input);
       checkDiv.appendChild(label);
 
+      // armado tarjeta
       card.appendChild(h3);
       card.appendChild(pTutor);
-      card.appendChild(pEmail); // añadido
+      card.appendChild(pEmail);
       card.appendChild(pCupo);
       card.appendChild(horarioDiv);
       card.appendChild(checkDiv);
+
       col.appendChild(card);
       grid.appendChild(col);
     });
@@ -174,20 +207,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadTutorias = async () => {
     try {
       const usuarioId = getUsuarioId();
-      if (!usuarioId) throw new Error('Usuario no autenticado');
+      if (!usuarioId) {
+        showMessage('No hay sesión activa. Inicia sesión.', 'error');
+        return;
+      }
 
-      // ahora cargamos tutorias, horarios y usuarios en paralelo
       const [tRes, sRes, uRes] = await Promise.all([
         fetch('/tutorias', { credentials: 'include' }),
         fetch('/horarios', { credentials: 'include' }),
         fetch('/usuarios', { credentials: 'include' })
       ]);
 
-      if (!tRes.ok || !sRes.ok || !uRes.ok) throw new Error('Error al cargar datos');
-
-      const tutorias = await tRes.json();
-      const schedules = await sRes.json();
-      const users = await uRes.json();
+      // tolerante: si algún recurso falla, lo indicamos y seguimos con lo que haya
+      const tutorias = tRes.ok ? await safeJson(tRes) : [];
+      const schedules = sRes.ok ? await safeJson(sRes) : [];
+      const users = uRes && uRes.ok ? await safeJson(uRes) : [];
 
       renderCursos(tutorias, schedules, users, usuarioId);
     } catch (err) {
@@ -196,44 +230,53 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  btn.addEventListener('click', async () => {
-    showMessage('');
-    const estudianteId = getUsuarioId();
-    if (!estudianteId) {
-      showMessage('No hay sesión activa. Inicia sesión como estudiante.', 'error');
-      return;
-    }
+  // helper parse-safe
+  async function safeJson(response) {
+    const text = await response.text().catch(() => '');
+    try { return JSON.parse(text); } catch { return []; }
+  }
 
-    const seleccionados = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
-    if (!seleccionados.length) {
-      showMessage('Selecciona al menos un curso para inscribirte.', 'error');
-      return;
-    }
-
-    let successCount = 0;
-    for (const input of seleccionados) {
-      const tutoriaId = input.dataset.tutoriaId;
-      try {
-        const result = await inscribir(tutoriaId, estudianteId);
-        if (result.error) {
-          console.warn(`[${tutoriaId}]`, result.error);
-        } else {
-          successCount++;
-        }
-      } catch (err) {
-        console.error(`[${tutoriaId}]`, err);
+  // handler inscribirse
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      showMessage('');
+      const estudianteId = getUsuarioId();
+      if (!estudianteId) {
+        showMessage('No hay sesión activa. Inicia sesión como estudiante.', 'error');
+        return;
       }
-    }
 
-    if (successCount > 0) {
-      showMessage(`Inscripción completada en ${successCount} curso(s).`);
-      setTimeout(() => {
-        window.location.href = 'gestion_estudiante.html';
-      }, 1500);
-    } else {
-      showMessage('No se pudo completar la inscripción.', 'error');
-    }
-  });
+      const seleccionados = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
+      if (!seleccionados.length) {
+        showMessage('Selecciona al menos un curso para inscribirte.', 'error');
+        return;
+      }
+
+      let successCount = 0;
+      for (const input of seleccionados) {
+        const tutoriaId = input.dataset.tutoriaId;
+        try {
+          const result = await inscribir(tutoriaId, estudianteId);
+          if (result && (result.error || result.ok === false)) {
+            console.warn(`[inscribir ${tutoriaId}]`, result);
+          } else {
+            successCount++;
+          }
+        } catch (err) {
+          console.error(`[inscribir ${tutoriaId}]`, err);
+        }
+      }
+
+      if (successCount > 0) {
+        showMessage(`Inscripción completada en ${successCount} curso(s).`);
+        setTimeout(() => { window.location.href = 'gestion_estudiante.html'; }, 1200);
+      } else {
+        showMessage('No se pudo completar la inscripción.', 'error');
+      }
+    });
+  } else {
+    console.warn('Botón btnInscribirse no encontrado en el DOM.');
+  }
 
   loadTutorias();
 });
