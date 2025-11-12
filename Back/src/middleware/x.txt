@@ -1,1 +1,0 @@
-Lo que se ejecuta antes de llegar al controlador

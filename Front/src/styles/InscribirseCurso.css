@@ -1,22 +1,107 @@
-.nav-link.active {
-    border-bottom: 2px solid white;
+:root {
+  --ucab-blue: #0b4a7a;
+  --ucab-primary: #0b4a7a;
+  --accent: #0b8ae6;
+  --light-grey-bg: #f4f7fb;
+  --muted: #6c757d;
+  --card-text: #222;
 }
 
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--light-grey-bg);
+  color: var(--card-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bg-ucab-blue {
+  background-color: var(--ucab-blue) !important;
+  color: #fff;
+}
 
 .page-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--light-grey);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+#cursoGrid .card {
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 12px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 8px rgba(11,61,145,0.03);
+}
 
-.sticky-footer-btn {
-    position: sticky;
-    bottom: 0;
-    z-index: 1020;
-    padding: 20px 0;
-    background-color: var(--white);
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-    margin-top: auto; 
+#cursoGrid h3 {
+  color: var(--ucab-blue);
+}
+
+#cursoGrid .text-muted {
+  color: var(--muted) !important;
+}
+
+#cursoGrid .small {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+#inscripcionMsg {
+  font-size: 1rem;
+  color: var(--muted);
+}
+#inscripcionMsg.error {
+  color: #dc3545;
+}
+#inscripcionMsg:not(.error) {
+  color: #198754;
+}
+
+.btn-primary {
+  background-color: var(--ucab-primary);
+  border: none;
+}
+.btn-primary:hover {
+  background-color: #093c65;
+}
+
+.footer-fixed {
+  background: transparent;
+  padding: 18px 0;
+}
+
+/* Botón Volver */
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  min-width: 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.9);
+  color: rgba(255,255,255,0.97);
+  background: transparent;
+  box-sizing: border-box;
+  text-decoration: none;
+  transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  cursor: pointer;
+}
+
+.btn-volver:hover,
+.btn-volver:focus {
+  background-color: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(11,79,138,0.06);
+  text-decoration: none;
+}
+
+@media (max-width: 576px) {
+  .btn-volver {
+    padding: 0.22rem 0.5rem;
+    font-size: 0.82rem;
+  }
 }

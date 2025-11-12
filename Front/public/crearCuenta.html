@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Cuenta - Programa Estudiante-Tutor</title>
-
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-          rel="stylesheet" 
-          xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
-          crossorigin="anonymous">
-    
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../src/styles/styles.css">
-    <link rel="stylesheet" href="../src/styles/crearCuenta.css"> 
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Crear Cuenta</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/src/styles/crearCuenta.css" rel="stylesheet">
 </head>
-<body class="d-flex flex-column min-vh-100">
-    
-     <header class="navbar navbar-dark bg-ucab-blue py-3">
-        <div class="container-fluid mx-lg-5">
-            <a class="navbar-brand fw-bold fs-5 me-5" href="#">
-                    UCAB <span class="fw-normal">Programa Estudiante-Tutor</span>
-                </a>
-        </div>
-    </header>
+<body>
+  <div class="container" style="max-width:640px;margin:3rem auto;">
+    <h3>Crear Cuenta</h3>
+    <form id="registerForm" novalidate>
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input id="nombre" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="apellido" class="form-label">Apellido</label>
+        <input id="apellido" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Correo institucional</label>
+        <input id="email" class="form-control" type="email" placeholder="usuario@est.ucab.edu.ve" required />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Contraseña</label>
+        <input id="password" class="form-control" type="password" required />
+      </div>
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+        <input id="confirmPassword" class="form-control" type="password" required />
+      </div>
+      <div class="mb-3">
+        <label for="rol" class="form-label">Rol</label>
+        <select id="rol" class="form-select" required>
+          <option value="estudiante" selected>Estudiante</option>
+          <option value="tutor">Tutor</option>
+        </select>
+      </div>
 
-    
-    <div class="login-container">
-        <div class="login-card"> 
-            <h2 class="text-center fw-bold fs-4 mb-2">Crear Cuenta</h2>
-            <p class="text-center text-muted mb-4 fs-6">Completa el formulario para registrarte en el sistema</p>
+      <div id="regError" class="text-danger mb-2 visually-hidden" role="status" aria-live="polite"></div>
 
+<<<<<<< HEAD
             <form id="signupForm">
                 
                 <div class="row mb-3">
@@ -99,5 +108,19 @@
     </script>
     
     <script src="../src/components/auth/crearCuenta.js"></script>
+=======
+      <div class="d-grid gap-2">
+        <button id="regBtn" type="submit" class="btn btn-primary">Crear cuenta</button>
+      </div>
+
+      <div style="margin-top:12px">
+        <a href="/login.html">Volver al login</a>
+      </div>
+    </form>
+  </div>
+
+  <script type="module" src="/src/components/auth/crearCuenta.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+>>>>>>> origin/mauricio
 </body>
 </html>

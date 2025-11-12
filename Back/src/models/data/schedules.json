@@ -1,5 +1,6 @@
 [
   {
+<<<<<<< HEAD
     "tutor": "1762657384069",
     "day": "martes",
     "start": "10:00",
@@ -22,5 +23,29 @@
     "day": "lunes",
     "start": "11:00",
     "end": "11:50"
+=======
+    "tutorId": "1762814845675-8s4k5oh",
+    "slots": [
+      {
+        "day": "Martes",
+        "horaInicio": "09:00",
+        "horaFin": "10:50"
+      }
+    ],
+    "createdAt": "2025-11-10T22:48:02.208Z",
+    "id": "1762814882209-n8gorwz"
+  },
+  {
+    "tutorId": "1762814845675-8s4k5oh",
+    "slots": [
+      {
+        "day": "Miércoles",
+        "horaInicio": "15:00",
+        "horaFin": "16:40"
+      }
+    ],
+    "createdAt": "2025-11-11T15:13:32.802Z",
+    "id": "1762874012803-ie0tl8z"
+>>>>>>> origin/mauricio
   }
 ]

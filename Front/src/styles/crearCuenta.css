@@ -1,72 +1,105 @@
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--light-grey);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; 
-        }
-        
-       
-        .login-container {
-            flex-grow: 1; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px; 
-        }
+:root {
+  --ucab-blue: #0b4a7a;
+  --ucab-primary: #0b4a7a;
+  --accent: #0b8ae6;
+  --light-grey-bg: #f4f7fb;
+  --muted: #6c757d;
+  --card-text: #222;
+}
 
-       
-        .login-card {
-            background-color: var(--white);
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            max-width: 500px; 
-            width: 100%; 
-        }
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--light-grey-bg);
+  color: var(--card-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
+.bg-ucab-blue {
+  background-color: var(--ucab-blue) !important;
+  color: #fff;
+}
 
-        .role-selection .btn {
-            border: 1px solid #ced4da;
-            color: #495057;
-            background-color: var(--white);
-            font-weight: 500;
-            padding: 10px;
-            transition: all 0.2s;
-        }
+.text-ucab-blue {
+  color: var(--ucab-blue) !important;
+}
 
-        .role-selection .btn.active-role, .role-selection .btn:focus {
-            background-color: var(--white);
-            border-color: var(--ucab-link);
-            color: var(--ucab-link);
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25); 
-            z-index: 2; 
-        }
-    
-        .header-login {
-            background-color: var(--ucab-blue);
-            color: var(--white);
-            padding: 15px 20px;
-        }
-        .footer-login {
-            background-color: var(--ucab-blue); 
-            color: var(--white);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: center; 
-            align-items: center;
-            width: 100%;
-            font-size: 0.9em;
-            position: relative; 
-        }
-        
-        
-        .form-control {
-            background-color: var(--light-grey); 
-            border: 1px solid #ced4da;
-            padding: 10px;
-        }
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-        .text-register {
-            font-size: 0.9em;
-        }
+.profile-card {
+  max-width: 800px;
+  margin: auto;
+  border-radius: 12px;
+  background: #fff;
+  padding: 18px;
+  color: var(--card-text);
+}
+
+#fechaPerfil {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.user-icon {
+  width: 50px;
+  height: 50px;
+  background-color: var(--ucab-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.fw-medium {
+  font-weight: 500;
+}
+
+.text-muted {
+  color: var(--muted) !important;
+}
+
+.footer-fixed {
+  background: transparent;
+  padding: 18px 0;
+}
+
+/* Botón Volver */
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  min-width: 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.97);
+  background: transparent;
+  box-sizing: border-box;
+  text-decoration: none;
+  transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  cursor: pointer;
+}
+
+.btn-volver:hover,
+.btn-volver:focus {
+  background-color: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(11, 79, 138, 0.06);
+  text-decoration: none;
+}
+
+@media (max-width: 576px) {
+  .btn-volver {
+    padding: 0.22rem 0.5rem;
+    font-size: 0.82rem;
+  }
+}

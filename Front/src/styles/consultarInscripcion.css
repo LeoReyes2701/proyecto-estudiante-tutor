@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body {
     font-family: 'Roboto', sans-serif;
     background-color: var(--bg-light);
@@ -117,3 +118,193 @@ body {
     display: flex;
     align-items: center;
 }
+=======
+:root {
+  --ucab-blue: #0b3d91;
+  --accent: #0b8ae6;
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --muted: #6c757d;
+  --ucab-link: #0b8ae6;
+  --btn-gradient: linear-gradient(90deg, var(--ucab-blue), var(--accent));
+  --btn-shadow: 0 8px 18px rgba(11,61,145,0.12);
+}
+
+/* Base */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg);
+  color: #222;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+
+/* Header */
+.bg-ucab-blue {
+  background-color: var(--ucab-blue) !important;
+  color: #fff;
+}
+
+/* Wrapper class so we can position the back button absolute relative to the header */
+.header-with-back {
+  position: relative;
+}
+
+/* Botón Volver (estilo UCAB) */
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  min-width: 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.9);
+  color: rgba(255,255,255,0.97);
+  background: transparent;
+  box-sizing: border-box;
+  text-decoration: none;
+  transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  cursor: pointer;
+  z-index: 5;
+  position: absolute;
+  top: 12px;
+  right: 18px;
+}
+
+/* SVG inside button should match text color */
+.btn-volver svg {
+  display: inline-block;
+  vertical-align: middle;
+  color: inherit;
+}
+
+/* Hover / focus states */
+.btn-volver:hover,
+.btn-volver:focus {
+  background-color: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(11,79,138,0.06);
+  text-decoration: none;
+}
+
+/* Responsive adjustments for the absolute back button */
+@media (max-width: 768px) {
+  .btn-volver {
+    top: 10px;
+    right: 12px;
+  }
+}
+@media (max-width: 576px) {
+  .btn-volver {
+    padding: 0.22rem 0.5rem;
+    font-size: 0.82rem;
+    top: 8px;
+    right: 10px;
+  }
+}
+
+/* Layout */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inscription card container */
+.inscription-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Card details */
+.details-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 28px;
+  margin-top: 1rem;
+  box-shadow: 0 6px 20px rgba(30,40,60,0.06);
+}
+
+.section-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.data-pair {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.75rem;
+}
+
+.data-pair .label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.data-pair .value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #222;
+}
+
+.tutor-info-row {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.tutor-info-col {
+  flex: 1;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #198754;
+  background-color: rgba(25,135,84,0.08);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.footer-fixed {
+  background: transparent;
+  padding: 18px 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Message area */
+#inscripcionMsg {
+  font-size: 1rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .container-fluid.mx-lg-5 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .inscription-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .tutor-info-row {
+    gap: 1rem;
+  }
+}
+
+>>>>>>> origin/mauricio

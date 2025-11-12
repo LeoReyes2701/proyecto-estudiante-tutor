@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<<<<<<< HEAD
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - UCAB Programa Estudiante-Tutor</title>
@@ -142,3 +143,89 @@
     </script>
 </body>
 </html>
+=======
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mi Perfil - UCAB Programa Estudiante-Tutor</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/styles/styles.css">
+  <link rel="stylesheet" href="../src/styles/consultarPerfil.css">
+</head>
+<body class="d-flex flex-column min-vh-100 p-0">
+  <div class="page-container">
+    <header class="navbar navbar-expand-lg navbar-dark bg-ucab-blue py-3">
+      <div class="container-fluid mx-lg-5">
+        <a class="navbar-brand fw-bold fs-5 me-5" href="#">
+          UCAB <span class="fw-normal">Programa Estudiante-Tutor</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a id="btnVolver" class="btn btn-outline-light btn-sm btn-volver" href="#" role="button">Volver</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <div class="bg-ucab-blue text-white p-5">
+      <div class="container-fluid mx-lg-5">
+        <h1 class="fw-bold display-5">Mi Perfil</h1>
+      </div>
+    </div>
+
+    <main class="flex-grow-1 container pb-5">
+      <div class="card shadow-sm p-4 profile-card mb-4 mt-4">
+        <div class="d-flex align-items-center mb-3">
+          <div class="user-icon me-4" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.282 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+            </svg>
+          </div>
+
+          <div>
+            <h5 class="fw-bold mb-0" id="userName">Usuario</h5>
+            <p class="small text-muted mb-0" id="fechaPerfil">Perfil creado el: --/--/----</p>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-12 d-flex justify-content-between py-2 border-bottom">
+            <span class="text-muted fw-medium">Email:</span>
+            <span class="text-ucab-blue fw-medium" id="userEmail">—</span>
+          </div>
+          <div class="col-12 d-flex justify-content-between py-2">
+            <span class="text-muted fw-medium">Rol:</span>
+            <span class="fw-medium" id="userRol">—</span>
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <button id="logoutButton" class="btn btn-danger px-5 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-right me-2" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+              <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+            </svg>
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer-fixed d-flex justify-content-center align-items-center mt-auto">
+      <span class="opacity-75">© 2025 UCAB - Universidad Católica Andrés Bello</span>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="../src/components/profile/consultarPerfil.js"></script>
+</body>
+</html>
+>>>>>>> origin/mauricio

@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "1762818294742-dybcyxy",
+    "titulo": "hola 213",
+    "descripcion": "13223",
+    "cupo": 10,
+    "creadorId": "1762814845675-8s4k5oh",
+    "creadorNombre": "mao anez",
+    "horarioId": "1762814882209-n8gorwz",
+    "estudiantesInscritos": [
+      {
+        "id": "1762814926275-dh70m2d",
+        "fecha": "11/11/25"
+      }
+    ],
+    "createdAt": "10/11/25"
+  }
+]

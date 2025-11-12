@@ -1,13 +1,29 @@
 [
   {
-    "id": "1762657384069",
-    "nombre": "Nanan",
-    "apellido": "Naa",
-    "email": "na@est.ucab.edu.ve",
-    "password": "$2b$10$C9j3b3j/sp3WjFTDl5b/G.ES0AaNAjt30dhNr/c8LBUj2eBAhMzoK",
+    "id": "1762814845675-8s4k5oh",
+    "nombre": "mao",
+    "apellido": "anez",
+    "email": "manez@est.ucab.edu.ve",
+    "password": "123456",
     "rol": "tutor",
-    "createdAt": "08/11/25",
-    "tutoriasOfrecidas": [],
-    "tutoriasInscritas": []
+    "createdAt": "10/11/25"
+  },
+  {
+    "id": "1762814926275-dh70m2d",
+    "nombre": "test",
+    "apellido": "test",
+    "email": "test@est.ucab.edu.ve",
+    "password": "123456",
+    "rol": "estudiante",
+    "createdAt": "10/11/25"
+  },
+  {
+    "id": "1762830880431-cl5et2z",
+    "nombre": "test",
+    "apellido": "anez",
+    "email": "manez2@est.ucab.edu.ve",
+    "password": "123456",
+    "rol": "estudiante",
+    "createdAt": "10/11/25"
   }
 ]

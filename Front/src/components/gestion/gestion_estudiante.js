@@ -1,4 +1,8 @@
 // /src/components/gestion/gestion_estudiante.js
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/mauricio
 const btnConsultarPerfil = document.getElementById('btnConsultarPerfil');
 const btnConsultarHorario = document.getElementById('btnConsultarHorario');
 const btnConsultarTutoria = document.getElementById('btnConsultarTutoria');
@@ -17,7 +21,11 @@ function openPage(url) {
 
 function showModal(title, html) {
   if (!modal) {
+<<<<<<< HEAD
     alert(title + '\n\n' + (typeof html === 'string' ? html : JSON.stringify(html)));
+=======
+    alert(`${title}\n\n${typeof html === 'string' ? html : JSON.stringify(html)}`);
+>>>>>>> origin/mauricio
     return;
   }
   modalTitle.textContent = title || 'Resultado';
@@ -25,6 +33,7 @@ function showModal(title, html) {
   modal.show();
 }
 
+<<<<<<< HEAD
 // Asociaciones: rutas destino (ajusta si tus archivos se llaman distinto)
 btnConsultarPerfil?.addEventListener('click', () => openPage('/consultarPerfil.html'));
 btnConsultarHorario?.addEventListener('click', () => openPage('/consultarHorario.html'));
@@ -58,11 +67,32 @@ btnLogout?.addEventListener('click', () => {
 
 // Mostrar nombre / email en la cabecera si hay sesión
 (async function fetchProfile(){
+=======
+// Asociaciones: rutas destino
+btnConsultarPerfil?.addEventListener('click', () => openPage('/consultarPerfil.html'));
+btnConsultarHorario?.addEventListener('click', () => openPage('/consultarHorario.html'));
+btnConsultarTutoria?.addEventListener('click', () => openPage('/consultarTutoria.html'));
+btnConsultarInscripcion?.addEventListener('click', () => openPage('/consultarInscripcion.html'));
+btnInscribirseCurso?.addEventListener('click', () => openPage('/InscribirseCurso.html'));
+
+btnLogout?.addEventListener('click', () => {
+  document.cookie = 'usuario=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+  localStorage.removeItem('usuario');
+  openPage('/login.html');
+});
+
+// Mostrar nombre / email en la cabecera si hay sesión
+(async function fetchProfile() {
+>>>>>>> origin/mauricio
   try {
     const res = await fetch('/auth/profile', { credentials: 'same-origin' });
     if (!res.ok) return;
     const json = await res.json();
+<<<<<<< HEAD
     if (json && json.ok && json.user) {
+=======
+    if (json?.ok && json.user) {
+>>>>>>> origin/mauricio
       const name = `${json.user.nombre || ''} ${json.user.apellido || ''}`.trim();
       const welcomeTitle = document.getElementById('welcomeTitle');
       if (welcomeTitle && name) welcomeTitle.textContent = `Hola, ${name}`;

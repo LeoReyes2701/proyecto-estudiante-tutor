@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('tutoriasContainer');
   const emptyMessage = document.getElementById('emptyMessage');
 
+<<<<<<< HEAD
   async function fetchTutorias() {
     try {
       const res = await fetch('/tutorias', { method: 'GET', headers: { 'Accept': 'application/json' }});
@@ -15,11 +16,116 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTutorias(tutorias);
     } catch (error) {
       console.error('No se pudo conectar con el servidor:', error);
+=======
+  /* Añadir botón "Volver" arriba a la derecha (si no existe en el HTML) y ajustar según rol */
+  (function ensureTopRightBackButton() {
+    try {
+      const headerBar = document.querySelector('.bg-ucab-blue') || document.body;
+      // evita duplicados
+      if (headerBar.querySelector && headerBar.querySelector('#btnVolverTop')) return;
+
+      const btn = document.createElement('button');
+      btn.id = 'btnVolverTop';
+      btn.className = 'btn-volver btn btn-sm btn-outline-secondary';
+      btn.type = 'button';
+
+      if (headerBar === document.body) {
+        btn.style.position = 'fixed';
+        btn.style.top = '12px';
+        btn.style.right = '16px';
+        btn.style.zIndex = 9999;
+      } else {
+        btn.style.position = 'absolute';
+        btn.style.top = '12px';
+        btn.style.right = '16px';
+        headerBar.style.position = headerBar.style.position || 'relative';
+      }
+
+      btn.textContent = 'Volver';
+
+      // destino por defecto (por si no hay usuario)
+      let target = 'gestion.html';
+
+      try {
+        const raw = localStorage.getItem('usuario');
+        if (raw) {
+          const u = JSON.parse(raw);
+          const role = String(u?.role || u?.rol || (u?.isTutor ? 'tutor' : '') || u?.tipo || '').toLowerCase();
+          if (role === 'tutor' || role === 'teacher' || role === 'profesor' || role === 'admin') {
+            target = 'gestion.html';
+          } else {
+            target = 'gestion_estudiante.html';
+          }
+        } else {
+          // sin sesión: llevar a gestión estudiante por seguridad/UX
+          target = 'gestion_estudiante.html';
+        }
+      } catch (e) {
+        // en caso de parse error, dejar target por defecto
+        console.warn('Error leyendo localStorage.usuario para botón Volver', e);
+      }
+
+      btn.addEventListener('click', () => { window.location.href = target; });
+
+      headerBar.appendChild(btn);
+    } catch (e) {
+      console.warn('No se pudo insertar botón Volver:', e);
+    }
+  })();
+
+  const getUsuarioId = () => {
+    try {
+      const raw = localStorage.getItem('usuario');
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      return obj.id || obj.userId || obj._id || null;
+    } catch {
+      return null;
+    }
+  };
+
+  async function fetchTutoriasAndSchedules() {
+    try {
+      const usuarioId = getUsuarioId();
+
+      const [tRes, sRes] = await Promise.all([
+        fetch('/tutorias', { credentials: 'include', headers: { 'Accept': 'application/json' } }),
+        fetch('/horarios', { credentials: 'include', headers: { 'Accept': 'application/json' } })
+      ]);
+
+      if (!tRes.ok) return showEmpty('Error al cargar tutorías');
+
+      let schedules = [];
+      if (sRes && sRes.ok) {
+        try { schedules = await sRes.json(); } catch (e) { schedules = []; }
+      }
+
+      const allTutorias = await tRes.json();
+
+      // Si no hay usuario (no sesión), mostramos vacío
+      if (!usuarioId) {
+        return showEmpty('No hay sesión activa');
+      }
+
+      // Filtrar tutorías donde el usuario esté inscrito
+      const tutoriasInscritas = (Array.isArray(allTutorias) ? allTutorias : []).filter(t => {
+        if (!Array.isArray(t.estudiantesInscritos)) return false;
+        return t.estudiantesInscritos.some(e => {
+          // e puede ser string id o objeto { id: '...' }
+          const eid = (typeof e === 'string') ? e : (e && (e.id || e.userId || e._id));
+          return String(eid) === String(usuarioId);
+        });
+      });
+
+      renderTutorias(tutoriasInscritas, schedules);
+    } catch (error) {
+>>>>>>> origin/mauricio
       showEmpty('No se pudo conectar con el servidor');
     }
   }
 
   function showEmpty(message) {
+<<<<<<< HEAD
     container.innerHTML = '';
     emptyMessage.classList.remove('d-none');
     emptyMessage.textContent = message || 'No hay tutorías registradas aún.';
@@ -34,6 +140,74 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     emptyMessage.classList.add('d-none');
+=======
+    if (container) container.innerHTML = '';
+    if (emptyMessage) {
+      emptyMessage.classList.remove('d-none');
+      emptyMessage.textContent = message || 'No hay tutorías registradas aún.';
+    }
+  }
+
+  function hideEmpty() {
+    if (emptyMessage) emptyMessage.classList.add('d-none');
+  }
+
+  function formatCupo(t) {
+    const n = Number(t);
+    return Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
+  }
+
+  function buildSchedulesMap(schedules) {
+    const map = new Map();
+    (schedules || []).forEach(s => {
+      const id = s.id || s._id || s.horarioId || s.idHorario;
+      if (id) map.set(String(id), s);
+    });
+    return map;
+  }
+
+  function extractHorarioData(horario) {
+    if (!horario || typeof horario !== 'object') return null;
+
+    const day = horario.day || horario.dia || '';
+    const start = horario.start || horario.horaInicio || horario.inicio || horario.startTime || horario.start_at || '';
+    const end = horario.end || horario.horaFin || horario.fin || horario.endTime || horario.end_at || '';
+
+    if (day || start || end) return { day, start, end };
+
+    if (Array.isArray(horario.slots) && horario.slots.length > 0) {
+      const s0 = horario.slots[0];
+      return {
+        day: s0.day || s0.dia || '',
+        start: s0.start || s0.horaInicio || '',
+        end: s0.end || s0.horaFin || ''
+      };
+    }
+
+    return null;
+  }
+
+  function timeDisplay(hhmm) {
+    if (!hhmm) return '';
+    const [hh, mm] = String(hhmm).split(':').map(Number);
+    if (Number.isNaN(hh) || Number.isNaN(mm)) return hhmm;
+    const ampm = hh >= 12 ? 'PM' : 'AM';
+    const h12 = ((hh + 11) % 12) + 1;
+    return `${h12}:${String(mm).padStart(2, '0')} ${ampm}`;
+  }
+
+  function renderTutorias(tutorias, schedules) {
+    if (!container) return;
+    container.innerHTML = '';
+    if (!Array.isArray(tutorias) || tutorias.length === 0) {
+      // mostrar mensaje vacío
+      if (emptyMessage) emptyMessage.classList.remove('d-none');
+      return;
+    }
+
+    hideEmpty();
+    const schedulesMap = buildSchedulesMap(schedules);
+>>>>>>> origin/mauricio
 
     tutorias.forEach((tutoria, idx) => {
       const col = document.createElement('div');
@@ -47,7 +221,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const title = document.createElement('h5');
       title.className = 'card-title mb-2';
+<<<<<<< HEAD
       title.textContent = tutoria.nombre || `Tutoria ${idx + 1}`;
+=======
+      title.textContent = tutoria.titulo || tutoria.nombre || `Tutoria ${idx + 1}`;
+>>>>>>> origin/mauricio
 
       const desc = document.createElement('p');
       desc.className = 'card-text text-muted mb-3';
@@ -55,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const cupos = document.createElement('p');
       cupos.className = 'mb-2';
+<<<<<<< HEAD
       cupos.innerHTML = `<strong>Cupos:</strong> ${tutoria.cupos ?? '-'}`;
 
       const horariosList = document.createElement('ul');
@@ -63,6 +242,49 @@ document.addEventListener('DOMContentLoaded', () => {
         tutoria.horarios.forEach(h => {
           const li = document.createElement('li');
           li.textContent = `${h.dia} — ${h.hora}`;
+=======
+      const displayCupo = formatCupo(tutoria.cupo ?? tutoria.cupos);
+      cupos.innerHTML = `<strong>Cupos:</strong> ${displayCupo}`;
+
+      const horariosList = document.createElement('ul');
+      horariosList.className = 'list-unstyled mb-0';
+
+      if (tutoria.horarioId) {
+        const horario = schedulesMap.get(String(tutoria.horarioId));
+        if (horario && Array.isArray(horario.slots)) {
+          const byDay = {};
+          horario.slots.forEach(s => {
+            const day = s.day || s.dia || 'Sin día';
+            if (!byDay[day]) byDay[day] = [];
+            byDay[day].push(s);
+          });
+          Object.keys(byDay).forEach(day => {
+            const ranges = byDay[day].map(s => `${timeDisplay(s.horaInicio || s.start || '')} - ${timeDisplay(s.horaFin || s.end || '')}`).join(', ');
+            const row = document.createElement('li');
+            row.className = 'value';
+            row.textContent = `${day}: ${ranges}`;
+            horariosList.appendChild(row);
+          });
+        } else {
+          const data = extractHorarioData(horario);
+          const li = document.createElement('li');
+          if (data) {
+            li.textContent = `Horario: ${data.day || '—'} • ${data.start || '—'} — ${data.end || '—'}`;
+          } else {
+            li.textContent = `Horario Id: ${tutoria.horarioId}`;
+          }
+          horariosList.appendChild(li);
+        }
+      } else if (Array.isArray(tutoria.horarios)) {
+        tutoria.horarios.forEach(h => {
+          const data = extractHorarioData(h);
+          const li = document.createElement('li');
+          if (data) {
+            li.textContent = `${data.day || '—'} • ${data.start || '—'} — ${data.end || '—'}`;
+          } else {
+            li.textContent = JSON.stringify(h);
+          }
+>>>>>>> origin/mauricio
           horariosList.appendChild(li);
         });
       } else {
@@ -71,17 +293,35 @@ document.addEventListener('DOMContentLoaded', () => {
         horariosList.appendChild(li);
       }
 
+<<<<<<< HEAD
+=======
+      if (tutoria.createdAt) {
+        const created = document.createElement('p');
+        created.className = 'text-muted small mt-3 mb-0';
+        const d = new Date(tutoria.createdAt);
+        created.textContent = `Creada: ${isNaN(d.getTime()) ? tutoria.createdAt : d.toLocaleDateString()}`;
+        cardBody.appendChild(created);
+      }
+
+>>>>>>> origin/mauricio
       cardBody.appendChild(title);
       cardBody.appendChild(desc);
       cardBody.appendChild(cupos);
       cardBody.appendChild(horariosList);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/mauricio
       card.appendChild(cardBody);
       col.appendChild(card);
       container.appendChild(col);
     });
   }
 
+<<<<<<< HEAD
   // Inicializar
   fetchTutorias();
+=======
+  fetchTutoriasAndSchedules();
+>>>>>>> origin/mauricio
 });

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 function setupPasswordToggle(toggleId, inputId) {
     const toggle = document.querySelector(`#${toggleId}`);
     const input = document.querySelector(`#${inputId}`);
@@ -71,79 +72,121 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!rolSeleccionado) {
       alert('Debes seleccionar un rol antes de registrarte');
+=======
+// /src/components/auth/crearCuenta.js
+const form = document.getElementById('registerForm');
+const regBtn = document.getElementById('regBtn');
+const regError = document.getElementById('regError');
+
+if (form) {
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    regError.classList.add('visually-hidden');
+    regError.textContent = '';
+
+    const nombre = getValue('nombre');
+    const apellido = getValue('apellido');
+    const email = getValue('email');
+    const password = getValue('password');
+    const confirmPassword = getValue('confirmPassword');
+    const rol = getValue('rol').toLowerCase();
+
+    // Validaciones básicas
+    if (!nombre || !apellido || !email || !password || !confirmPassword) {
+      showError('Completa todos los campos obligatorios.');
+>>>>>>> origin/mauricio
       return;
     }
 
-    const nombre = document.getElementById("nombreInput")?.value.trim();
-    const apellido = document.getElementById("apellidoInput")?.value.trim();
-    const email = document.getElementById("emailInput")?.value.trim().toLowerCase();
-    const password = document.getElementById("passwordInput")?.value.trim();
-    const confirmPassword = document.getElementById("confirmPasswordInput")?.value.trim();
-
-
-    // if (!nombre || !apellido || !email || !password) {
-    //   alert('Faltan campos obligatorios');
-    //   return;
-    // }
-
-    const camposFaltantes = [];
-
-    if (!form.nombreInput.value.trim()) camposFaltantes.push("Nombre");
-    if (!form.apellidoInput.value.trim()) camposFaltantes.push("Apellido");
-    if (!form.correoInput.value.trim()) camposFaltantes.push("Correo");
-    if (!form.contraseñaInput.value.trim()) camposFaltantes.push("Contraseña");
-    if (!form.confirmarContraseñaInput.value.trim()) camposFaltantes.push("confirmarContraseña");
-    if (!rolSeleccionado) camposFaltantes.push("Rol");
-
-    if (camposFaltantes.length > 0) {
-    alert("Faltan campos obligatorios: " + camposFaltantes.join(", "));
-    return;
-    }
-
-
-    if (!email.endsWith('@est.ucab.edu.ve')) {
-      alert('El correo debe terminar en @est.ucab.edu.ve');
-      return;
-    }
-
-    if (confirmPassword && password !== confirmPassword) {
-      alert('Las contraseñas no coinciden');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError('Ingresa un correo válido.');
       return;
     }
 
     if (password.length < 6) {
-      alert('La contraseña debe tener al menos 6 caracteres');
+      showError('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
 
-    const datos = { nombre, apellido, email, password, rol: rolSeleccionado };
+    if (password !== confirmPassword) {
+      showError('Las contraseñas no coinciden.');
+      markInvalid('confirmPassword');
+      return;
+    }
+
+    if (!['estudiante', 'tutor', 'profesor'].includes(rol)) {
+      showError('Rol inválido.');
+      return;
+    }
+
+    const payload = {
+      nombre,
+      apellido,
+      email,
+      password,
+      rol
+    };
 
     try {
-      const res = await fetch('http://localhost:3000/auth/registro', {
+      setLoading(true);
+      const resp = await fetch('/auth/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos)
+        body: JSON.stringify(payload),
+        credentials: 'same-origin'
       });
 
-      let resultado = null;
-      try { resultado = await res.json(); } catch (err) { /* ignore parse error */ }
+      const json = await resp.json().catch(() => null);
 
-      if (res.ok) {
-        alert(resultado?.mensaje || 'Usuario registrado con éxito');
-        window.location.href = "/login";
-        form.reset();
-        rolSeleccionado = null;
-        roleButtons.forEach(b => b.classList.remove('active-role', 'btn-primary'));
-        if (btnEstudiante) { btnEstudiante.classList.remove('btn-primary'); btnEstudiante.classList.add('btn-outline-secondary'); }
-        if (btnTutor) { btnTutor.classList.remove('btn-primary'); btnTutor.classList.add('btn-outline-secondary'); }
+      if (!resp.ok || !json) {
+        const errMsg = (json && json.error) ? json.error : `Error de servidor (${resp.status})`;
+        showError(errMsg);
+        return;
+      }
+
+      if (json.ok) {
+        regBtn.textContent = 'Registrado';
+        setTimeout(() => {
+          window.location.href = json.redirect || '/';
+        }, 600);
       } else {
-        alert(resultado?.error || resultado?.mensaje || `Error ${res.status}: ${res.statusText}`);
+        showError(json.error || 'No se pudo registrar.');
       }
     } catch (err) {
-      console.error('Error en fetch registro:', err);
-      alert('Error al conectar con el servidor');
+      console.error('[crearCuenta] network error', err);
+      showError('Error de red. Revisa la consola.');
+    } finally {
+      setLoading(false);
     }
   });
+}
 
-});
+function getValue(id) {
+  return String((document.getElementById(id) || {}).value || '').trim();
+}
 
+<<<<<<< HEAD
+=======
+function showError(msg) {
+  regError.textContent = msg;
+  regError.classList.remove('visually-hidden');
+}
+
+function setLoading(isLoading) {
+  if (isLoading) {
+    regBtn.disabled = true;
+    regBtn.innerHTML = 'Registrando...';
+  } else {
+    regBtn.disabled = false;
+    regBtn.innerHTML = 'Crear cuenta';
+  }
+}
+
+function markInvalid(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add('is-invalid');
+    el.addEventListener('input', () => el.classList.remove('is-invalid'), { once: true });
+  }
+}
+>>>>>>> origin/mauricio
