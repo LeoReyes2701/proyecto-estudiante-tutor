@@ -127,35 +127,32 @@ document.addEventListener('DOMContentLoaded', () => {
       const allTutorias = await tutoriasRes.json();
       const allHorarios = await horariosRes.json();
 
-      let relevantTutorias = [];
+      let mineSchedules = [];
 
       if (isTutor) {
-        // Mostrar tutorías creadas por el tutor
-        relevantTutorias = allTutorias.filter(t => {
-          const cid = t.creadorId || t.creador || t.userId;
-          return String(cid) === String(usuarioId);
-        });
+        // Mostrar TODOS los horarios creados por el tutor
+        mineSchedules = allHorarios.filter(s => String(s.tutorId || s.userId || s.creadorId) === String(usuarioId));
       } else {
-        // Mostrar tutorías donde el usuario está inscrito
-        relevantTutorias = allTutorias.filter(t => {
+        // Mostrar horarios de tutorías donde el estudiante está inscrito
+        const relevantTutorias = allTutorias.filter(t => {
           if (!Array.isArray(t.estudiantesInscritos)) return false;
           return t.estudiantesInscritos.some(e => {
             const id = typeof e === 'string' ? e : e.id || e.userId || e._id;
             return String(id) === String(usuarioId);
           });
         });
-      }
 
-      if (!relevantTutorias.length) {
-        showMessage(isTutor ? 'No has creado ninguna tutoría.' : 'No estás inscrito en ninguna tutoría.', 'info');
-        return;
-      }
+        if (!relevantTutorias.length) {
+          showMessage('No estás inscrito en ninguna tutoría.', 'info');
+          return;
+        }
 
-      const horarioIds = new Set(relevantTutorias.map(t => String(t.horarioId)).filter(Boolean));
-      const mineSchedules = allHorarios.filter(s => horarioIds.has(String(s.id || s._id)));
+        const horarioIds = new Set(relevantTutorias.map(t => String(t.horarioId)).filter(Boolean));
+        mineSchedules = allHorarios.filter(s => horarioIds.has(String(s.id || s._id)));
+      }
 
       if (!mineSchedules.length) {
-        showMessage('No se encontraron horarios asociados.', 'info');
+        showMessage(isTutor ? 'No has creado ningún horario.' : 'No se encontraron horarios asociados.', 'info');
         return;
       }
 

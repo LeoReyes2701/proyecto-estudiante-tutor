@@ -100,16 +100,19 @@ document.addEventListener('DOMContentLoaded', () => {
     horariosList.innerHTML = '<div class="no-horarios">Cargando horarios...</div>';
     clearFeedback();
     try {
-      // intentar tutorId desde cookie (si aplica)
+      // Obtener tutorId desde localStorage
       let tutorId = null;
       try {
-        const cookie = document.cookie.split(';').map(s=>s.trim()).find(s=>s.startsWith('usuario='));
-        if (cookie) { const raw = cookie.split('=')[1]; tutorId = JSON.parse(atob(decodeURIComponent(raw))).id; }
+        const raw = localStorage.getItem('usuario');
+        if (raw) {
+          const u = JSON.parse(raw);
+          tutorId = u.id || u.userId || u._id;
+        }
       } catch(e){ tutorId = null; }
 
-      const q = tutorId ? `?tutorId=${encodeURIComponent(tutorId)}` : '';
+      const url = tutorId ? `${HORARIOS_ENDPOINT}/tutor/${encodeURIComponent(tutorId)}` : HORARIOS_ENDPOINT;
       const [hRes, tRes] = await Promise.all([
-        fetch(HORARIOS_ENDPOINT + q, { credentials:'include', headers:{ 'Accept':'application/json' }}),
+        fetch(url, { credentials:'include', headers:{ 'Accept':'application/json' }}),
         fetch(TUTORIAS_MINE, { credentials:'include', headers:{ 'Accept':'application/json' }}).catch(()=>null)
       ]);
 

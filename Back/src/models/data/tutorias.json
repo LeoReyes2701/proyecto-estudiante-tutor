@@ -14,5 +14,108 @@
       }
     ],
     "createdAt": "10/11/25"
+  },
+  {
+    "id": "1762984428174-3m7yk57",
+    "titulo": "Algebra Lineal",
+    "descripcion": "jjj",
+    "cupo": 10,
+    "creadorId": "1762814845675-8s4k5oh",
+    "creadorNombre": "mao anez",
+    "horarioId": "1762874012803-ie0tl8z",
+    "estudiantesInscritos": [],
+    "createdAt": "12/11/25"
+  },
+  {
+    "id": "1762984544021-8r7zdt1",
+    "titulo": "aa",
+    "descripcion": "aa",
+    "cupo": 10,
+    "creadorId": "1762814845675-8s4k5oh",
+    "creadorNombre": "mao anez",
+    "horarioId": "1762984483516-7fov93h",
+    "estudiantesInscritos": [
+      {
+        "id": "1762814926275-dh70m2d",
+        "fecha": "12/11/25"
+      }
+    ],
+    "createdAt": "12/11/25"
+  },
+  {
+    "id": "1762984834562-yetmsxw",
+    "titulo": "ññ",
+    "descripcion": "ñññññ",
+    "cupo": 10,
+    "creadorId": "1762814845675-8s4k5oh",
+    "creadorNombre": "mao anez",
+    "horarioId": "1762984805986-j1dbgkc",
+    "estudiantesInscritos": [
+      {
+        "id": "1762814926275-dh70m2d",
+        "fecha": "12/11/25"
+      }
+    ],
+    "createdAt": "12/11/25"
+  },
+  {
+    "id": "1762985776296-a0upzp4",
+    "titulo": "matematica",
+    "descripcion": "hola tio qlq",
+    "cupo": 10,
+    "creadorId": "1762985519347-6mr42xi",
+    "creadorNombre": "Santiago Risquez",
+    "horarioId": "1762985609874-ydjyjhh",
+    "estudiantesInscritos": [],
+    "createdAt": "12/11/25"
+  },
+  {
+    "id": "1762985799338-9e3ce06",
+    "titulo": "1",
+    "descripcion": "",
+    "cupo": 10,
+    "creadorId": "1762985519347-6mr42xi",
+    "creadorNombre": "Santiago Risquez",
+    "horarioId": "1762814882209-n8gorwz",
+    "estudiantesInscritos": [
+      {
+        "id": "1762814926275-dh70m2d",
+        "fecha": "13/11/25"
+      }
+    ],
+    "createdAt": "12/11/25"
+  },
+  {
+    "id": "1762985841147-azt5miu",
+    "titulo": "Matematica",
+    "descripcion": "",
+    "cupo": 10,
+    "creadorId": "1762985519347-6mr42xi",
+    "creadorNombre": "Santiago Risquez",
+    "horarioId": null,
+    "estudiantesInscritos": [],
+    "createdAt": "12/11/25"
+  },
+  {
+    "id": "1763055928607-q7oswla",
+    "titulo": "Matematica",
+    "descripcion": "algebra y trigonometria",
+    "cupo": 16,
+    "creadorId": "1762986069232-b40ts09",
+    "creadorNombre": "Eduardo Rivas",
+    "horarioId": "1763055176512-xc874nv",
+    "estudiantesInscritos": [],
+    "createdAt": "13/11/25"
+  },
+  {
+    "id": "1763057453568-povab1n",
+    "titulo": "zz",
+    "descripcion": "zz",
+    "cupo": 14,
+    "creadorId": "1762986069232-b40ts09",
+    "creadorNombre": "Eduardo Rivas",
+    "horarioId": "1763057430605-t7bz7gz",
+    "estudiantesInscritos": [],
+    "createdAt": "13/11/25"
   }
 ]

@@ -27,6 +27,7 @@ function makeController({ inscripcionRepository } = {}) {
       if (result.status === 'not_found') return res.status(404).json({ error: result.message });
       if (result.status === 'already') return res.status(200).json({ message: result.message, tutoria: result.tutoria });
       if (result.status === 'full') return res.status(409).json({ error: result.message, tutoria: result.tutoria });
+      if (result.status === 'conflict') return res.status(409).json({ error: result.message, tutoria: result.tutoria });
       if (result.status === 'ok') return res.status(201).json({ message: result.message, tutoria: result.tutoria });
 
       // fallback genérico

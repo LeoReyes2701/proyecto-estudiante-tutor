@@ -226,27 +226,37 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       let successCount = 0;
+      let errorMessages = [];
       for (const input of seleccionados) {
         const tutoriaId = input.dataset.tutoriaId;
         try {
           const result = await inscribir(tutoriaId, estudianteId);
-          if (result && (result.error || result.ok === false)) {
+          if (result && result.error) {
             console.warn(`[inscribir ${tutoriaId}]`, result);
+            errorMessages.push(result.error);
+          } else if (result && result.ok === false) {
+            console.warn(`[inscribir ${tutoriaId}]`, result);
+            errorMessages.push('Error desconocido en la inscripción');
           } else {
             successCount++;
           }
         } catch (err) {
           console.error(`[inscribir ${tutoriaId}]`, err);
+          errorMessages.push('Error de conexión');
         }
       }
 
       if (successCount > 0) {
-        showMessage(`Inscripción completada en ${successCount} curso(s).`);
+        let message = `Inscripción completada en ${successCount} curso(s).`;
+        if (errorMessages.length > 0) {
+          message += ` Algunos errores: ${errorMessages.join(', ')}`;
+        }
+        showMessage(message);
         setTimeout(() => {
           window.location.href = 'gestion_estudiante.html';
-        }, 1200);
+        }, 2000);
       } else {
-        showMessage('No se pudo completar la inscripción.', 'error');
+        showMessage(`No se pudo completar la inscripción: ${errorMessages.join(', ')}`, 'error');
       }
     });
   } else {

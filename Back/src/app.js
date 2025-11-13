@@ -67,7 +67,8 @@ try {
   const mod = inscripcionControllerModule;
   inscripcionController = typeof mod === 'function' ? (mod({ inscripcionRepository: inscripcionRepo }) || mod) : mod;
 } catch (e) {
-  inscripcionController = inscripcionControllerModule;
+  console.error('[app] error loading inscripcionController', e);
+  inscripcionController = null;
 }
 
 console.log('[app] controllers ready:', {

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Consultar Mis Horarios - Programa Estudiante-Tutor</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- CSS local -->
+  <link rel="stylesheet" href="../src/styles/consultarHorario.css">
+  <style>
+    /* Ajustes mínimos por si falta CSS local */
+    .btn-volver { margin-left: 8px; }
+    .schedule-card { padding: 12px; }
+  </style>
+</head>
+<body class="p-0 light-grey-bg">
+  <div class="page-container d-flex flex-column min-vh-100">
+    <header class="navbar navbar-expand-lg navbar-dark bg-ucab-blue py-3">
+      <div class="container-fluid mx-lg-5 d-flex align-items-center">
+        <a class="navbar-brand fw-bold fs-5 me-3" href="gestion_estudiante.html">
+          UCAB <span class="fw-normal">Programa Estudiante-Tutor</span>
+        </a>
+
+        <div class="ms-auto">
+          <!-- Botón Volver único: el JS ajustará su href según el rol en localStorage.usuario -->
+          <a id="btnVolverRole" class="btn btn-outline-light btn-sm btn-volver" href="gestion_estudiante.html" role="button" title="Volver a gestión">Volver</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="bg-ucab-blue text-white p-5">
+      <div class="container-fluid mx-lg-5">
+        <h1 class="fw-bold display-5 mb-0">Mis Horarios</h1>
+      </div>
+    </div>
+
+    <main class="py-5 px-3 flex-fill">
+      <div class="container mx-lg-5">
+        <div id="horariosContainer" class="row g-4">
+          <!-- Los horarios se insertarán aquí -->
+        </div>
+
+        <div id="emptyMessage" class="text-center text-muted mt-5 d-none">
+          No hay horarios registrados aún.
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer-fixed d-flex justify-content-center align-items-center mt-auto py-3">
+      <span class="opacity-75">© 2025 UCAB - Universidad Católica Andrés Bello</span>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+  <!-- Carga el módulo JS que ajusta el botón y renderiza horarios -->
+  <script type="module" src="../src/components/schedule/consultarHorarioEst.js"></script>
+</body>
+</html>

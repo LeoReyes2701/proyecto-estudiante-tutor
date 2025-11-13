@@ -62,7 +62,7 @@ async function create(req, res) {
         String(e.tutorId || e.userId) === String(creatorId) &&
         _slotsKey(e.slots) === _slotsKey(normalizedSlots)
       );
-      return res.status(200).json({ message: 'Horario ya existe', horario: existing });
+      return res.status(200).json({ message: 'Horario ya registrado en el sistema', horario: existing });
     }
 
     // Validar solapamiento
@@ -117,8 +117,16 @@ async function create(req, res) {
 
 async function getAll(req, res) {
   try {
-    const arr = await scheduleRepo.readAll();
-    return res.json(Array.isArray(arr) ? arr : []);
+    let arr = await scheduleRepo.readAll();
+    arr = Array.isArray(arr) ? arr : [];
+
+    // Filtrar por tutorId si viene en query
+    const { tutorId } = req.query;
+    if (tutorId) {
+      arr = arr.filter(s => String(s.tutorId || s.userId) === String(tutorId));
+    }
+
+    return res.json(arr);
   } catch (err) {
     console.error('[scheduleController.getAll] error', err);
     return res.status(500).json({ error: 'Error interno' });

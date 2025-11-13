@@ -2,8 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('tutoriasContainer');
   const emptyMessage = document.getElementById('emptyMessage');
 
-
-
   const getUsuarioId = () => {
     try {
       const raw = localStorage.getItem('usuario');
@@ -38,13 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return showEmpty('No hay sesión activa');
       }
 
-      // Filtrar tutorías creadas por el tutor
-      const tutoriasCreadas = (Array.isArray(allTutorias) ? allTutorias : []).filter(t => {
-        const cid = t.creadorId || t.creador || t.userId;
-        return String(cid) === String(usuarioId);
+      // Filtrar tutorías donde el estudiante está inscrito
+      const tutoriasInscritas = (Array.isArray(allTutorias) ? allTutorias : []).filter(t => {
+        if (!Array.isArray(t.estudiantesInscritos)) return false;
+        return t.estudiantesInscritos.some(e => {
+          const id = typeof e === 'string' ? e : e.id || e.userId || e._id;
+          return String(id) === String(usuarioId);
+        });
       });
 
-      renderTutorias(tutoriasCreadas, schedules);
+      renderTutorias(tutoriasInscritas, schedules);
     } catch (error) {
       showEmpty('No se pudo conectar con el servidor');
     }
@@ -136,10 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
       desc.className = 'card-text text-muted mb-3';
       desc.textContent = tutoria.descripcion || '';
 
+      const tutor = document.createElement('p');
+      tutor.className = 'mb-2';
+      tutor.innerHTML = `<strong>Tutor:</strong> ${tutoria.creadorNombre || tutoria.creador || 'Desconocido'}`;
+
       const cupos = document.createElement('p');
       cupos.className = 'mb-2';
       const displayCupo = formatCupo(tutoria.cupo ?? tutoria.cupos);
-      cupos.innerHTML = `<strong>Cupos:</strong> ${displayCupo}`;
+      const inscritos = Array.isArray(tutoria.estudiantesInscritos) ? tutoria.estudiantesInscritos.length : 0;
+      cupos.innerHTML = `<strong>Cupos:</strong> ${inscritos} / ${displayCupo}`;
 
       const horariosList = document.createElement('ul');
       horariosList.className = 'list-unstyled mb-0';
@@ -197,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       cardBody.appendChild(title);
       cardBody.appendChild(desc);
+      cardBody.appendChild(tutor);
       cardBody.appendChild(cupos);
       cardBody.appendChild(horariosList);
       card.appendChild(cardBody);
@@ -206,4 +213,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   fetchTutoriasAndSchedules();
+
+  // Ajustar el botón Volver según el rol del usuario
+  const btnVolver = document.getElementById('btnVolverRole');
+  if (btnVolver) {
+    try {
+      const usuario = JSON.parse(localStorage.getItem('usuario'));
+      if (usuario && usuario.rol === 'estudiante') {
+        btnVolver.href = 'gestion_estudiante.html';
+      } else if (usuario && usuario.rol === 'tutor') {
+        btnVolver.href = 'gestion.html';
+      } else {
+        btnVolver.href = 'login.html';
+      }
+    } catch {
+      btnVolver.href = 'login.html';
+    }
+  }
 });

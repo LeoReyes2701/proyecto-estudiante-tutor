@@ -28,8 +28,8 @@ function showModal(title, html) {
 
 // Asociaciones: rutas destino
 btnConsultarPerfil?.addEventListener('click', () => openPage('/consultarPerfil.html'));
-btnConsultarHorario?.addEventListener('click', () => openPage('/consultarHorario.html'));
-btnConsultarTutoria?.addEventListener('click', () => openPage('/consultarTutoria.html'));
+btnConsultarHorario?.addEventListener('click', () => openPage('/consultarHorarioEst.html'));
+btnConsultarTutoria?.addEventListener('click', () => openPage('/consultarTutoriaEst.html'));
 btnConsultarInscripcion?.addEventListener('click', () => openPage('/consultarInscripcion.html'));
 btnInscribirseCurso?.addEventListener('click', () => openPage('/InscribirseCurso.html'));
 

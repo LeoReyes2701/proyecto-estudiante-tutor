@@ -25,5 +25,23 @@
     "password": "123456",
     "rol": "estudiante",
     "createdAt": "10/11/25"
+  },
+  {
+    "id": "1762985519347-6mr42xi",
+    "nombre": "Santiago",
+    "apellido": "Risquez",
+    "email": "sjrisquez.24@est.ucab.edu.ve",
+    "password": "123456",
+    "rol": "tutor",
+    "createdAt": "12/11/25"
+  },
+  {
+    "id": "1762986069232-b40ts09",
+    "nombre": "Eduardo",
+    "apellido": "Rivas",
+    "email": "erisquezr@est.ucab.edu.ve",
+    "password": "123456",
+    "rol": "tutor",
+    "createdAt": "12/11/25"
   }
 ]
