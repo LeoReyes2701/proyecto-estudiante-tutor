@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const inicio = document.getElementById('horaInicio');
   const fin = document.getElementById('horaFin');
 
-  const MAX_MINUTES = 120;
-  const MIN_MINUTES = 20;
+  const ALLOWED_DURATIONS = [50, 100, 110];
 
   const log = (...args) => console.log('[crearHorario]', ...args);
 
@@ -38,8 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (e <= s) return { ok: false, msg: 'La hora de fin debe ser posterior a la hora de inicio.' };
     const diff = e - s;
-    if (diff < MIN_MINUTES) return { ok: false, msg: `La duración mínima es ${MIN_MINUTES} minutos.` };
-    if (diff > MAX_MINUTES) return { ok: false, msg: 'La diferencia entre inicio y fin no puede ser mayor a 2 horas.' };
+    if (!ALLOWED_DURATIONS.includes(diff)) return { ok: false, msg: 'La duración debe ser exactamente 50, 100 o 110 minutos.' };
     return { ok: true, duration: diff };
   }
 
@@ -266,9 +264,10 @@ document.addEventListener('DOMContentLoaded', () => {
     opts.forEach(opt => {
       if (!opt.value) return;
       const v = timeToMinutes(opt.value);
-      opt.disabled = !(v > s && (v - s) <= MAX_MINUTES);
+      opt.disabled = !(v > s && ALLOWED_DURATIONS.includes(v - s));
     });
-    if (timeToMinutes(fin.value) <= s || (timeToMinutes(fin.value) - s) > MAX_MINUTES) {
+    const currentFin = timeToMinutes(fin.value);
+    if (currentFin <= s || !ALLOWED_DURATIONS.includes(currentFin - s)) {
       fin.value = '';
     }
   });
