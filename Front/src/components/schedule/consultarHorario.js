@@ -30,28 +30,48 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${h12}:${String(mm).padStart(2, '0')} ${ampm}`;
   }
 
-  function buildCard(tutorId, day, slots) {
+  function buildCard(tutorId, day, slots, isTutor, allSchedules) {
     const card = document.createElement('div');
     card.className = 'card shadow-sm schedule-card';
 
     const h5 = document.createElement('h5');
-    h5.className = 'day-title fw-bold mb-3 d-flex justify-content-between align-items-center';
-
-    const left = document.createElement('div');
-    left.className = 'd-flex align-items-center';
-    const spanDay = document.createElement('span');
-    spanDay.textContent = day;
-    left.appendChild(spanDay);
-
-    const right = document.createElement('div');
-    right.className = 'day-hours';
-    right.innerHTML = slots
-      .map(s => `${timeDisplay(s.horaInicio || s.start)} - ${timeDisplay(s.horaFin || s.end)}`)
-      .join('<br>');
-
-    h5.appendChild(left);
-    h5.appendChild(right);
+    h5.className = 'day-title fw-bold mb-3';
+    h5.textContent = day;
     card.appendChild(h5);
+
+    // Para cada slot, crear una fila con radio button y horario
+    slots.forEach((slot, index) => {
+      const slotDiv = document.createElement('div');
+      slotDiv.className = 'd-flex justify-content-between align-items-center mb-2';
+
+      const left = document.createElement('div');
+      left.className = 'd-flex align-items-center';
+
+      // Radio button para selección (solo para tutores)
+      if (isTutor) {
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'scheduleSelection';
+        radio.className = 'me-2';
+        radio.value = JSON.stringify({
+          day,
+          slot: {
+            ...slot,
+            horaInicio: slot.horaInicio || slot.start,
+            horaFin: slot.horaFin || slot.end
+          },
+          scheduleId: slot.scheduleId
+        });
+        left.appendChild(radio);
+      }
+
+      const timeText = document.createElement('span');
+      timeText.textContent = `${timeDisplay(slot.horaInicio || slot.start)} - ${timeDisplay(slot.horaFin || slot.end)}`;
+      left.appendChild(timeText);
+
+      slotDiv.appendChild(left);
+      card.appendChild(slotDiv);
+    });
 
     return card;
   }
@@ -180,12 +200,89 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       days.forEach(day => {
-        const card = buildCard(usuarioId, day, byDay[day]);
+        const card = buildCard(usuarioId, day, byDay[day], isTutor, mineSchedules);
         wrapper.appendChild(card);
       });
+
+      // Agregar botones de acción para tutores
+      if (isTutor && mineSchedules.length > 0) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'mt-4 d-flex justify-content-center gap-3';
+        actionsDiv.innerHTML = `
+          <button id="modifyBtn" class="btn btn-primary" disabled>Modificar</button>
+          <button id="deleteBtn" class="btn btn-danger" disabled>Eliminar</button>
+        `;
+        wrapper.appendChild(actionsDiv);
+
+        // Habilitar/deshabilitar botones según selección
+        const radios = document.querySelectorAll('input[name="scheduleSelection"]');
+        radios.forEach(radio => {
+          radio.addEventListener('change', () => {
+            document.getElementById('modifyBtn').disabled = false;
+            document.getElementById('deleteBtn').disabled = false;
+          });
+        });
+
+        // Evento para modificar
+        document.getElementById('modifyBtn').addEventListener('click', () => {
+          const selectedRadio = document.querySelector('input[name="scheduleSelection"]:checked');
+          if (!selectedRadio) return;
+          const selectedData = JSON.parse(selectedRadio.value);
+          const slot = selectedData.slot;
+          const scheduleId = selectedData.scheduleId;
+          if (!scheduleId) {
+            showMessage('No se puede modificar este horario: falta ID', 'error');
+            return;
+          }
+          // Redirect to crearHorario.html with edit params
+          const params = new URLSearchParams({
+            edit: 'true',
+            id: scheduleId,
+            day: slot.day,
+            horaInicio: slot.horaInicio,
+            horaFin: slot.horaFin
+          });
+          window.location.href = `/crearHorario.html?${params.toString()}`;
+        });
+
+        // Evento para eliminar
+        document.getElementById('deleteBtn').addEventListener('click', () => {
+          const selectedRadio = document.querySelector('input[name="scheduleSelection"]:checked');
+          if (!selectedRadio) return;
+          const selectedData = JSON.parse(selectedRadio.value);
+          const scheduleId = selectedData.scheduleId;
+          if (!scheduleId) {
+            showMessage('No se puede eliminar este horario: falta ID', 'error');
+            return;
+          }
+          if (confirm(`¿Estás seguro de que quieres eliminar el horario de ${selectedData.day}?`)) {
+            deleteSchedule(scheduleId);
+          }
+        });
+      }
     } catch (err) {
       log('network error', err);
       showMessage('Error de red al cargar horarios.', 'error');
+    }
+  }
+
+  async function deleteSchedule(scheduleId) {
+    try {
+      const response = await fetch(`/horarios/${scheduleId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        showMessage('Horario eliminado exitosamente', 'success');
+        loadAndRender(); // Recargar la página
+      } else {
+        showMessage(result.error || 'Error al eliminar horario', 'error');
+      }
+    } catch (err) {
+      log('error deleting schedule', err);
+      showMessage('Error de red al eliminar horario', 'error');
     }
   }
 

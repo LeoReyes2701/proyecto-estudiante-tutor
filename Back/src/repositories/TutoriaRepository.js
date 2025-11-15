@@ -146,6 +146,20 @@ class TutoriaRepository {
   async saveAsync(tutoria) {
     return this.save(tutoria);
   }
+
+  delete(id) {
+    if (!id) return false;
+    const raw = this._readRaw();
+    const idx = raw.findIndex(x => String(x.id) === String(id));
+    if (idx < 0) return false;
+    raw.splice(idx, 1);
+    this._writeRaw(raw);
+    return true;
+  }
+
+  async deleteAsync(id) {
+    return this.delete(id);
+  }
 }
 
 module.exports = TutoriaRepository;

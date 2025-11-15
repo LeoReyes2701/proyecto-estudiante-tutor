@@ -170,6 +170,27 @@ class ScheduleRepository {
       this._slotsKey(e.slots) === key
     ) || null;
   }
+
+  // delete atómico por id
+  async delete(id) {
+    if (!id) throw new Error('id required for delete');
+
+    await this._lock();
+    try {
+      const all = this._readAllSyncSafe();
+      const idx = (all || []).findIndex(x => String(x.id) === String(id));
+      if (idx < 0) {
+        console.log('[ScheduleRepository.delete] id not found', id);
+        return false; // no encontrado
+      }
+      all.splice(idx, 1);
+      this._writeAllAtomicSync(all);
+      console.log('[ScheduleRepository.delete] deleted id', id);
+      return true;
+    } finally {
+      this._unlock();
+    }
+  }
 }
 
 module.exports = ScheduleRepository;

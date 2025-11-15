@@ -23,6 +23,8 @@ class TutoriaController {
     this.create = this.create.bind(this);
     this.list = this.list.bind(this);
     this.getById = this.getById.bind(this);
+    this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   // POST /tutorias
@@ -178,6 +180,113 @@ class TutoriaController {
       return res.json(plain);
     } catch (err) {
       console.error('[tutoriaController.getById] error', err);
+      return res.status(500).json({ error: 'Error interno' });
+    }
+  }
+
+  // PUT /tutorias/:id
+  async update(req, res) {
+    try {
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
+
+      const { id } = req.params;
+      const { titulo, descripcion, cupo, slots } = req.body || {};
+
+      if (!id) return res.status(400).json({ error: 'ID requerido' });
+
+      // Verificar que la tutoría existe
+      const existing = await this.tutoriaRepository.findById(id);
+      if (!existing) return res.status(404).json({ error: 'Tutoría no encontrada' });
+
+      // Verificar que el usuario es el creador y es tutor
+      const plain = (existing && typeof existing.toJSON === 'function') ? existing.toJSON() : existing;
+      if (String(plain.creadorId) !== String(req.user.id)) {
+        return res.status(403).json({ error: 'No tienes permiso para modificar esta tutoría' });
+      }
+      if (req.user.rol !== 'tutor') {
+        return res.status(403).json({ error: 'Solo los tutores pueden modificar tutorías' });
+      }
+
+      // Preparar actualización: solo permitir cambios en descripcion, cupo, horarioId (titulo no se puede cambiar)
+      const updates = {};
+      if (descripcion !== undefined) {
+        updates.descripcion = descripcion;
+      }
+      if (cupo !== undefined) {
+        const normalizedCupo = Number.isFinite(Number(cupo)) ? Math.max(0, Math.floor(Number(cupo))) : 0;
+        updates.cupo = normalizedCupo;
+      }
+
+      // Manejar cambio de horario si se proporcionan slots
+      if (Array.isArray(slots) && slots.length > 0) {
+        const s0 = slots[0];
+        let horarioId = s0.id || s0.horarioId || s0.scheduleId || null;
+
+        if (!horarioId && this.scheduleRepository && (s0.day || s0.horaInicio || s0.start)) {
+          try {
+            const allSchedules = await (this.scheduleRepository.readAll ? this.scheduleRepository.readAll() : this.scheduleRepository.listAll());
+            const match = (Array.isArray(allSchedules) ? allSchedules : []).find(sc => {
+              const sd = String(sc.day || sc.dia || (sc.slots && sc.slots[0] && sc.slots[0].day) || '');
+              const ss = String(sc.start || sc.horaInicio || (sc.slots && sc.slots[0] && sc.slots[0].horaInicio) || '');
+              const se = String(sc.end || sc.horaFin || (sc.slots && sc.slots[0] && sc.slots[0].horaFin) || '');
+              const qd = String(s0.day || s0.dia || '');
+              const qs = String(s0.start || s0.horaInicio || '');
+              const qe = String(s0.end || s0.horaFin || '');
+              return sd === qd && ss === qs && se === qe;
+            });
+            if (match) horarioId = match.id || match._id || null;
+          } catch (e) {
+            console.warn('[tutoriaController.update] scheduleRepository search failed', e);
+          }
+        }
+        updates.horarioId = horarioId;
+      }
+
+      // Aplicar cambios
+      const updatedData = { ...plain, ...updates, updatedAt: new Date().toISOString() };
+      const updated = await this.tutoriaRepository.save(updatedData);
+
+      return res.status(200).json({ message: 'Tutoría actualizada exitosamente', tutoria: updated });
+    } catch (err) {
+      console.error('[tutoriaController.update] error', err);
+      return res.status(500).json({ error: 'Error interno' });
+    }
+  }
+
+  // DELETE /tutorias/:id
+  async delete(req, res) {
+    try {
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
+
+      const { id } = req.params;
+
+      if (!id) return res.status(400).json({ error: 'ID requerido' });
+
+      // Verificar que la tutoría existe
+      const existing = await this.tutoriaRepository.findById(id);
+      if (!existing) return res.status(404).json({ error: 'Tutoría no encontrada' });
+
+      // Verificar que el usuario es el creador y es tutor
+      const plain = (existing && typeof existing.toJSON === 'function') ? existing.toJSON() : existing;
+      const creatorId = plain.creadorId || plain.creador || plain.userId;
+      if (String(creatorId) !== String(req.user.id)) {
+        return res.status(403).json({ error: 'No tienes permiso para eliminar esta tutoría' });
+      }
+      if (req.user.rol !== 'tutor') {
+        return res.status(403).json({ error: 'Solo los tutores pueden eliminar tutorías' });
+      }
+
+      // Eliminar
+      const deleted = await this.tutoriaRepository.delete(id);
+      if (!deleted) return res.status(404).json({ error: 'Tutoría no encontrada' });
+
+      return res.status(200).json({ message: 'Tutoría eliminada exitosamente' });
+    } catch (err) {
+      console.error('[tutoriaController.delete] error', err);
       return res.status(500).json({ error: 'Error interno' });
     }
   }

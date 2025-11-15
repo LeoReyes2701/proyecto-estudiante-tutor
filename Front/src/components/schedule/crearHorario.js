@@ -63,6 +63,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Check if in edit mode
+  const urlParams = new URLSearchParams(window.location.search);
+  const isEditMode = urlParams.get('edit') === 'true';
+  const editId = urlParams.get('id');
+  let originalSlot = null;
+
+  if (isEditMode && editId) {
+    // Pre-fill form with edit data
+    dia.value = urlParams.get('day') || '';
+    inicio.value = urlParams.get('horaInicio') || '';
+    fin.value = urlParams.get('horaFin') || '';
+    originalSlot = { day: dia.value, horaInicio: inicio.value, horaFin: fin.value };
+
+    // Change button text and title
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.textContent = 'Actualizar Horario';
+    }
+    const h1 = document.querySelector('h1');
+    if (h1) {
+      h1.textContent = 'Editar Horario';
+    }
+  }
+
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     log('submit fired');
@@ -104,18 +128,40 @@ document.addEventListener('DOMContentLoaded', () => {
     log('payload base', payloadBase);
     showFormMessage('Validando horario...', 'info');
 
-    // Verificar si ya existe un horario idéntico
-    if (await horarioDuplicado(slot, tutorId)) {
+    // For edit mode, skip duplicate check if slot hasn't changed
+    let isDuplicate = false;
+    if (isEditMode && originalSlot &&
+        originalSlot.day === slot.day &&
+        originalSlot.horaInicio === slot.horaInicio &&
+        originalSlot.horaFin === slot.horaFin) {
+      isDuplicate = false; // Allow saving same slot
+    } else {
+      isDuplicate = await horarioDuplicado(slot, tutorId);
+    }
+
+    if (isDuplicate) {
       showFormMessage('Ya existe un horario idéntico. No se puede duplicar.', 'error');
       return;
     }
 
     try {
-      const previewRes = await fetch('/horarios', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payloadBase)
-      });
+      let previewRes;
+      if (isEditMode) {
+        // For edit, use PUT to update
+        previewRes = await fetch(`/horarios/${editId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payloadBase)
+        });
+      } else {
+        // For create, use POST
+        previewRes = await fetch('/horarios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payloadBase)
+        });
+      }
+
       const previewJson = await previewRes.json().catch(() => ({}));
       log('preview response', previewRes.status, previewJson);
 
@@ -133,11 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmBox.innerHTML = "";
 
         const confirmYesBtn = document.createElement("button");
-        confirmYesBtn.textContent = "Sí, crear el horario";
+        confirmYesBtn.textContent = isEditMode ? "Sí, actualizar el horario" : "Sí, crear el horario";
         confirmYesBtn.className = "btn btn-success btn-sm me-2";
 
         const confirmNoBtn = document.createElement("button");
-        confirmNoBtn.textContent = "No, descartar la creación";
+        confirmNoBtn.textContent = isEditMode ? "No, descartar la actualización" : "No, descartar la creación";
         confirmNoBtn.className = "btn btn-danger btn-sm";
 
         confirmBox.appendChild(confirmYesBtn);
@@ -145,11 +191,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Si el usuario confirma
         confirmYesBtn.addEventListener("click", async () => {
-          const res2 = await fetch('/horarios', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...payloadBase, confirm: "yes" })
-          });
+          const confirmPayload = { ...payloadBase, confirm: "yes" };
+          let res2;
+          if (isEditMode) {
+            res2 = await fetch(`/horarios/${editId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(confirmPayload)
+            });
+          } else {
+            res2 = await fetch('/horarios', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(confirmPayload)
+            });
+          }
 
           let data2 = {};
           try {
@@ -159,8 +215,8 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           if (res2.ok || res2.status === 201) {
-            showFormMessage(data2.message || "Horario creado correctamente", 'success');
-            setTimeout(() => { window.location.href = '/gestion.html'; }, 900);
+            showFormMessage(data2.message || (isEditMode ? "Horario actualizado correctamente" : "Horario creado correctamente"), 'success');
+            setTimeout(() => { window.location.href = '/consultarHorario.html'; }, 900);
           } else {
             showFormMessage(data2.message || `Error ${res2.status}`, 'error');
           }
@@ -168,19 +224,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Si el usuario cancela
         confirmNoBtn.addEventListener("click", async () => {
-          const res2 = await fetch('/horarios', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...payloadBase, confirm: "no" })
-          });
+          const confirmPayload = { ...payloadBase, confirm: "no" };
+          let res2;
+          if (isEditMode) {
+            res2 = await fetch(`/horarios/${editId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(confirmPayload)
+            });
+          } else {
+            res2 = await fetch('/horarios', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(confirmPayload)
+            });
+          }
 
           let data2 = {};
           try {
             data2 = await res2.json();
           } catch (e) {}
 
-          showFormMessage(data2.message || "Horario no creado", 'warning');
-          setTimeout(() => { window.location.href = '/gestion.html'; }, 900);
+          showFormMessage(data2.message || (isEditMode ? "Horario no actualizado" : "Horario no creado"), 'warning');
+          setTimeout(() => { window.location.href = '/consultarHorario.html'; }, 900);
         });
 
       } else {

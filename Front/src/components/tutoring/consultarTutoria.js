@@ -139,7 +139,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const cupos = document.createElement('p');
       cupos.className = 'mb-2';
       const displayCupo = formatCupo(tutoria.cupo ?? tutoria.cupos);
-      cupos.innerHTML = `<strong>Cupos:</strong> ${displayCupo}`;
+      const inscritos = Array.isArray(tutoria.estudiantesInscritos) ? tutoria.estudiantesInscritos.length : 0;
+      cupos.innerHTML = `<strong>Cupos:</strong> ${inscritos} / ${displayCupo}`;
+
+      // Botones de acción para modificar y eliminar
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'd-flex gap-2 mt-3';
+
+      const editBtn = document.createElement('button');
+      editBtn.className = 'btn btn-primary btn-sm';
+      editBtn.textContent = 'Modificar';
+      editBtn.addEventListener('click', () => redirectToCreateTutoria(tutoria));
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'btn btn-danger btn-sm';
+      deleteBtn.textContent = 'Eliminar';
+      deleteBtn.addEventListener('click', () => confirmDelete(tutoria));
+
+      actionsDiv.appendChild(editBtn);
+      actionsDiv.appendChild(deleteBtn);
 
       const horariosList = document.createElement('ul');
       horariosList.className = 'list-unstyled mb-0';
@@ -198,11 +216,48 @@ document.addEventListener('DOMContentLoaded', () => {
       cardBody.appendChild(title);
       cardBody.appendChild(desc);
       cardBody.appendChild(cupos);
+      cardBody.appendChild(actionsDiv);
       cardBody.appendChild(horariosList);
       card.appendChild(cardBody);
       col.appendChild(card);
       container.appendChild(col);
     });
+  }
+
+  // Función para redirigir a crear tutoría con datos de edición
+  function redirectToCreateTutoria(tutoria) {
+    // Guardar datos de la tutoría en localStorage para edición
+    localStorage.setItem('editTutoria', JSON.stringify(tutoria));
+    // Redirigir a la página de crear tutoría
+    window.location.href = 'crearTutoria.html';
+  }
+
+  // Función para confirmar eliminación
+  function confirmDelete(tutoria) {
+    if (confirm(`¿Estás seguro de que quieres eliminar la tutoría "${tutoria.titulo}"? Esta acción no se puede deshacer.`)) {
+      deleteTutoria(tutoria.id);
+    }
+  }
+
+  // Función para eliminar tutoría
+  async function deleteTutoria(id) {
+    try {
+      const response = await fetch(`/tutorias/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        alert('Tutoría eliminada exitosamente');
+        fetchTutoriasAndSchedules(); // Recargar lista
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error || 'Error desconocido'}`);
+      }
+    } catch (err) {
+      console.error('Error deleting tutoria:', err);
+      alert('Error al eliminar la tutoría');
+    }
   }
 
   fetchTutoriasAndSchedules();

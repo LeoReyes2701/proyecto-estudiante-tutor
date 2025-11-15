@@ -47,9 +47,8 @@ module.exports = function ({ scheduleController: injectedController, authMiddlew
   router.get(
     '/:id',
     wrap(async (req, res) => {
-      if (!controller || typeof controller.getById === 'function') {
-        // si existe método getById, usarlo; si no, caer a getByTutorId si aplica
-        return controller.getById ? controller.getById(req, res) : controller.getByTutorId ? controller.getByTutorId(req, res) : res.status(404).json({ error: 'Not implemented' });
+      if (!controller || typeof controller.getById !== 'function') {
+        return res.status(500).json({ error: 'getById not available' });
       }
       return controller.getById(req, res);
     })
@@ -92,6 +91,32 @@ module.exports = function ({ scheduleController: injectedController, authMiddlew
   // if (authMiddleware) postHandlers.unshift(authMiddleware);
 
   router.post('/', postHandlers);
+
+  // PUT /:id -> update (protegido con authMiddleware)
+  const putHandlers = [
+    wrap(async (req, res) => {
+      if (!controller || typeof controller.update !== 'function') {
+        return res.status(500).json({ error: 'update handler not available' });
+      }
+      return controller.update(req, res);
+    })
+  ];
+  if (authMiddleware) putHandlers.unshift(authMiddleware);
+
+  router.put('/:id', putHandlers);
+
+  // DELETE /:id -> delete (protegido con authMiddleware)
+  const deleteHandlers = [
+    wrap(async (req, res) => {
+      if (!controller || typeof controller.delete !== 'function') {
+        return res.status(500).json({ error: 'delete handler not available' });
+      }
+      return controller.delete(req, res);
+    })
+  ];
+  if (authMiddleware) deleteHandlers.unshift(authMiddleware);
+
+  router.delete('/:id', deleteHandlers);
 
   return router;
 };

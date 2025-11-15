@@ -13,6 +13,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const submitBtn = form && form.querySelector('button[type="submit"]');
   const feedback = document.getElementById('formFeedback');
 
+  // Verificar si hay datos de edición en localStorage
+  const editData = localStorage.getItem('editTutoria');
+  let isEditing = false;
+  let editTutoria = null;
+  if (editData) {
+    try {
+      editTutoria = JSON.parse(editData);
+      isEditing = true;
+      localStorage.removeItem('editTutoria'); // Limpiar después de usar
+    } catch (e) {
+      console.warn('Error parsing editTutoria:', e);
+    }
+  }
+
   let horarios = []; // normalizados: { id, day, start, end, raw }
   let selectedIdx = new Set();
 
@@ -152,12 +166,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const slots = selected.map(s => ({ horarioId: s.id, day: s.day, start: s.start, end: s.end }));
       const payload = { titulo, descripcion: (inputDescripcion && inputDescripcion.value || '').trim(), cupo, slots };
 
-      submitBtn && (submitBtn.disabled = true, submitBtn.textContent = 'Creando...');
-      const post = await fetch(POST_TUTORIAS, { method:'POST', credentials:'include', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+      submitBtn && (submitBtn.disabled = true, submitBtn.textContent = isEditing ? 'Actualizando...' : 'Creando...');
+
+      let method = 'POST';
+      let url = POST_TUTORIAS;
+      if (isEditing && editTutoria && editTutoria.id) {
+        method = 'PUT';
+        url = `${POST_TUTORIAS}/${editTutoria.id}`;
+      }
+
+      const post = await fetch(url, { method, credentials:'include', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
 
       // ---------- Cambiado: comprobar createRes.ok || createRes.status === 201 ----------
       if (post && (post.ok || post.status === 201)) {
-        setFeedback('Tutoría creada.', 'success');
+        setFeedback(isEditing ? 'Tutoría actualizada.' : 'Tutoría creada.', 'success');
         // redirigir tras 900 ms
         setTimeout(() => { window.location.href = '/gestion.html'; }, 900);
         form.reset();
@@ -177,13 +199,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (err) {
       console.error(err);
-      setFeedback('Error creando la tutoría', 'danger');
+      setFeedback(isEditing ? 'Error actualizando la tutoría' : 'Error creando la tutoría', 'danger');
     } finally {
-      submitBtn && (submitBtn.disabled = false, submitBtn.textContent = 'Publicar tutoría');
+      submitBtn && (submitBtn.disabled = false, submitBtn.textContent = isEditing ? 'Actualizar tutoría' : 'Publicar tutoría');
     }
   }
 
   form && form.addEventListener('submit', validateAndPost);
+
+  // Si estamos editando, cargar datos de la tutoría
+  if (isEditing && editTutoria) {
+    // Cambiar título de la página
+    const titleElement = document.querySelector('h3');
+    if (titleElement) titleElement.textContent = 'Modificar Tutoría';
+
+    // Cambiar texto del botón
+    if (submitBtn) submitBtn.textContent = 'Actualizar tutoría';
+
+    // Llenar formulario con datos existentes
+    if (inputTitulo) inputTitulo.value = editTutoria.titulo || '';
+    if (inputDescripcion) inputDescripcion.value = editTutoria.descripcion || '';
+    if (inputCupo) inputCupo.value = editTutoria.cupo || 10;
+
+    // Seleccionar horarios actuales si existen
+    if (editTutoria.horarioId) {
+      // Buscar el horario en la lista y seleccionarlo
+      setTimeout(() => {
+        const horarioIndex = horarios.findIndex(h => String(h.id) === String(editTutoria.horarioId));
+        if (horarioIndex !== -1) {
+          selectedIdx.add(horarioIndex);
+          render();
+        }
+      }, 1000); // Esperar a que se carguen los horarios
+    }
+  }
 
   // inicializar
   loadHorarios();
