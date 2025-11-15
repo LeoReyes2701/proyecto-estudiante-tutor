@@ -217,7 +217,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (submitBtn) submitBtn.textContent = 'Actualizar tutoría';
 
     // Llenar formulario con datos existentes
-    if (inputTitulo) inputTitulo.value = editTutoria.titulo || '';
+    if (inputTitulo) {
+      inputTitulo.value = editTutoria.titulo || '';
+      inputTitulo.readOnly = true; // Bloquear edición del título
+      // Agregar mensaje explicativo
+      const titleHelp = document.createElement('small');
+      titleHelp.className = 'form-text text-muted';
+      titleHelp.textContent = 'El título no se puede modificar una vez creada la tutoría.';
+      inputTitulo.parentNode.appendChild(titleHelp);
+    }
     if (inputDescripcion) inputDescripcion.value = editTutoria.descripcion || '';
     if (inputCupo) inputCupo.value = editTutoria.cupo || 10;
 
