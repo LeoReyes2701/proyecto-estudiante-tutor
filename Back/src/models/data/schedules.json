@@ -106,5 +106,77 @@
     ],
     "createdAt": "2025-11-13T18:10:30.604Z",
     "id": "1763057430605-t7bz7gz"
+  },
+  {
+    "tutorId": "1762814845676-9t5l6pi",
+    "slots": [
+      {
+        "day": "Jueves",
+        "horaInicio": "10:00",
+        "horaFin": "11:40"
+      }
+    ],
+    "createdAt": "2025-11-14T10:00:00.000Z",
+    "id": "1763058000000-abc123"
+  },
+  {
+    "tutorId": "1762814845676-9t5l6pi",
+    "slots": [
+      {
+        "day": "Viernes",
+        "horaInicio": "13:00",
+        "horaFin": "14:30"
+      }
+    ],
+    "createdAt": "2025-11-14T10:05:00.000Z",
+    "id": "1763058300000-def456"
+  },
+  {
+    "tutorId": "1762814845677-0u6m7qj",
+    "slots": [
+      {
+        "day": "Lunes",
+        "horaInicio": "08:00",
+        "horaFin": "09:30"
+      }
+    ],
+    "createdAt": "2025-11-14T10:10:00.000Z",
+    "id": "1763058600000-ghi789"
+  },
+  {
+    "tutorId": "1762814845677-0u6m7qj",
+    "slots": [
+      {
+        "day": "Miércoles",
+        "horaInicio": "16:00",
+        "horaFin": "17:30"
+      }
+    ],
+    "createdAt": "2025-11-14T10:15:00.000Z",
+    "id": "1763058900000-jkl012"
+  },
+  {
+    "tutorId": "1762814845675-8s4k5oh",
+    "slots": [
+      {
+        "day": "Sábado",
+        "horaInicio": "09:00",
+        "horaFin": "10:30"
+      }
+    ],
+    "createdAt": "2025-11-14T10:20:00.000Z",
+    "id": "1763059200000-mno345"
+  },
+  {
+    "tutorId": "1762814845675-8s4k5oh",
+    "slots": [
+      {
+        "day": "Domingo",
+        "horaInicio": "14:00",
+        "horaFin": "15:30"
+      }
+    ],
+    "createdAt": "2025-11-14T10:25:00.000Z",
+    "id": "1763059500000-pqr678"
   }
 ]

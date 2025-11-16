@@ -216,6 +216,11 @@ class TutoriaController {
       }
       if (cupo !== undefined) {
         const normalizedCupo = Number.isFinite(Number(cupo)) ? Math.max(0, Math.floor(Number(cupo))) : 0;
+        // Validar que el nuevo cupo no sea menor que los estudiantes ya inscritos
+        const inscritosCount = Array.isArray(plain.estudiantesInscritos) ? plain.estudiantesInscritos.length : 0;
+        if (normalizedCupo < inscritosCount) {
+          return res.status(400).json({ error: `No se puede reducir el cupo a ${normalizedCupo} porque ya hay ${inscritosCount} estudiantes inscritos` });
+        }
         updates.cupo = normalizedCupo;
       }
 

@@ -1,121 +1,174 @@
 [
   {
-    "id": "1762818294742-dybcyxy",
-    "titulo": "hola 213",
-    "descripcion": "13223",
+    "id": "1763059600000-stu123",
+    "titulo": "Tutoria de Matematica",
+    "descripcion": "Clases de algebra basica",
     "cupo": 10,
     "creadorId": "1762814845675-8s4k5oh",
-    "creadorNombre": "mao anez",
-    "horarioId": "1762814882209-n8gorwz",
+    "creadorNombre": "Mauricio Anez",
+    "horarioId": "1763059200000-mno345",
     "estudiantesInscritos": [
       {
-        "id": "1762814926275-dh70m2d",
-        "fecha": "11/11/25"
+        "id": "1762814845678-1v7n8rk",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845679-2w8o9sl",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845680-3x9p0tm",
+        "fecha": "14/11/25"
       }
     ],
-    "createdAt": "10/11/25"
+    "createdAt": "14/11/25"
   },
   {
-    "id": "1762984428174-3m7yk57",
-    "titulo": "Algebra Lineal",
-    "descripcion": "jjj",
+    "id": "1763059700000-vwx456",
+    "titulo": "Tutoria de Fisica",
+    "descripcion": "Introduccion a la fisica cuantica",
     "cupo": 10,
     "creadorId": "1762814845675-8s4k5oh",
-    "creadorNombre": "mao anez",
-    "horarioId": "1762874012803-ie0tl8z",
-    "estudiantesInscritos": [],
-    "createdAt": "12/11/25"
-  },
-  {
-    "id": "1762984544021-8r7zdt1",
-    "titulo": "aa",
-    "descripcion": "aa",
-    "cupo": 10,
-    "creadorId": "1762814845675-8s4k5oh",
-    "creadorNombre": "mao anez",
-    "horarioId": "1762984483516-7fov93h",
+    "creadorNombre": "Mauricio Anez",
+    "horarioId": "1763059500000-pqr678",
     "estudiantesInscritos": [
       {
-        "id": "1762814926275-dh70m2d",
-        "fecha": "12/11/25"
+        "id": "1762814845681-4y0q1un",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845682-5z1r2vo",
+        "fecha": "14/11/25"
       }
     ],
-    "createdAt": "12/11/25"
+    "createdAt": "14/11/25"
   },
   {
-    "id": "1762984834562-yetmsxw",
-    "titulo": "ññ",
-    "descripcion": "ñññññ",
+    "id": "1763059800000-yza789",
+    "titulo": "Tutoria de Quimica",
+    "descripcion": "Quimica organica avanzada",
     "cupo": 10,
-    "creadorId": "1762814845675-8s4k5oh",
-    "creadorNombre": "mao anez",
-    "horarioId": "1762984805986-j1dbgkc",
+    "creadorId": "1762814845676-9t5l6pi",
+    "creadorNombre": "Roberto Silva",
+    "horarioId": "1763058000000-abc123",
     "estudiantesInscritos": [
       {
-        "id": "1762814926275-dh70m2d",
-        "fecha": "12/11/25"
+        "id": "1762814845683-6a2s3wp",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845684-7b3t4xq",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845685-8c4u5yr",
+        "fecha": "14/11/25"
       }
     ],
-    "createdAt": "12/11/25"
+    "createdAt": "14/11/25"
   },
   {
-    "id": "1762985776296-a0upzp4",
-    "titulo": "matematica",
-    "descripcion": "Algebra y Trigonometria",
-    "cupo": 10,
-    "creadorId": "1762985519347-6mr42xi",
-    "creadorNombre": "Santiago Risquez",
-    "horarioId": "1762985609874-ydjyjhh",
-    "estudiantesInscritos": [],
-    "createdAt": "12/11/25"
-  },
-  {
-    "id": "1762985799338-9e3ce06",
-    "titulo": "1",
-    "descripcion": "",
-    "cupo": 10,
-    "creadorId": "1762985519347-6mr42xi",
-    "creadorNombre": "Santiago Risquez",
-    "horarioId": "1762814882209-n8gorwz",
+    "id": "1763059900000-bcd012",
+    "titulo": "Tutoria de Biologia",
+    "descripcion": "Biologia molecular",
+    "cupo": 12,
+    "creadorId": "1762814845676-9t5l6pi",
+    "creadorNombre": "Roberto Silva",
+    "horarioId": "1763058300000-def456",
     "estudiantesInscritos": [
       {
-        "id": "1762814926275-dh70m2d",
-        "fecha": "13/11/25"
+        "id": "1762814845686-9d5v6zs",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845687-0e6w7at",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845688-1f7x8bu",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845678-1v7n8rk",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845679-2w8o9sl",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845680-3x9p0tm",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845681-4y0q1un",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845682-5z1r2vo",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845683-6a2s3wp",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845684-7b3t4xq",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1763258985216-rcee4o1",
+        "fecha": "15/11/25"
+      },
+      {
+        "id": "1763260595202-k3hrcko",
+        "fecha": "15/11/25"
       }
     ],
-    "createdAt": "12/11/25"
+    "createdAt": "14/11/25"
   },
   {
-    "id": "1762985841147-azt5miu",
-    "titulo": "Matematica",
-    "descripcion": "",
+    "id": "1763060000000-efd345",
+    "titulo": "Tutoria de Historia",
+    "descripcion": "Historia universal",
     "cupo": 10,
-    "creadorId": "1762985519347-6mr42xi",
-    "creadorNombre": "Santiago Risquez",
-    "horarioId": null,
-    "estudiantesInscritos": [],
-    "createdAt": "12/11/25"
+    "creadorId": "1762814845677-0u6m7qj",
+    "creadorNombre": "Carmen Vargas",
+    "horarioId": "1763058600000-ghi789",
+    "estudiantesInscritos": [
+      {
+        "id": "1762814845685-8c4u5yr",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845686-9d5v6zs",
+        "fecha": "14/11/25"
+      }
+    ],
+    "createdAt": "14/11/25"
   },
   {
-    "id": "1763055928607-q7oswla",
-    "titulo": "Matematica",
-    "descripcion": "algebra y trigonometria",
-    "cupo": 16,
-    "creadorId": "1762986069232-b40ts09",
-    "creadorNombre": "Eduardo Rivas",
-    "horarioId": "1763055176512-xc874nv",
-    "estudiantesInscritos": [],
-    "createdAt": "13/11/25"
-  },
-  {
-    "id": "1763057453568-povab1n",
-    "titulo": "zz",
-    "descripcion": "zz",
-    "cupo": 14,
-    "creadorId": "1762986069232-b40ts09",
-    "creadorNombre": "Eduardo Rivas",
-    "horarioId": "1763057430605-t7bz7gz",
-    "estudiantesInscritos": [],
-    "createdAt": "13/11/25"
+    "id": "1763060100000-ghi678",
+    "titulo": "Tutoria de Literatura",
+    "descripcion": "Literatura clasica",
+    "cupo": 10,
+    "creadorId": "1762814845677-0u6m7qj",
+    "creadorNombre": "Carmen Vargas",
+    "horarioId": "1763058900000-jkl012",
+    "estudiantesInscritos": [
+      {
+        "id": "1762814845687-0e6w7at",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845688-1f7x8bu",
+        "fecha": "14/11/25"
+      },
+      {
+        "id": "1762814845678-1v7n8rk",
+        "fecha": "14/11/25"
+      }
+    ],
+    "createdAt": "14/11/25"
   }
 ]
