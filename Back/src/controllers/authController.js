@@ -2,6 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const User = require('../models/User');
+const TutoriaRepository = require('../repositories/TutoriaRepository');
+const ScheduleRepository = require('../repositories/ScheduleRepository');
 
 const usuariosFile = path.resolve(__dirname, '..', 'models', 'data', 'usuarios.json');
 
@@ -343,7 +345,40 @@ class AuthController {
         return res.status(401).json({ ok: false, error: 'Cookie inválida' });
       }
 
-      // Eliminar del repositorio
+      // Instanciar repositorios
+      const tutoriaRepo = new TutoriaRepository();
+      const scheduleRepo = new ScheduleRepository();
+
+      // Manejar dependencias según el rol
+      if (String(currentUser.rol).toLowerCase() === 'tutor') {
+        // Eliminar todas las tutorías creadas por el tutor
+        const allTutorias = await tutoriaRepo.getAll();
+        const tutorTutorias = allTutorias.filter(t => String(t.creadorId) === String(currentUser.id));
+        for (const tutoria of tutorTutorias) {
+          await tutoriaRepo.delete(tutoria.id);
+        }
+
+        // Eliminar todos los horarios del tutor
+        const tutorSchedules = await scheduleRepo.findByTutorId(currentUser.id);
+        for (const schedule of tutorSchedules) {
+          await scheduleRepo.delete(schedule.id);
+        }
+      } else if (String(currentUser.rol).toLowerCase() === 'estudiante') {
+        // Remover al estudiante de todas las tutorías donde esté inscrito
+        const allTutorias = await tutoriaRepo.getAll();
+        for (const tutoria of allTutorias) {
+          if (Array.isArray(tutoria.estudiantesInscritos)) {
+            const originalLength = tutoria.estudiantesInscritos.length;
+            tutoria.estudiantesInscritos = tutoria.estudiantesInscritos.filter(e => String(e.id) !== String(currentUser.id));
+            if (tutoria.estudiantesInscritos.length !== originalLength) {
+              // Solo guardar si hubo cambios
+              await tutoriaRepo.save(tutoria);
+            }
+          }
+        }
+      }
+
+      // Eliminar del repositorio de usuarios
       let deleted = false;
       if (this.userRepository && typeof this.userRepository.deleteById === 'function') {
         try {
