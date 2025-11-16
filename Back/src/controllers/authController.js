@@ -32,7 +32,10 @@ function base64DecodeJson(str) {
 
 class AuthController {
   constructor({ userRepository } = {}) {
-    this.userRepository = userRepository || null;
+    this.userRepository = userRepository || new (require('../repositories/UserRepository'))();
+    // Bind methods to preserve 'this' context when used as Express middleware
+    this.updateProfile = this.updateProfile.bind(this);
+    this.deleteProfile = this.deleteProfile.bind(this);
   }
 
   // obtiene todos los usuarios: soporta repo sync/async o lectura directa de archivo
@@ -245,6 +248,131 @@ class AuthController {
         return res.status(401).json({ ok: false, error: 'Cookie inválida' });
       }
     } catch (err) {
+      return next(err);
+    }
+  }
+
+  // Actualizar perfil del usuario autenticado
+  async updateProfile(req, res, next) {
+    try {
+      // Obtener usuario de la cookie
+      const cookieHeader = req.headers.cookie || '';
+      const part = cookieHeader.split(';').map(p => p.trim()).find(p => p.startsWith('usuario='));
+      if (!part) return res.status(401).json({ ok: false, error: 'No autenticado' });
+      const val = part.split('=')[1];
+      let currentUser;
+      try {
+        currentUser = base64DecodeJson(val);
+      } catch (e) {
+        return res.status(401).json({ ok: false, error: 'Cookie inválida' });
+      }
+
+      const { nombre, apellido, email, password } = req.body || {};
+      const updates = {};
+
+      if (nombre !== undefined) updates.nombre = String(nombre).trim();
+      if (apellido !== undefined) updates.apellido = String(apellido).trim();
+      if (email !== undefined) {
+        const newEmail = String(email).trim().toLowerCase();
+        // Verificar si el email ya existe en otro usuario
+        if (this.userRepository && typeof this.userRepository.findByEmail === 'function') {
+          try {
+            const existing = this.userRepository.findByEmail(newEmail);
+            const existingUser = (existing && typeof existing.then === 'function') ? await existing : existing;
+            if (existingUser && String(existingUser.id) !== String(currentUser.id)) {
+              return res.status(409).json({ ok: false, error: 'Email ya registrado por otro usuario' });
+            }
+          } catch (e) {
+            console.error('[updateProfile] error checking email uniqueness:', e);
+            // Continue with fallback check
+          }
+        } else {
+          // Fallback: check manually
+          let users = await this._getAllUsers();
+          users = Array.isArray(users) ? users : [];
+          const existing = users.find(u => String(u.email || '').trim().toLowerCase() === newEmail && String(u.id) !== String(currentUser.id));
+          if (existing) {
+            return res.status(409).json({ ok: false, error: 'Email ya registrado por otro usuario' });
+          }
+        }
+        updates.email = newEmail;
+      }
+      if (password !== undefined) updates.password = String(password).trim();
+
+      // Actualizar en repositorio
+      let updatedUser;
+      if (this.userRepository && typeof this.userRepository.updateById === 'function') {
+        updatedUser = this.userRepository.updateById(currentUser.id, updates);
+        if (updatedUser && typeof updatedUser.then === 'function') updatedUser = await updatedUser;
+      } else {
+        // Fallback: actualizar manualmente
+        let users = await this._getAllUsers();
+        const idx = users.findIndex(u => String(u.id) === String(currentUser.id));
+        if (idx === -1) return res.status(404).json({ ok: false, error: 'Usuario no encontrado' });
+        Object.assign(users[idx], updates);
+        const saved = await this._saveAllUsers(users);
+        if (!saved) return res.status(500).json({ ok: false, error: 'No se pudo actualizar el perfil' });
+        updatedUser = users[idx];
+      }
+
+      // Actualizar cookie con nuevos datos
+      const sUser = safeUser(updatedUser);
+      const cookieVal = base64EncodeJson(sUser);
+      const expiresDate = new Date(Date.now() + 8 * 60 * 60 * 1000); // 8h
+      res.setHeader('Set-Cookie', `usuario=${cookieVal}; Path=/; Expires=${expiresDate.toUTCString()}; SameSite=Lax`);
+
+      return res.json({ ok: true, user: sUser });
+    } catch (err) {
+      console.error('[updateProfile] error:', err);
+      return next(err);
+    }
+  }
+
+  // Eliminar perfil del usuario autenticado
+  async deleteProfile(req, res, next) {
+    try {
+      // Obtener usuario de la cookie
+      const cookieHeader = req.headers.cookie || '';
+      const part = cookieHeader.split(';').map(p => p.trim()).find(p => p.startsWith('usuario='));
+      if (!part) return res.status(401).json({ ok: false, error: 'No autenticado' });
+      const val = part.split('=')[1];
+      let currentUser;
+      try {
+        currentUser = base64DecodeJson(val);
+      } catch (e) {
+        return res.status(401).json({ ok: false, error: 'Cookie inválida' });
+      }
+
+      // Eliminar del repositorio
+      let deleted = false;
+      if (this.userRepository && typeof this.userRepository.deleteById === 'function') {
+        try {
+          deleted = this.userRepository.deleteById(currentUser.id);
+          if (deleted && typeof deleted.then === 'function') deleted = await deleted;
+        } catch (e) {
+          console.error('[deleteProfile] repo.deleteById error:', e);
+          // Continue with fallback
+        }
+      }
+
+      if (!deleted) {
+        // Fallback: eliminar manualmente
+        let users = await this._getAllUsers();
+        const idx = users.findIndex(u => String(u.id) === String(currentUser.id));
+        if (idx !== -1) {
+          users.splice(idx, 1);
+          deleted = await this._saveAllUsers(users);
+        }
+      }
+
+      if (!deleted) return res.status(500).json({ ok: false, error: 'No se pudo eliminar el perfil' });
+
+      // Limpiar cookie
+      res.setHeader('Set-Cookie', 'usuario=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax');
+
+      return res.json({ ok: true, message: 'Perfil eliminado exitosamente' });
+    } catch (err) {
+      console.error('[deleteProfile] error:', err);
       return next(err);
     }
   }

@@ -54,6 +54,7 @@ const inscripcionRepo = new InscripcionRepository();
 
 // Controllers
 const authcontroller = new AuthController({ userRepository: userRepo });
+console.log('[app] authcontroller.userRepository:', !!authcontroller.userRepository);
 
 const tutoriaController = new TutoriaController({
   tutoriaRepository: tutoriaRepo,
@@ -215,6 +216,12 @@ app.get(['/', '/index.html', '/login.html', '/login'], (req, res) => {
 
 app.get('/crearCuenta.html', (req, res) => {
   return res.sendFile(path.join(frontPublic, 'crearCuenta.html'));
+});
+
+app.get('/editarPerfil.html', (req, res) => {
+  const user = readUsuarioCookie(req);
+  if (!user) return res.redirect('/login.html');
+  return res.sendFile(path.join(frontPublic, 'editarPerfil.html'));
 });
 
 app.get('/gestion.html', (req, res) => {

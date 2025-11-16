@@ -60,6 +60,104 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Delete profile
+    const deleteBtn = document.getElementById("deleteButton");
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", async () => {
+        if (!confirm("¿Estás seguro de que quieres eliminar tu perfil? Esta acción no se puede deshacer.")) {
+          return;
+        }
+
+        try {
+          const resp = await fetch('/auth/profile', {
+            method: 'DELETE',
+            credentials: 'same-origin'
+          });
+
+          const json = await resp.json().catch(() => null);
+
+          if (resp.ok && json && json.ok) {
+            alert("Perfil eliminado exitosamente.");
+            try { localStorage.removeItem("usuario"); } catch (e) {}
+            window.location.href = "/login.html";
+          } else {
+            const errMsg = (json && json.error) ? json.error : `Error de servidor (${resp.status})`;
+            alert(`Error al eliminar perfil: ${errMsg}`);
+          }
+        } catch (err) {
+          console.error('[deleteProfile] network error', err);
+          alert("Error de red. Revisa la consola.");
+        }
+      });
+    }
+
+    // Editar perfil
+    const editBtn = document.getElementById("editButton");
+    const editForm = document.getElementById("editForm");
+    const profileForm = document.getElementById("profileForm");
+    const cancelEditBtn = document.getElementById("cancelEdit");
+
+    if (editBtn && editForm) {
+      editBtn.addEventListener("click", () => {
+        // Llenar formulario con datos actuales
+        document.getElementById("editNombre").value = usuario.nombre || "";
+        document.getElementById("editApellido").value = usuario.apellido || "";
+        document.getElementById("editEmail").value = usuario.email || "";
+        document.getElementById("editPassword").value = "";
+        editForm.style.display = "block";
+        editBtn.style.display = "none";
+      });
+    }
+
+    if (cancelEditBtn && editForm && editBtn) {
+      cancelEditBtn.addEventListener("click", () => {
+        editForm.style.display = "none";
+        editBtn.style.display = "inline-block";
+      });
+    }
+
+    // Enviar formulario de edición
+    if (profileForm) {
+      profileForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(profileForm);
+        const updates = {
+          nombre: formData.get("editNombre").trim(),
+          apellido: formData.get("editApellido").trim(),
+          email: formData.get("editEmail").trim().toLowerCase(),
+          password: formData.get("editPassword").trim() || undefined
+        };
+
+        try {
+          const response = await fetch("/auth/profile", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(updates)
+          });
+
+          const result = await response.json();
+          if (result.ok) {
+            // Actualizar localStorage y UI
+            localStorage.setItem("usuario", JSON.stringify(result.user));
+            setText(userNameEl, `${result.user.nombre || ""} ${result.user.apellido || ""}`.trim() || "Usuario");
+            setText(userEmailEl, result.user.email || "—");
+            setText(userRolEl, result.user.rol || "—");
+            editForm.style.display = "none";
+            editBtn.style.display = "inline-block";
+            alert("Perfil actualizado exitosamente");
+          } else {
+            alert("Error al actualizar perfil: " + (result.error || "Error desconocido"));
+          }
+        } catch (error) {
+          console.error("Error updating profile:", error);
+          alert("Error al actualizar perfil");
+        }
+      });
+    }
+
+
+
     if (!volverBtn) return;
 
     try {

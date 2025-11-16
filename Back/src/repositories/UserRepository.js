@@ -120,6 +120,27 @@ class UserRepository {
     this._writeRaw(normalized);
     return true;
   }
+
+  // Actualiza un usuario por ID, acepta instancia User o plain object; devuelve instancia User actualizada
+  updateById(id, updates) {
+    if (!id) throw new Error('UserRepository.updateById requires a valid id');
+    const raw = this._readRaw();
+    const idx = raw.findIndex(u => String(u.id) === String(id));
+    if (idx === -1) throw new Error('Usuario no encontrado');
+
+    // Merge updates con el usuario existente
+    const existing = raw[idx];
+    const merged = Object.assign({}, existing, updates);
+    const updatedUser = new User(merged);
+    raw[idx] = updatedUser.toJSON();
+    this._writeRaw(raw);
+    return updatedUser;
+  }
+
+  // Elimina un usuario por ID
+  deleteById(id) {
+    return this.removeById(id);
+  }
 }
 
 module.exports = UserRepository;
