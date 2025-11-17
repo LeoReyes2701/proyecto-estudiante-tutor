@@ -147,32 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const allTutorias = await tutoriasRes.json();
       const allHorarios = await horariosRes.json();
 
-      let mineSchedules = [];
-
-      if (isTutor) {
-        // Mostrar TODOS los horarios creados por el tutor
-        mineSchedules = allHorarios.filter(s => String(s.tutorId || s.userId || s.creadorId) === String(usuarioId));
-      } else {
-        // Mostrar horarios de tutorías donde el estudiante está inscrito
-        const relevantTutorias = allTutorias.filter(t => {
-          if (!Array.isArray(t.estudiantesInscritos)) return false;
-          return t.estudiantesInscritos.some(e => {
-            const id = typeof e === 'string' ? e : e.id || e.userId || e._id;
-            return String(id) === String(usuarioId);
-          });
-        });
-
-        if (!relevantTutorias.length) {
-          showMessage('No estás inscrito en ninguna tutoría.', 'info');
-          return;
-        }
-
-        const horarioIds = new Set(relevantTutorias.map(t => String(t.horarioId)).filter(Boolean));
-        mineSchedules = allHorarios.filter(s => horarioIds.has(String(s.id || s._id)));
-      }
+      // Solo lógica para tutores: mostrar TODOS los horarios creados por el tutor
+      const mineSchedules = allHorarios.filter(s => String(s.tutorId || s.userId || s.creadorId) === String(usuarioId));
 
       if (!mineSchedules.length) {
-        showMessage(isTutor ? 'No has creado ningún horario.' : 'No se encontraron horarios asociados.', 'info');
+        showMessage('No has creado ningún horario.', 'info');
         return;
       }
 
