@@ -124,6 +124,37 @@ class InscripcionRepository {
     if (Number.isNaN(h) || Number.isNaN(m)) return -1;
     return h * 60 + m;
   }
+
+  async eliminarInscripcion(tutoriaId, estudianteId) {
+    if (!tutoriaId || !estudianteId) throw new Error('Faltan parámetros');
+
+    // Obtener la tutoria
+    const tutoria = await this.tutoriaRepo.findById(tutoriaId);
+    if (!tutoria) return { status: 'not_found', message: 'Tutoria no encontrada' };
+
+    // Verificar que el estudiante esté inscrito
+    if (!Array.isArray(tutoria.estudiantesInscritos)) tutoria.estudiantesInscritos = [];
+    const index = tutoria.estudiantesInscritos.findIndex(e => String(e.id) === String(estudianteId));
+    if (index === -1) {
+      return { status: 'not_enrolled', message: 'Estudiante no inscrito en esta tutoría' };
+    }
+
+    // Remover la inscripción
+    tutoria.estudiantesInscritos.splice(index, 1);
+
+    // Intentar actualizar el repositorio
+    if (typeof this.tutoriaRepo.update === 'function') {
+      await this.tutoriaRepo.update(tutoriaId, tutoria);
+    } else if (typeof this.tutoriaRepo.save === 'function') {
+      await this.tutoriaRepo.save(tutoria);
+    } else if (typeof this.tutoriaRepo.replace === 'function') {
+      await this.tutoriaRepo.replace(tutoriaId, tutoria);
+    } else {
+      throw new Error('TutoriaRepository no implementa método de guardado (update/save/replace)');
+    }
+
+    return { status: 'ok', message: 'Inscripción eliminada exitosamente' };
+  }
 }
 
 module.exports = InscripcionRepository;

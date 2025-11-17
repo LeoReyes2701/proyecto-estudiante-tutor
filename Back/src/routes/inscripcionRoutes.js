@@ -40,5 +40,19 @@ module.exports = function ({ inscripcionController: injectedController, authMidd
 
   router.post('/', handlers);
 
+  // DELETE / -> eliminar (protegido por authMiddleware si se inyecta)
+  const deleteHandlers = [
+    wrap(async (req, res) => {
+      if (!controller || typeof controller.eliminar !== 'function') {
+        return res.status(500).json({ error: 'Inscripcion controller no disponible' });
+      }
+      return controller.eliminar(req, res);
+    })
+  ];
+
+  if (authMiddleware) deleteHandlers.unshift(authMiddleware);
+
+  router.delete('/', deleteHandlers);
+
   return router;
 };

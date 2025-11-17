@@ -198,6 +198,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const schedules = sRes.ok ? await safeJson(sRes) : [];
       const users = uRes && uRes.ok ? await safeJson(uRes) : [];
 
+      // Check if modifying an existing inscription
+      const modificarTutoriaId = localStorage.getItem('modificarTutoriaId');
+      if (modificarTutoriaId) {
+        // First, delete the existing inscription
+        try {
+          const deleteRes = await fetch('/inscripcion', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tutoriaId: modificarTutoriaId }),
+            credentials: 'include'
+          });
+          if (!deleteRes.ok) {
+            const errorData = await deleteRes.json();
+            showMessage(errorData.error || 'Error al eliminar la inscripción anterior', 'error');
+            return;
+          }
+        } catch (err) {
+          console.error('Error eliminando inscripción anterior:', err);
+          showMessage('Error de conexión al eliminar inscripción anterior', 'error');
+          return;
+        }
+        localStorage.removeItem('modificarTutoriaId');
+        showMessage('Inscripción anterior eliminada. Selecciona una nueva tutoría.', 'success');
+      }
+
       renderCursos(tutorias, schedules, users, usuarioId);
     } catch (err) {
       console.error('[loadTutorias]', err);

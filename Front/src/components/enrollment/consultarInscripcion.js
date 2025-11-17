@@ -190,6 +190,47 @@ const renderInscripciones = (tutorias = [], schedules = [], usuarioId = '') => {
     fechaPair.appendChild(fechaLabel);
     fechaPair.appendChild(fechaValue);
     insBlock.appendChild(fechaPair);
+
+    // Botones de acción
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'd-flex justify-content-between mt-3';
+    const modificarBtn = document.createElement('button');
+    modificarBtn.className = 'btn btn-outline-primary btn-sm';
+    modificarBtn.textContent = 'Modificar';
+    modificarBtn.addEventListener('click', () => {
+      // Redirigir a la página de inscripción con el ID de la tutoría actual para reemplazar
+      localStorage.setItem('modificarTutoriaId', tutoria.id);
+      window.location.href = 'InscribirseCurso.html';
+    });
+    const eliminarBtn = document.createElement('button');
+    eliminarBtn.className = 'btn btn-outline-danger btn-sm';
+    eliminarBtn.textContent = 'Eliminar';
+    eliminarBtn.addEventListener('click', async () => {
+      if (confirm('¿Estás seguro de que deseas eliminar esta inscripción?')) {
+        try {
+          const res = await fetch('/inscripcion', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tutoriaId: tutoria.id }),
+            credentials: 'include'
+          });
+          const result = await res.json();
+          if (res.ok) {
+            showMessage(result.message, 'success');
+            setTimeout(() => location.reload(), 2000);
+          } else {
+            showMessage(result.error || 'Error al eliminar la inscripción', 'error');
+          }
+        } catch (err) {
+          console.error('Error eliminando inscripción:', err);
+          showMessage('Error de conexión', 'error');
+        }
+      }
+    });
+    actionsDiv.appendChild(modificarBtn);
+    actionsDiv.appendChild(eliminarBtn);
+    insBlock.appendChild(actionsDiv);
+
     card.appendChild(insBlock);
 
     grid.appendChild(card);
