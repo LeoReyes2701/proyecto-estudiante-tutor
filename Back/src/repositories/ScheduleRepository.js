@@ -160,7 +160,6 @@ class ScheduleRepository {
     }
 
     if (!Array.isArray(all)) {
-      console.warn('[ScheduleRepository.findByTutorAndSlots] storage content malformed, expected array but got:', typeof all);
       return null;
     }
 

@@ -127,8 +127,8 @@
   },
   {
     "id": "1763258985216-rcee4o1",
-    "nombre": "hola",
-    "apellido": "hola",
+    "nombre": "Carlos",
+    "apellido": "Rivera",
     "email": "hola@est.ucab.edu.ve",
     "password": "123456",
     "rol": "estudiante",
@@ -142,5 +142,14 @@
     "password": "123456",
     "rol": "estudiante",
     "createdAt": "15/11/25"
+  },
+  {
+    "id": "1763435930782-1q1ynzo",
+    "nombre": "Santiago",
+    "apellido": "Risquez Riccobono",
+    "email": "sjrisquez@est.ucab.edu.ve",
+    "password": "123456",
+    "rol": "tutor",
+    "createdAt": "17/11/25"
   }
 ]

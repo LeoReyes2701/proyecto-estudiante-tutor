@@ -52,7 +52,6 @@ class Tutoria {
       const fullName = `${nombre} ${apellido}`.trim();
       return fullName.length > 1 ? fullName : 'Desconocido';
     } catch (e) {
-      console.warn('[Tutoria] No se pudo leer usuarios.json para obtener nombre del tutor:', e);
       return 'Desconocido';
     }
   }

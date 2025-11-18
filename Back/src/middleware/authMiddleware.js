@@ -11,7 +11,6 @@ function parseUsuarioCookie(cookieHeader = '') {
     const json = Buffer.from(val, 'base64').toString('utf8');
     return JSON.parse(json);
   } catch (e) {
-    console.warn('[auth] parseUsuarioCookie failed', e);
     return null;
   }
 }
@@ -39,7 +38,6 @@ module.exports = async function authMiddleware(req, res, next) {
           return next();
         }
       } catch (e) {
-        console.warn('[auth] userRepo.findById error', e);
         // fallback a usar el objeto de la cookie si tiene mínimos
         req.user = { id: usuario.id || usuario._id || null, email: usuario.email || null, rol: usuario.rol || 'tutor' };
         req.userFull = null;
@@ -69,7 +67,6 @@ module.exports = async function authMiddleware(req, res, next) {
     }
 
     // 3) ningún método válido: rechazar
-    console.warn('[auth] no credentials found', { cookie: !!req.headers.cookie, authorization: !!req.headers.authorization });
     return res.status(401).json({ error: 'No autorizado' });
   } catch (err) {
     console.error('[authMiddleware] error', err);

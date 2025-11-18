@@ -39,6 +39,10 @@
       {
         "id": "1762814845682-5z1r2vo",
         "fecha": "14/11/25"
+      },
+      {
+        "id": "1763258985216-rcee4o1",
+        "fecha": "17/11/25"
       }
     ],
     "createdAt": "14/11/25"
@@ -46,7 +50,7 @@
   {
     "id": "1763059800000-yza789",
     "titulo": "Tutoria de Quimica",
-    "descripcion": "Quimica organica avanzada",
+    "descripcion": "Aula A2-23\nQuimica organica avanzada",
     "cupo": 10,
     "creadorId": "1762814845676-9t5l6pi",
     "creadorNombre": "Roberto Silva",
@@ -70,7 +74,7 @@
   {
     "id": "1763059900000-bcd012",
     "titulo": "Tutoria de Biologia",
-    "descripcion": "Biologia molecular",
+    "descripcion": "Aula L2312\nBiologia molecular",
     "cupo": 12,
     "creadorId": "1762814845676-9t5l6pi",
     "creadorNombre": "Roberto Silva",
@@ -115,10 +119,6 @@
       {
         "id": "1762814845684-7b3t4xq",
         "fecha": "14/11/25"
-      },
-      {
-        "id": "1763258985216-rcee4o1",
-        "fecha": "15/11/25"
       },
       {
         "id": "1763260595202-k3hrcko",
@@ -167,8 +167,23 @@
       {
         "id": "1762814845678-1v7n8rk",
         "fecha": "14/11/25"
+      },
+      {
+        "id": "1763258985216-rcee4o1",
+        "fecha": "17/11/25"
       }
     ],
     "createdAt": "14/11/25"
+  },
+  {
+    "id": "1763434401679-ybcp8tz",
+    "titulo": "Química",
+    "descripcion": "Aula L2314\nQuimica orgánica",
+    "cupo": 10,
+    "creadorId": "1762814845676-9t5l6pi",
+    "creadorNombre": "Roberto Silva",
+    "horarioId": "1763435428755-e86h4kk",
+    "estudiantesInscritos": [],
+    "createdAt": "17/11/25"
   }
 ]

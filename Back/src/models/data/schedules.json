@@ -178,5 +178,41 @@
     ],
     "createdAt": "2025-11-14T10:25:00.000Z",
     "id": "1763059500000-pqr678"
+  },
+  {
+    "tutorId": "1762814845676-9t5l6pi",
+    "slots": [
+      {
+        "day": "Lunes",
+        "horaInicio": "11:00",
+        "horaFin": "12:50"
+      }
+    ],
+    "createdAt": "2025-11-18T02:57:23.596Z",
+    "id": "1763434643597-jo3wfnm"
+  },
+  {
+    "tutorId": "1762814845676-9t5l6pi",
+    "slots": [
+      {
+        "day": "Miércoles",
+        "horaInicio": "12:00",
+        "horaFin": "13:40"
+      }
+    ],
+    "createdAt": "2025-11-18T03:07:27.210Z",
+    "id": "1763435247210-n8yvj3s"
+  },
+  {
+    "tutorId": "1762814845676-9t5l6pi",
+    "slots": [
+      {
+        "day": "Miércoles",
+        "horaInicio": "16:00",
+        "horaFin": "16:50"
+      }
+    ],
+    "createdAt": "2025-11-18T03:10:28.753Z",
+    "id": "1763435428755-e86h4kk"
   }
 ]

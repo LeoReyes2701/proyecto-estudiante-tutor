@@ -21,7 +21,6 @@ module.exports = function tutoriaRoutesFactory({ tutoriaController, authMiddlewa
   if (typeof authMiddleware === 'function') {
     router.post('/', authMiddleware, asyncHandler((req, res, next) => tutoriaController.create(req, res, next)));
   } else {
-    console.warn('[tutoriaRoutes] authMiddleware not provided; POST /tutorias will be unprotected');
     router.post('/', asyncHandler((req, res, next) => tutoriaController.create(req, res, next)));
   }
 
@@ -29,7 +28,6 @@ module.exports = function tutoriaRoutesFactory({ tutoriaController, authMiddlewa
   if (typeof authMiddleware === 'function') {
     router.put('/:id', authMiddleware, asyncHandler((req, res, next) => tutoriaController.update(req, res, next)));
   } else {
-    console.warn('[tutoriaRoutes] authMiddleware not provided; PUT /tutorias/:id will be unprotected');
     router.put('/:id', asyncHandler((req, res, next) => tutoriaController.update(req, res, next)));
   }
 
@@ -37,7 +35,6 @@ module.exports = function tutoriaRoutesFactory({ tutoriaController, authMiddlewa
   if (typeof authMiddleware === 'function') {
     router.delete('/:id', authMiddleware, asyncHandler((req, res, next) => tutoriaController.delete(req, res, next)));
   } else {
-    console.warn('[tutoriaRoutes] authMiddleware not provided; DELETE /tutorias/:id will be unprotected');
     router.delete('/:id', asyncHandler((req, res, next) => tutoriaController.delete(req, res, next)));
   }
 

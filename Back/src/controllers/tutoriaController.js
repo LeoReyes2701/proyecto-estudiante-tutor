@@ -8,7 +8,6 @@ function parseUsuarioCookie(cookieHeader = '') {
     if (!val) return null;
     return JSON.parse(Buffer.from(val, 'base64').toString('utf8'));
   } catch (e) {
-    console.warn('[tutoriaController] parseUsuarioCookie failed', e);
     return null;
   }
 }
@@ -46,21 +45,17 @@ class TutoriaController {
         horarioId = s0.id || s0.horarioId || s0.scheduleId || null;
 
         if (!horarioId && this.scheduleRepository && (s0.day || s0.horaInicio || s0.start)) {
-          try {
-            const allSchedules = await (this.scheduleRepository.readAll ? this.scheduleRepository.readAll() : this.scheduleRepository.listAll());
-            const match = (Array.isArray(allSchedules) ? allSchedules : []).find(sc => {
-              const sd = String(sc.day || sc.dia || (sc.slots && sc.slots[0] && sc.slots[0].day) || '');
-              const ss = String(sc.start || sc.horaInicio || (sc.slots && sc.slots[0] && sc.slots[0].horaInicio) || '');
-              const se = String(sc.end || sc.horaFin || (sc.slots && sc.slots[0] && sc.slots[0].horaFin) || '');
-              const qd = String(s0.day || s0.dia || '');
-              const qs = String(s0.start || s0.horaInicio || '');
-              const qe = String(s0.end || s0.horaFin || '');
-              return sd === qd && ss === qs && se === qe;
-            });
-            if (match) horarioId = match.id || match._id || null;
-          } catch (e) {
-            console.warn('[tutoriaController] scheduleRepository search failed', e);
-          }
+          const allSchedules = await (this.scheduleRepository.readAll ? this.scheduleRepository.readAll() : this.scheduleRepository.listAll());
+          const match = (Array.isArray(allSchedules) ? allSchedules : []).find(sc => {
+            const sd = String(sc.day || sc.dia || (sc.slots && sc.slots[0] && sc.slots[0].day) || '');
+            const ss = String(sc.start || sc.horaInicio || (sc.slots && sc.slots[0] && sc.slots[0].horaInicio) || '');
+            const se = String(sc.end || sc.horaFin || (sc.slots && sc.slots[0] && sc.slots[0].horaFin) || '');
+            const qd = String(s0.day || s0.dia || '');
+            const qs = String(s0.start || s0.horaInicio || '');
+            const qe = String(s0.end || s0.horaFin || '');
+            return sd === qd && ss === qs && se === qe;
+          });
+          if (match) horarioId = match.id || match._id || null;
         }
       }
 
@@ -230,21 +225,17 @@ class TutoriaController {
         let horarioId = s0.id || s0.horarioId || s0.scheduleId || null;
 
         if (!horarioId && this.scheduleRepository && (s0.day || s0.horaInicio || s0.start)) {
-          try {
-            const allSchedules = await (this.scheduleRepository.readAll ? this.scheduleRepository.readAll() : this.scheduleRepository.listAll());
-            const match = (Array.isArray(allSchedules) ? allSchedules : []).find(sc => {
-              const sd = String(sc.day || sc.dia || (sc.slots && sc.slots[0] && sc.slots[0].day) || '');
-              const ss = String(sc.start || sc.horaInicio || (sc.slots && sc.slots[0] && sc.slots[0].horaInicio) || '');
-              const se = String(sc.end || sc.horaFin || (sc.slots && sc.slots[0] && sc.slots[0].horaFin) || '');
-              const qd = String(s0.day || s0.dia || '');
-              const qs = String(s0.start || s0.horaInicio || '');
-              const qe = String(s0.end || s0.horaFin || '');
-              return sd === qd && ss === qs && se === qe;
-            });
-            if (match) horarioId = match.id || match._id || null;
-          } catch (e) {
-            console.warn('[tutoriaController.update] scheduleRepository search failed', e);
-          }
+          const allSchedules = await (this.scheduleRepository.readAll ? this.scheduleRepository.readAll() : this.scheduleRepository.listAll());
+          const match = (Array.isArray(allSchedules) ? allSchedules : []).find(sc => {
+            const sd = String(sc.day || sc.dia || (sc.slots && sc.slots[0] && sc.slots[0].day) || '');
+            const ss = String(sc.start || sc.horaInicio || (sc.slots && sc.slots[0] && sc.slots[0].horaInicio) || '');
+            const se = String(sc.end || sc.horaFin || (sc.slots && sc.slots[0] && sc.slots[0].horaFin) || '');
+            const qd = String(s0.day || s0.dia || '');
+            const qs = String(s0.start || s0.horaInicio || '');
+            const qe = String(s0.end || s0.horaFin || '');
+            return sd === qd && ss === qs && se === qe;
+          });
+          if (match) horarioId = match.id || match._id || null;
         }
         updates.horarioId = horarioId;
       }
