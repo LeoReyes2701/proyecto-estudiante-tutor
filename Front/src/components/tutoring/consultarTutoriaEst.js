@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (data) {
             li.textContent = `Horario: ${data.day || '—'} • ${data.start || '—'} — ${data.end || '—'}`;
           } else {
-            li.textContent = `Horario Id: ${tutoria.horarioId}`;
+            li.textContent = 'No hay horarios registrados';
           }
           horariosList.appendChild(li);
         }

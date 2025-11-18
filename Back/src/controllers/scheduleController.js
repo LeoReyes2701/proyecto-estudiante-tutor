@@ -1,6 +1,8 @@
 // Back/src/controllers/scheduleController.js
 const ScheduleRepository = require('../repositories/ScheduleRepository');
+const TutoriaRepository = require('../repositories/TutoriaRepository');
 const scheduleRepo = new ScheduleRepository();
+const tutoriaRepo = new TutoriaRepository();
 
 function timeToMinutes(hhmm) {
   if (!hhmm || typeof hhmm !== 'string') return NaN;
@@ -254,8 +256,26 @@ async function deleteSchedule(req, res) {
       return res.status(403).json({ error: 'No tienes permiso para eliminar este horario' });
     }
 
+    // Eliminar el horario
     const deleted = await scheduleRepo.delete(id);
     if (!deleted) return res.status(404).json({ error: 'Horario no encontrado' });
+
+    // Actualizar la tutoría que referencia este horario, estableciendo horarioId a null
+    try {
+      const allTutorias = await tutoriaRepo.readAll();
+      const tutoriaToUpdate = (Array.isArray(allTutorias) ? allTutorias : []).find(t =>
+        String(t.horarioId) === String(id)
+      );
+
+      if (tutoriaToUpdate) {
+        const updatedTutoria = { ...tutoriaToUpdate, horarioId: null };
+        await tutoriaRepo.save(updatedTutoria);
+        console.log(`[scheduleController.deleteSchedule] Updated tutoria ${tutoriaToUpdate.id}: set horarioId to null`);
+      }
+    } catch (updateErr) {
+      console.error('[scheduleController.deleteSchedule] Error updating tutoria:', updateErr);
+      // No fallar la eliminación del horario por error en actualización de tutoría
+    }
 
     return res.status(200).json({ message: 'Horario eliminado exitosamente' });
   } catch (err) {
