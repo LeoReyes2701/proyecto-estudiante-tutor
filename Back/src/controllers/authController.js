@@ -1,6 +1,7 @@
 // Back/src/controllers/authcontroller.js
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const TutoriaRepository = require('../repositories/TutoriaRepository');
 const ScheduleRepository = require('../repositories/ScheduleRepository');
@@ -128,9 +129,11 @@ class AuthController {
         }
       }
 
+      const hashedPassword = await bcrypt.hash(String(password).trim(), 10);
+
       const minimal = {
         email: String(email).trim(),
-        password: String(password).trim(),
+        password: hashedPassword,
         nombre: nombre || '',
         apellido: apellido || '',
         rol: rol || 'estudiante'
@@ -196,9 +199,11 @@ class AuthController {
         return res.status(401).json({ ok: false, error: 'Usuario o contraseña incorrectos' });
       }
 
-      if (String(user.password || '').trim() !== password) {
+      const passwordMatch = await bcrypt.compare(password, String(user.password || '').trim());
+      if (!passwordMatch) {
         return res.status(401).json({ ok: false, error: 'Usuario o contraseña incorrectos' });
       }
+
 
       // actualizar lastLogin y updatedAt
       user.lastLogin = new Date().toISOString();
@@ -299,7 +304,10 @@ class AuthController {
         }
         updates.email = newEmail;
       }
-      if (password !== undefined) updates.password = String(password).trim();
+      if (password !== undefined) {
+        const hashedPassword = await bcrypt.hash(String(password).trim(), 10);
+        updates.password = hashedPassword;
+      }
 
       // Actualizar en repositorio
       let updatedUser;
@@ -316,6 +324,7 @@ class AuthController {
         if (!saved) return res.status(500).json({ ok: false, error: 'No se pudo actualizar el perfil' });
         updatedUser = users[idx];
       }
+
 
       // Actualizar cookie con nuevos datos
       const sUser = safeUser(updatedUser);

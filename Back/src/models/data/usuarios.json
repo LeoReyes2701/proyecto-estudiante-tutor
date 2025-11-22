@@ -151,5 +151,14 @@
     "password": "123456",
     "rol": "tutor",
     "createdAt": "17/11/25"
+  },
+  {
+    "id": "1763851782959-4tokhco",
+    "nombre": "carlos",
+    "apellido": "gonsales",
+    "email": "cgons@est.ucab.edu.ve",
+    "password": "$2b$10$bowdMWeIlc9x0tRIgExlDe.4ZKMcjmZFBIsYr00ofyxH5CDx1rpWG",
+    "rol": "estudiante",
+    "createdAt": "22/11/25"
   }
 ]
