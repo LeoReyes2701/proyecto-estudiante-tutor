@@ -185,5 +185,16 @@
     "horarioId": "1763435428755-e86h4kk",
     "estudiantesInscritos": [],
     "createdAt": "17/11/25"
+  },
+  {
+    "id": "1764013613990-aoa2y5j",
+    "titulo": "Algebra",
+    "descripcion": "algebra super especializada Aula Magna",
+    "cupo": 10,
+    "creadorId": "1764013572744-l7cwztm",
+    "creadorNombre": "Alberto Lopez",
+    "horarioId": null,
+    "estudiantesInscritos": [],
+    "createdAt": "24/11/25"
   }
 ]

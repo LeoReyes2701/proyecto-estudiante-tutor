@@ -4,7 +4,7 @@
     "nombre": "Mauricio",
     "apellido": "Anez",
     "email": "manez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "tutor",
     "createdAt": "10/11/25"
   },
@@ -13,7 +13,7 @@
     "nombre": "Roberto",
     "apellido": "Silva",
     "email": "rsilva@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "tutor",
     "createdAt": "10/11/25"
   },
@@ -22,7 +22,7 @@
     "nombre": "Carmen",
     "apellido": "Vargas",
     "email": "cvargas@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "tutor",
     "createdAt": "10/11/25"
   },
@@ -31,7 +31,7 @@
     "nombre": "Juan",
     "apellido": "Perez",
     "email": "jperez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -40,7 +40,7 @@
     "nombre": "Maria",
     "apellido": "Lopez",
     "email": "mlopez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -49,7 +49,7 @@
     "nombre": "Carlos",
     "apellido": "Garcia",
     "email": "cgarcia@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -58,7 +58,7 @@
     "nombre": "Ana",
     "apellido": "Rodriguez",
     "email": "arodriguez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -67,7 +67,7 @@
     "nombre": "Pedro",
     "apellido": "Martinez",
     "email": "pmartinez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -76,7 +76,7 @@
     "nombre": "Sofia",
     "apellido": "Hernandez",
     "email": "shernandez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -85,7 +85,7 @@
     "nombre": "Luis",
     "apellido": "Gonzalez",
     "email": "lgonzalez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -94,7 +94,7 @@
     "nombre": "Laura",
     "apellido": "Sanchez",
     "email": "lsanchez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -103,7 +103,7 @@
     "nombre": "Miguel",
     "apellido": "Ramirez",
     "email": "mramirez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -112,7 +112,7 @@
     "nombre": "Elena",
     "apellido": "Torres",
     "email": "etorres@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -121,7 +121,7 @@
     "nombre": "Diego",
     "apellido": "Flores",
     "email": "dflores@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "10/11/25"
   },
@@ -130,7 +130,7 @@
     "nombre": "Carlos",
     "apellido": "Rivera",
     "email": "hola@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "15/11/25"
   },
@@ -139,7 +139,7 @@
     "nombre": "ok",
     "apellido": "ok",
     "email": "ok@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "estudiante",
     "createdAt": "15/11/25"
   },
@@ -148,7 +148,7 @@
     "nombre": "Santiago",
     "apellido": "Risquez Riccobono",
     "email": "sjrisquez@est.ucab.edu.ve",
-    "password": "123456",
+    "password": "$2b$10$/Cyk5UgRHL250rGyrCYKwOsXhINim/movH9cXTFmQdeftY7.OGVdm",
     "rol": "tutor",
     "createdAt": "17/11/25"
   },
@@ -160,5 +160,14 @@
     "password": "$2b$10$bowdMWeIlc9x0tRIgExlDe.4ZKMcjmZFBIsYr00ofyxH5CDx1rpWG",
     "rol": "estudiante",
     "createdAt": "22/11/25"
+  },
+  {
+    "id": "1764013572744-l7cwztm",
+    "nombre": "Alberto",
+    "apellido": "Lopez",
+    "email": "alopez@est.ucab.edu.ve",
+    "password": "$2b$10$lsABD4gQBjU/rj0Yimsl7OXkm3/OiYOfLzDKU1ret/V8KKafA5GC6",
+    "rol": "tutor",
+    "createdAt": "24/11/25"
   }
 ]
